@@ -1,0 +1,958 @@
+	.title	TANKM Tank Game
+
+$$tank = 1			; say that this is TANK game
+
+;+
+;	or	TANKM	Tank Game
+;	if $$TANK is defined
+;-
+
+	$dibdef
+	$iodef
+	$qiodef
+	$secdef
+	$jpidef
+;	$ssdef
+esc		= 27
+
+snake		= 8		; number of snakes
+
+;	meaning of event flags in cluster 2
+
+flag$v_master	= 0		; set if a master snake exists
+flag$v_read	= 1		; set if all snakes should read command
+flag$v_update	= 2		; set if all snakes should update screen
+flag$v_game	= 3		; set if game is in progress
+flag$v_endofgame= 4		; set if we have reached the end of the game
+flag$v_synch	= 5
+flag$v_done	= 8		; set if operation (read,update) is complete
+
+check_timer	= 13		; check timer id
+
+
+	.psect	$rodata	nowrt, noexe, shr, pic, long
+
+ttname_descr:
+	.ascid	/TT/
+
+mbxcnv:
+	.ascid	/_MBA!UW:/	; convert mbx unit number to physical name
+
+mbxbuf_descr:
+	.word	mbxbuf_siz, 0
+	.long	mbxbuf
+
+dibbuf_descr:
+	.word	dib$k_length, 0
+	.long	dibbuf
+
+	.align long
+snake_desc_2:
+.if ndf $$tank
+	.ascid	/SNAKE_1/		; name of snake event flags
+.iff
+	.ascid	/TANK_1/
+.endc
+
+	.align	long
+snake_map_name:
+.if ndf $$tank
+	.ascid	/SNAKE_DATA/
+.iff
+	.ascid	/TANK_DATA/
+.endc
+
+text = .
+	.ascii	<esc>'<'		; enter ANSI mode
+	.ascii	<esc>'(B'		; select ascii character set
+	.ascii	<esc>'[2J'		; erase entire screen
+	.ascii	<esc>'[1;1H'		; jump to top left corner
+	.ascii	<10>			; linefeed
+.if ndf $$tank
+	.ascii	<esc>'#3                 SNAKE' ; double-height top half
+.iff
+	.ascii	<esc>'#3                 TANK'
+.endc
+	.ascii	<13><10>
+.if ndf $$tank
+	.ascii	<esc>'#4                 SNAKE' ; double-height bottom half
+.iff
+	.ascii	<esc>'#4                 TANK'
+.endc
+	.ascii	<13><10><10>
+	.ascii	<esc>'#6        Thank you for playing'
+	.ascii	<13><10><10>
+text_len = . - text
+	.align	long
+text_end_game:
+	.long	2
+	.long	text
+	.address 10$
+10$:	.long	text_len
+
+text = .
+	.ascii	<13><10><10>
+	.ascii	'Game aborted because master '
+.if ndf $$tank
+	.ascii	'snake'
+.iff
+	.ascii	'tank'
+.endc
+	.ascii	' quitted'<13><10><10>
+text_len = . - text
+	.align	long
+text_abort:
+	.long	2
+	.long	text
+	.address 10$
+10$:	.long	text_len
+
+text = .
+	.ascii	<esc> 'Y' <31+24> <31+1>	; col 1, row 24
+	.ascii	<esc> 'G'			; exit graphics
+	.ascii	<7> ' Please wait for next game ...'
+	.ascii	<esc> 'F'			; enter graphics
+text_len = . - text
+	.align	long
+text_wait:
+	.long	2
+	.long	text
+	.address 10$
+10$:	.long	text_len
+
+	.align	long
+username_jpi:
+	.word	12, jpi$_username
+	.address username_buf
+	.address username_siz
+	.long	0
+
+	.align	long
+start_wait:
+	.long	-10000000*5, -1		; wait 5 seconds
+second_1:
+	.long	-10000000*1, -1		; wait 1 second
+second_2:
+	.long	-10000000*2, -1		; wait 2 seconds
+update_wait:
+	.long	-100000*33, -1		; wait 33/100 ths of a second
+check_wait:
+	.long	-10000000*4, -1		; wait 2 seconds for checking
+valid_move:
+	.long	^B101110100		; valid moves are 2,4,6,8 and 5!!
+start_direction:
+.if ndf $$tank
+	.byte	2, 8, 2, 8, 2, 8, 6, 4	; initial move directions for snake
+.iff
+	.byte	6, 4, 4, 6, 2, 8, 6, 4	;  for tank
+.endc
+	.align	long
+add_head_par:
+	.long	1			; parameter list to Pascal routine
+	.address move			; each players move
+update_par:
+	.long	2
+	.address outbuf
+	.address screen_len
+update_par2:			; if we have died, then there is no head
+	.long	2		; to change to a diamond, so write screen
+	.address screen_buf	; update directly from global memory.
+	.address screen_len
+
+	.psect	$rwbuf	wrt, noexe, noshr, pic, page
+
+mbxname_len = 16
+mbxname:			; room to hold the physical mbx name
+	.blkb	mbxname_len
+mbxname_descr:
+	.word	mbxname_len, 0
+	.long	mbxname
+mbxiosb:
+	.long	0,0
+mbxbuf_siz = 32
+mbxbuf:
+	.blkb	mbxbuf_siz
+
+dibbuf:
+	.blkb	dib$k_length
+
+	.align	long
+ttiosb:
+	.long	0,0
+
+ttbuf_siz = 128
+ttbuf:
+	.blkb	ttbuf_siz
+	.align	page
+outbuf_siz = 512
+outbuf::
+	.blkb	outbuf_siz
+
+snake_fab:
+.if ndf $$tank
+	$fab	fnm=<GAMES:SNAKE.BIN>, fop=<ufo>,-
+		fac=<get,put>, shr=<get,upd,upi>
+.iff
+	$fab	fnm=<GAMES:TANK.BIN>, fop=<ufo>,-
+		fac=<get,put>, shr=<get,upd,upi>
+.endc
+map_range:
+	.address share_data
+	.address share_data+<512*3>
+ret_range:
+	.long	0, 0
+
+
+	.psect	$sharedata wrt, noexe, shr, pic, page
+share_data:
+
+game_count:
+	.long			; count of number of games played
+master_flag:
+	.long			; = 1 if we are master snake
+abort:
+	.long			; = 1 if all snakes should abort
+player_bits:
+	.long			; bit set if that snake is playing
+players:
+	.long			; bit set if that snake is reserved
+other_players:
+	.long			; used by master snake to wait for other
+				; snakes to indicate operation completed
+move_count:
+	.long			; incremented every move.  Used for detecting
+				; other snakes hanging the game
+game_going:
+	.long			; <> 0 if a game is going
+you_just_died:
+	.long			; bit I set if snake I just died
+seed:
+	.long			; random number seed
+start_position:
+	.blkl	snake		; position of starting (1-8)
+;
+;		5
+;    1	+---------------+  3
+;	|		|
+;	|		|
+;    7	|		|  8
+;	|		|
+;	|		|
+;    4	+---------------+  2
+;		6
+;
+score:
+	.blkl	snake		; players' score
+n_games:
+	.blkl	snake		; # of games each player has played
+wins:
+	.blkl	snake		; # of wins for each player
+player_pos:
+	.blkl	snake		; starting position of each snake
+	.align	quad
+move:
+	.blkb	snake		; each snakes move
+name_size = 32
+name:
+	.blkb	name_size * snake ; each snakes name (32 chars long)
+. = . + 512 - < . - share_data >
+	.align	long
+screen_len:
+	.long			; # chars to be output
+screen_buf:
+	.blkb	508		; buffer containing screen update
+. = . + <512*4> - < . - share_data >
+
+
+	.psect	$rwdata	wrt, noexe, noshr, pic, long
+
+ttchan:
+	.word
+mbxchan:
+	.word
+data_ready:
+	.word
+master:
+	.word			; = 1 if we are master snake
+control_c_flag:
+	.word			; non zero if ^C typed
+dead:
+	.word			; bit I set if snake I just died
+	.align	long
+cluster_2:
+	.long
+cluster_3:
+	.long
+player:
+	.long
+player_efn:			; my player efn in cluster 2
+	.long
+current_players:
+	.long
+chars_left:			; # of chars left in buffer
+	.long
+char_pointer:
+	.long			; address of next character
+last_move_count:
+	.long
+username_buf:
+	.blkb	12
+username_siz:
+	.long
+
+outbuf_qio:
+	$qio	func=io$_writevblk!io$m_noformat,-
+		p1=outbuf
+output_qio:
+	$qio	func=io$_writevblk!io$m_noformat
+
+read_qio:
+	$qio	func=io$_readvblk!io$m_timed!io$m_noecho!io$m_nofiltr,-
+		iosb=ttiosb,-
+		p1=ttbuf, p2=ttbuf_siz, p3=0	; wait time = 0
+
+exit_block:			; exit handler block
+	.long
+	.address snake_exit
+	.long	1		; 1 argument
+	.address 10$
+10$:	.long			; exit reason
+
+
+	.psect	$code	nowrt, exe, shr, pic
+
+	.entry	-
+TTINIT, ^m<>
+;+
+; Create a mailbox.  Assign a channel to terminal with an associated mailbox.
+;-
+	$crembx_s	chan=mbxchan, promsk=#^xFF00
+	bsbw		error
+	$getchn_s	chan=mbxchan, pribuf=dibbuf_descr
+	bsbw		error
+	$fao_s		ctrstr=mbxcnv, outbuf=mbxname_descr,-
+			outlen=mbxname_descr, p1=dibbuf+dib$w_unit
+	$assign_s	devnam=ttname_descr, chan=ttchan, -  ; acmode=#^xFF00,
+			mbxnam=mbxname_descr
+	blbc	r0, 100$
+	movw	ttchan, outbuf_qio+qio$_chan		;store channel #
+	movw	ttchan, output_qio+qio$_chan		;store channel #
+	movw	ttchan, read_qio+qio$_chan		;store channel #
+	$qiow_s	func=#io$_setmode!io$m_ctrlcast, chan=ttchan,-
+		p1=control_c
+	ret
+100$:
+	bsbw	error
+	ret
+
+	.entry	-
+TT1CHAR,	^m<>
+	clrb	ttbuf
+	$qiow_s	func=#io$_readvblk!io$m_timed!io$m_noecho!io$m_nofiltr,-
+		chan=ttchan, iosb=ttiosb,-
+		p1=ttbuf, p2=#1, p3=#0	; wait time = 0
+	cvtbl	ttbuf, r0
+	cmpb	r0, #13			; is it <CR> ?
+	bneq	100$
+	clrb	data_ready
+100$:	ret
+
+TTREAD::
+	blbs	control_c_flag, 10$
+	tstl	chars_left		; have we used all characters ?
+	bgtr	50$			; no --> 50$
+	bbsc	#0, data_ready, 20$	; check if input ready
+5$:	mnegl	#1, r0			; no characters read
+	rsb				; no
+10$:
+	clrl	r0			; on ^C return move 0 = quit
+	rsb
+20$:
+	$qiow_g read_qio
+	blbc	r0, 5$			; error
+;
+;	$qiow_s	func=#io$_writevblk,chan=ttchan,-	; debug write
+;		p1=ttbuf, p2=ttiosb+2, p4=#^x1000
+
+	movzwl	ttiosb+2, chars_left		; # chars read
+	movab	ttbuf, char_pointer		; store address of character
+50$:
+	decl	chars_left
+	movzbl	@char_pointer, r0		; get next char
+	incl	char_pointer			; point to next
+	subb2	#^A/0/, r0			; convert from ascii to binary
+	blss	200$				; invalid command
+	cmpb	r0, #9
+	bgeq	150$				; invalid command (maybe quit)
+	bbc	r0, valid_move, 200$		; invalid command
+.if df $$tank
+	tstl	chars_left			; any chars left ?
+	bleq	100$				; no --> 100$
+	cmpb	@char_pointer, #^A/5/		; is next command fire ?
+	bneq	100$				; no --> 100$
+	incl	char_pointer
+	decl	chars_left
+	bisb2	#^B10000, r0			; add 16 to indicate fire
+.endc
+100$:
+	rsb
+150$:
+	cmpb	r0, #^A/e/-^A/0/		; was an "e" typed ?
+	beql	180$
+	cmpb	r0, #^A/E/-^A/0/		; was an "E" type ?
+	bneq	200$
+180$:
+	clrl	r0				; quit is move = 0
+	rsb
+200$:
+	mnegl	#1, r0				; no move given
+	rsb
+
+	.entry	-
+MBXREAD,	^m<>
+;+
+; This is an AST routine which executes when the mailbox record has been read.
+; The record itself is a status message which is assumed to say that
+; unsolicited data is available at the terminal
+;-
+	blbc	mbxiosb, 100$		; on error, dont re-que read
+;	we could have SS$_CANCEL or SS$_ABORT from the $CANCEL in the
+;	exit handler
+	movb	#1, data_ready		; indicate data is there
+	bsbw	queue_mbxread		; queue another read request
+100$:
+	ret
+
+QUEUE_MBXREAD:
+	$qio_s	efn=#2, func=#io$_readvblk, chan=mbxchan, iosb=mbxiosb,-
+		astadr=mbxread,-
+		p1=mbxbuf, p2=#mbxbuf_siz
+	blbc	r0, 100$
+	rsb
+100$:
+	bsbw	error
+	rsb
+
+TTWRITE::
+;+
+;	bsbw	ttwrite
+;	r3 contains length of buffer to write
+;	the buffer is outbuf
+;-
+	movl	r3, outbuf_qio+qio$_p2		; store length of buffer
+	$qiow_g	outbuf_qio
+	blbc	r0, 100$
+	rsb
+100$:
+	bsbw	error
+	rsb
+
+
+	.entry	-
+snake_screen, ^m<r2,r3,r4,r5>
+;+
+;	CALL SNAKE_SCREEN( array, length )
+;	BYTE ARRAY( LENGTH )
+;	copies string to update screen into shared memory
+;-
+	movl	@8(ap), r0		; get length
+	movl	r0, screen_len		; store length
+	movc3	r0, @4(ap), screen_buf	; copy text
+	ret
+
+	.entry	-
+snake_write, ^m<>
+;+
+;	CALL SNAKE_WRITE( array, length )
+;	BYTE ARRAY( LENGTH )
+;	writes buffer to terminal in noformat mode
+;-
+	movl	4(ap), output_qio+qio$_p1	; store address of buffer
+	movl	@8(ap), output_qio+qio$_p2	; store length of buffer
+	$qiow_g	output_qio
+	blbc	r0, 100$
+	ret
+100$:
+	bsbw	error
+	ret
+
+	.entry	-
+snake_dead, ^m<>
+;+
+;	CALL SNAKE_DEAD( player # )
+;-
+	subl3	#1, @4(ap), r0			; get # of snake who died
+	bbss	r0, you_just_died, 100$		; set flag saying he died
+100$:	ret
+
+
+	.entry -
+CANCELTYPEAHEAD, ^m<>
+	clrl	r0
+	tstw	ttchan		; check channel is open
+	beql	100$
+	$qiow_s	func=#io$_readvblk!io$m_purge!io$m_timed,-
+		chan=ttchan, p1=ttbuf	; do read with 0 length buffer (p2)
+100$:	ret			; return with status in r0
+
+ERROR:
+	blbs	r0, 100$
+	pushl	r0
+	calls	#1, G^lib$signal
+100$:
+	rsb
+
+	.entry	-
+control_c, ^m<>
+	movb	#1, control_c_flag
+	ret
+
+
+	.page
+	.entry	-
+SNAKE_INIT, ^m<r2,r3,r4,r5>				; snake game
+;+
+;	I = SNAKE_INIT( player # , game )
+;	returns I = 1 if you are master snake.
+;	returns your player # as a integer
+;	returns game = 1 if there is a game in progress
+;-
+
+	calls	#0, G^ttinit			; open terminal
+;
+	$ascefc_s efn=#64, name=snake_desc_2	; associate event flag cluster
+	bsbw	error
+;
+;	$open	fab=snake_fab			; open section file
+;	bsbw	error
+
+	$deltva_s inadr=map_range		; delete memory were global
+	bsbw	error				;  memory will be mapped
+
+	$crmpsc_s inadr=map_range, flags=#sec$m_gbl!sec$m_wrt!sec$m_pagfil, -
+		gsdnam=snake_map_name, -	; chan=snake_fab+fab$l_stv,-
+		pagcnt=#4
+	bsbw	error
+
+	cmpl	r0, #ss$_created		; are we first to map section
+	bneq	50$				; no
+	movab	share_data+4, r3
+	movc5	#0, (r3), #0, #512-4, (r3)	; clear everything except count
+	$clref_s efn=#flag$v_game+64		; say not game
+	movl	#39814571, seed			; init random n.g. seed
+	movl	#snake, r0			; 8 snakes
+20$:
+	movl	r0, start_position-4[r0]	; init start position
+	sobgtr	r0, 20$
+50$:
+	blbc	abort, 60$			; if not abort --> 60$
+	callg	text_abort, snake_write
+	$exit_s #1
+60$:
+	bsbw	queue_mbxread			; start terminal read
+;
+	bbss	#0, master_flag, 100$		; see if a master snake exists
+			; this should be interlocked on a multi-processor
+;+
+; We will have to be the master snake
+;-
+	movb	#1, master			; indicate we are master snake
+	$setef_s efn=#7				; set for first call
+100$:
+;
+	clrl	r1				; start at player 0 (bit0=1)
+150$:
+	bbcs	r1, players, 200$		; see if this snake is free
+	incl	r1				; go to next snake
+	cmpl	r1, #snake			; have we checked all snakes?
+	blss	150$				; no --> 150$
+	mnegl	#1, r1				; player = -1 means none
+200$:
+	movl	r1, player			; store my snake number (0-7)
+	movl	player, @4(ap)			;  and return it
+500$:
+	movzbl	game_going, @8(ap)		; return game going flag
+
+	movl	r1, r3
+	$getjpi_s itmlst=username_jpi		; get our username
+	mull2	#name_size, r3			; get offset to start of name
+	blss	600$				; no snakes available
+	movc5	username_siz, username_buf, #^a/ /, #name_size, name(r3)
+						; copy username
+600$:
+	$dclexh_s desblk=exit_block		; declare exit handler
+	bsbw	error
+
+	movzbl	master, r0			; return master snake status
+	ret
+
+master_wait:
+;+
+; master snake has to wait some time for other snakes to start playing
+; called from SNAKE_START
+;-
+	incl	game_count			; say another game being played
+220$:	clrb	player_bits			; no other players
+	bbss	player, player_bits, 400$	; say I am playing
+400$:
+	$clref_s efn=#flag$v_synch+64
+;+
+;	randomise starting positions
+;-
+	moval	start_position, r4		; starting position numbers
+	movl	#1, r2				; snake index (start at 1)
+500$:
+	pushal	seed				; random number seed
+	calls	#1, G^mth$random		; random real in r0
+	addl3	#1, r2, r3			; snake + 1
+	cvtlf	r3, r3				; as real
+	mulf2	r3, r0				; get snake to change pos with
+	cvtfl	r0, r0
+	movl	(r4)[r0], r1			; swap these positions
+	movl	(r4)[r2], (r4)[r0]
+	movl	r1, (r4)[r2]
+	aobleq	#7, r2, 500$
+;
+;	moval	start_position, r4
+	movab	move, r3
+	movl	#snake, r2			; number of snakes
+600$:
+	movl	(r4)+, r0			; get start position (1-8)
+	movb	start_direction-1[r0], (r3)+	; copy start direction
+	sobgtr	r2, 600$
+;
+	$setimr_s efn=#flag$v_game+64,- 
+			daytim=second_1		; wait a time for other snakes
+	$waitfr_s efn=#flag$v_game+64		; say that a game is going
+	movb	#1, game_going			; say game going
+	$clref_s efn=#flag$v_endofgame+64	; say not end of game
+	$setef_s efn=#7				; sets event flag for first
+						;  call to snake_wait
+	$setimr_s efn=#flag$v_synch+64,-		
+			 daytim=start_wait
+	$waitfr_s efn=#flag$v_synch+64
+	; this allows other snakes to set bit saying they are playing
+
+	rsb
+
+	.entry	-
+SNAKE_START, ^m<r2,r3,r4>
+;+
+;	CALL SNAKE_START( PLAYERS , START_POSITION )
+;	INTEGER PLAYERS, START_POSITION(8)
+;	waits 5? seconds for other players to run game
+;	The master snake is assumed to have waited some additional time
+;	Returns PLAYERS, bit I <> 0 if that player is active
+;	START_POSITION(I) is the starting location of snake I, (1-8)
+;-
+	blbc	master, 500$			; are we master snake ?
+	bsbw	master_wait
+	brb	800$
+200$:
+	$exit_s #1				; game aborted so stop
+500$:
+	$waitfr_s efn=#flag$v_game+64		; wait until a game starts
+	blbs	abort, 200$			; if game stopped --> 200$
+	bbss	player, player_bits, 600$	; say I am playing
+600$:	$waitfr_s efn=#flag$v_synch+64		; synchronise
+	blbs	abort, 200$			; if game stopped --> 200$
+800$:
+	movzbl	player_bits, r4			; get player bits
+	ashl	#flag$v_done, r4, other_players ; used by master snake
+	movl	r4, @4(ap)			; store player bits
+	clrl	chars_left			; cancel type ahead
+	clrb	data_ready			; make us do a read
+	$qiow_g read_qio			; clear out type-ahead
+;	return starting positions
+	moval	start_position, r0		; address of new positions
+	movl	8(ap), r2			; address of where to put them
+	movl	#snake, r1			; number of snakes
+900$:
+	movl	(r0)+, (r2)+
+	sobgtr	r1, 900$
+
+	mnegl	#1, last_move_count		; invalidate last counter
+
+	ret
+
+
+SNAKE_WAIT::
+;+
+;	BSBW SNAKE_WAIT
+; 	wait until we are told to read players command(s)
+;-
+	blbs	master, 200$			; are we master snake ?
+	$waitfr_s efn=#flag$v_read+64		; if not then wait for flag
+	rsb
+200$:	; master snake waits and then sets flag for all players
+	$cantim_s reqidt=#check_timer		; cancel checking timer
+	$waitfr_s efn=#7			; wait for previous timer
+	$setimr_s efn=#8, daytim=check_wait, -
+		astadr=check_ast, reqidt=#check_timer ; set off checking timer
+	$setimr_s efn=#7, daytim=update_wait
+	$clref_s efn=#flag$v_update+64		; clear next flag to wait on
+	movl	#flag$v_done+64, r2		; clear each players done flag
+	$clref_s efn=r2				; player 0
+	incl	r2
+	$clref_s efn=r2
+	incl	r2
+	$clref_s efn=r2
+	incl	r2
+	$clref_s efn=r2
+	incl	r2
+	$clref_s efn=r2
+	incl	r2
+	$clref_s efn=r2
+	incl	r2
+	$clref_s efn=r2
+	incl	r2
+	$clref_s efn=r2				; player 7
+;
+	$clref_s efn=#flag$v_synch+64
+	$setef_s efn=#flag$v_read+64		; tell everybody to do read
+	rsb
+
+
+SNAKE_READ::
+;+
+;	BSBW SNAKE_READ
+;	read all users moves and store them into the byte array MOVES(*)
+;-
+	bsbw	ttread				; read users commands, if any
+	tstb	r0				; anything read ?
+	blss	800$				; no
+500$:
+	movl	player, r1			; get our player number
+	movb	r0, move(r1)			; store our move
+	bneq	800$				; if not quit --> 800$
+	clrl	score[r1]			; clear score
+	clrl	n_games[r1]
+	clrl	wins[r1]
+	$exit_s #1				; and exit program
+800$:
+	addl3	#flag$v_done+64, player, r1
+	$setef_s efn=r1				; say that read is complete
+900$:
+	blbc	master, 1000$
+	$wfland_s efn=#64, mask=other_players	; wait for all players to read
+	incl	move_count			; onto next move
+	$clref_s efn=#flag$v_read+64		; clear next flag to wait on
+	$setef_s efn=#flag$v_update+64		; tell everybody to update
+	brb	1050$
+1000$:
+	$waitfr_s efn=#flag$v_update+64		; wait for all reads to complete
+	blbs	master_flag, 1050$		; check for master snake OK
+	movl	player, r1			; get our player number
+	clrb	move(r1)			; store our move ( quit )
+1050$:
+	rsb
+
+
+	.entry	-
+SNAKE_PLAY, ^m<r2,r3,r4,r5,r6,r7,r8,r9,r10,r11>
+;+
+;	called once at the start of the game.
+;	I then call the Pascal routine ADD_HEAD to perform the moves.
+;-
+	blbs	master, 1000$		; master snake does all the work
+100$:
+	bsbw	snake_wait
+	bsbw	snake_read
+	$waitfr_s efn=#flag$v_synch+64	; wait until screen update there
+	bsbw	snake_update		; update screen
+	brb	100$
+
+900$:
+	clrb	game_going		; tell other snakes games finished
+	$setef_s efn=#flag$v_synch+64	; wake other snakes up
+	bsbb	snake_update		; write out last move
+	ret
+
+1000$:	; master snake moves every snake
+	bsbw	snake_wait
+	bsbw	snake_read
+	callg	add_head_par, G^add_head	; call Pascal routine
+						; returns 1 if game still going
+	blbc	r0, 900$		; game has ended --> 900$
+	$setef_s efn=#flag$v_synch+64	; wake other snakes up
+	bsbb	snake_update		; update our screen
+	brb	1000$
+
+
+	.enable local_block
+500$:
+	$exit_s #1			; game aborted, so exit image
+
+snake_update::
+	blbs	abort, 500$
+	blbs	dead, 80$		; if we are dead, then no head
+;	replace your snake head with a diamond symbol
+	movc3	screen_len, screen_buf, outbuf	; copy update string
+	movl	player, r2		; get my snake number
+	addw2	#^A/1/+^X80, r2		; get number with parity bit set
+	locc	r2, screen_len, outbuf
+	beql	50$			; could not find it !!!
+	movb	#^A/`/, (r1)		; change to diamond
+50$:
+	callg	update_par, snake_write
+	blbc	game_going, 100$	; bit clear if game has finished
+	bbsc	player, you_just_died, 60$ ; see if we just died
+	rsb
+60$:	movb	#1, dead		; say we are dead
+	callg	text_wait, snake_write	; tell them to wait for next game_exit,
+	rsb
+80$:	; dont copy buffer if no head to update because we are dead
+	callg	update_par2, snake_write
+	blbc	game_going, 100$
+	rsb
+100$:
+	$setimr_s efn=#6, daytim=second_1	; so we can see last move
+	$waitfr_s efn=#6
+	ret				; return from SNAKE_PLAY if end game
+	.disable local_block
+
+
+	.entry	-
+CHECK_AST, ^m<r2,r3,r4>
+;+
+;	called when check_timer expires (2 seconds)
+;	we should only get here if one of the other snakes has aborted
+;	or ^S ed  .  Force the snake out of the game.
+;-
+	$readef_s efn=#64, state=cluster_2	; get done flags
+	extzv	#flag$v_done, #snake, cluster_2, r2 ; get done flags
+;	movb	other_players+1, r3		; get other players
+	bicw3	r2, other_players+1, r3		; find players who have not
+						; responded
+	bicw2	r3, other_players+1		; and say they are dead
+	clrl	r2				; snake 0
+100$:	bbc	r2, r3, 200$
+	clrb	move(r2)			; say snake has quitted
+	addl3	#flag$v_done+64, r2, r0		; get event flag
+	$setef_s efn=r0				; set event flag so I will
+						; wake up on return from here
+200$:	aoblss	#snake, r2, 100$		; for all 8 snakes
+
+	ret
+
+
+	.entry	-
+SNAKE_GAME_END, ^m<>
+;+
+;	synchronizes the end of the game
+;-
+	clrb	dead			; we are not dead
+	blbc	master, 500$		; if not master snake --> 500$
+	$clref_s efn=#flag$v_game+64	; say game not in progress
+	clrb	game_going		; and again
+	$setimr_s efn=#flag$v_endofgame+64, daytim=second_2
+	clrw	you_just_died		; reset died flags
+500$:
+	$waitfr_s efn=#flag$v_endofgame+64 ; wait for end of game
+	blbs	abort, 800$		; if we should abort --> 800$
+	ret
+800$:	; we must abort. Probably because master snake stopped
+	$exit_s #1
+
+
+	.entry	-
+SNAKE_EXIT, ^m<r2,r3,r4,r5>
+;+
+;	called as an exit handler
+;-
+	$cancel_s chan=mbxchan		; cancel mailbox read
+
+	movl	player, r3		; get my snake number
+	blss	80$			; we never were playing
+	clrb	move(r3)		; make next move a quit
+	addl3	#flag$v_done, r3, r2	; get done bit
+	bbcc	r2, other_players, 50$	; stop master snake from waiting for me
+50$:	addl2	#64, r2			; make into event flag
+	$setef_s efn=r2			; say input done
+	bbcc	r3, players, 60$	; say this snake available
+60$:
+	clrl	score[r3]		; zero score
+	clrl	n_games[r3]		; zero # of games played
+80$:
+	blbc	master, 100$		; are we master snake ?
+	movb	#1, abort		; tell all other snakes to abort
+	clrb	master_flag		; say no master snake
+	$setef_s efn=#flag$v_read+64	; wake everybody up
+	$setef_s efn=#flag$v_update+64
+	$setef_s efn=#flag$v_endofgame+64
+	$setef_s efn=#flag$v_synch+64
+	$setef_s efn=#flag$v_game+64	; for people waiting for a game
+100$:
+;	clear screen and put out of graphics mode
+	callg	text_end_game, snake_write
+	blbc	abort, 200$		; game is not being aborted --> 200$
+	callg	text_abort, snake_write
+200$:
+	$deltva_s inadr=ret_range	; delete global section
+	$dassgn_s chan=snake_fab+fab$l_stv ; deassign channel
+
+	ret
+
+	
+	.entry	-
+NAME_SET, ^m<r2,r3,r4,r5>
+;+
+;	CALL NAME_SET( name )
+;	set this players name
+;-
+	mull3	#name_size, player, r3	; get our player number (0-7)
+	addl2	#13, r3			; skip username
+	movc3	#name_size-13, @4(ap), name(r3) ; store name in shared memory
+	ret
+
+	.entry	-
+NAME_GET, ^m<r2,r3,r4,r5>
+;+
+;	CALL NAME_GET( name , player # )
+;	returns the name of specified player (1-8)
+;-
+	subl3	#1, @8(ap), r1		; get player number (0-7)
+	mull2	#name_size, r1		; offset to this players name
+	movc3	#name_size, name(r1), @4(ap) ; return players name
+	ret
+
+	.entry	-
+SCORE_SET, ^m<>
+;+
+;	CALL SCORE_SET( player #, score , # games , # wins )
+;-
+player_arg = 4
+score_arg = 8
+games_arg = 12
+wins_arg = 16
+	subl3	#1, @player_arg(ap), r1		; get our player # (0-snake)
+	movl	@score_arg(ap), score[r1]	; store score
+	movl	@games_arg(ap), n_games[r1]
+	movl	@wins_arg(ap), wins[r1]
+	ret
+
+	.entry	-
+SCORE_GET, ^m<>
+;+
+;	CALL SCORE_GET( player , score , # games , # wins )
+;-
+;player_arg = 4
+;score_arg = 8
+;games_arg = 12
+;wins_arg = 16
+	subl3	#1, @player_arg(ap), r1		; get player # (0-snake)
+	movl	score[r1], @score_arg(ap)	; return score
+	movl	n_games[r1], @games_arg(ap)	; return # of games played
+	movl	wins[r1], @wins_arg(ap)		; return # of wins
+	ret
+
+	.entry	-
+snake_game_count, ^m<>
+;+
+;	CALL SNAKE_GAME_COUNT( # games )
+;	returns # of games played (total)
+;-
+	movl	game_count, @4(ap)
+	ret
+
+	.end

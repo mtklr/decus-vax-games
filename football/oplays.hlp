@@ -1,0 +1,39 @@
+1 PlayAction_Pass
+The quarterback fakes a handoff to the runningback, then drops back
+looking for a pass downfield.  A successful play is when the runningback
+draws the linebackers away, giving the quarterback time to find his man.
+This play works well against run blitzes and reaction defenses.
+1 PowerRun_Inside
+The quarterback hands the ball off to the runningback, who runs between
+the tackles in search of daylight.  Provided the offensive line blasts
+a hole in the defense, this play is good for short yardage situations.
+1 Power_Sweep
+The offense moves as a unit towards the outside, forcing blocks that allow
+the runningback to turn the corner and explode into the secondary.  This
+play works well against drop-back defenses, but can be stuffed by a good
+blitz.
+1 Screen_Pass
+Linemen release defenders while the quarterback dumps the pass off to the
+runningback.  Then the linemen proceed downfield to block for the back as
+he scrambles his way into the secondary.  This play is optimum offense
+against the blitz.
+1 Deep_Pass
+The quarterback gets to test his strength and accuracy as he lobs the long
+bomb down the field.  This is a difficult play due to the precision
+required for completion.
+1 Crossing_Pass
+The receivers drop underneath the coverage and look to the quarterback for
+short to medium yardage.  The pattern takes time to develop, but is quite
+effective against most pass coverages.  However, the offensive line must
+make sure the pass rush does not get to the quarterback first.
+1 Counter_Gap
+One side of the offensive line pulls to the other side, overloading the
+line of scrimmage, and blasting a path for the runningback to move through.
+This play is very powerful against a balanced defensive front.  However,
+an aggresive defensive play can cut this play short in the backfield.
+1 Punt
+The punt is an excellent idea for 4th down situations outside of field
+goal range, except when points are needed desperately.
+1 Kick
+The kick is an attempt at the 3-point field goal.  Be aware that distance
+can affect the ball's chance of sailing through the uprights.

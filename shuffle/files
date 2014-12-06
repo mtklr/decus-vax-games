@@ -1,0 +1,19 @@
+You should have:
+
+Makefile:	this is the makefile, it needs some modification of directory
+		names
+
+shuffle.6:	this is the unix style manual page formatted in -man macros
+		you can modify the filenames in it.
+
+shuffle.h	this is the include file for the include files I use.
+		Here are also some modifications necessary.
+
+
+The rest of the files are the source files, this is a manifest of them:
+
+game.c
+main.c
+switch.c
+visual.c
+xrand.c

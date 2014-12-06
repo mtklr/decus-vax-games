@@ -1,0 +1,48 @@
+#
+# This is a sample LARN.OPT (.larnopts on Unix) options file.  It shows
+# all the possible options and provides examples.  For information about each
+# option, see the LARN.DOC file.  You can edit this sample file to produce a
+# real options file.
+#
+# The '#' character is a comment character; any line in the options file that
+# begins with this character will be ignored when the options file is read.
+#
+# Note that case-sensitivity is important when specifying options.
+#
+# The following options are allowed on MS-DOS and OS/2 only:
+#
+# cursor: 1 9
+# DECRainbow
+# graphics: 176 46
+# keypad
+# larndir: c:\games\larn
+# ramlevels
+# rawio
+# swapfile: c:\games\larn\larn.swp
+#
+# The following options can be used on all systems:
+#
+# auto-pickup
+# bold-objects
+# enable-checkpointing
+# highlight-objects
+# inverse-objects
+#                         You can rename monsters.  The first letter indicates
+#                         which monster changes.  The two examples have changed
+#                         the name of the Ant and Centaur, respectively.
+# monster: Aardvark
+# monster: "Charlie Chan"
+#                         You can specify your character's name.
+# name: Shogun
+#                         Note that names with spaces must be quoted
+# name: "Mr. Wizard"
+# original-objects
+# no-beep
+# no-introduction
+# prompt-on-objects
+# savefile: c:\games\larn\mygame.sav
+#
+# The following options are not allowed on MS-DOS or OS/2:
+#
+# play-day-play
+# process-name

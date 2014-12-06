@@ -1,0 +1,21 @@
+1 Pass_Blitz
+The linebackers and safeties go all out to rush the quarterback.  This is
+an excellent play to rattle the offense and is surprisingly effective
+against the run since it blocks all holes.
+1 Run_Blitz
+This play has the defensive front sealing off all holes up front where
+the runningback would try to get through.  Sometimes, this play can also
+rattle the quarterback, since the defense dominates the line of scrimmage.
+1 Zone_Defense
+The linebackers and safeties drop back looking to cover the receivers in
+the event of a pass.  Only defensive linemen are rushing up front.  This
+play is the safest way to prevent the big play by the offense.
+1 React_Defense
+The defensive linebackers hang loose in the middle of the field, reacting
+to the ball.  If they sense a pass play, they will drop back to cover it.
+Otherwise, they rush up front.  This play is a conservative play for the
+times when the defense is unsure what the offense might do.
+1 Punt_Block
+This play is designed for the sole purpose of blocking a punt.
+1 Kick_Block
+This play is designed for the sole purpose of blocking a kick.

@@ -1,0 +1,1362 @@
+{^86$2ytDhhb23hg$67fg3765GHU&y }
+[INHERIT('SYS$LIBRARY:STARLET')]
+PROGRAM SPIELCHEN (INPUT,OUTPUT);
+ 
+(******************************)
+(*        BOULDER DASH        *)
+(*      WRITTEN 1988  BY      *)
+(*       OSKAR SCHIRMER       *)
+(******************************)
+ 
+CONST GAME_SIZE = 127;
+      MAGMA_COOL = 50;
+      SECOND = 10000000;
+      MOMENT =  2400000;
+      OUTBUFLEN = 256;
+ 
+      CSI = CHR(27)+'[';
+      CRLF = CHR (13)+CHR (10);
+      XXERR01 = CHR(7)+CHR(27)+'[2J'+CHR(27)+'[?25h'+CHR(27)+'[?8h';
+      XXABD10 = CHR(15)+CHR(27)+'[?5l';
+      XXMNU01 = CHR(27)+'#6'+CHR(27)+'#';
+      XXAA901 = CHR(27)+'[1;';
+      XXABD06 = CHR(27)+'[1;1H'+CHR (13)+CHR (10);
+      XXABD08 = XXABD06;
+      XXPAG01 = CHR(27)+'[1;1H'+CHR(27)+'[2J';
+      XXPRP01 = CHR(27)+'[1;1H'+CHR(27)+'[2J'+CHR(27)+'[?8l'+CHR(27)+'[?25l'+CHR(27)+'[?7l'
+               +CHR(27)+'[1;1H'+CHR (27)+'#5'+CHR(10);
+      XXABD13 = CHR(27)+'[1;1HGOT:';
+      XXABD01 = CHR(27)+'[2;';
+      XXAA902 = XXABD01;
+      XXABD04 = XXABD01;
+      XXABD09 = CHR(27)+'[2@'+CHR(13)+CHR(10);
+      XXPLY01 = CHR(27)+'[2J'+CHR(27)+'[?25h'+CHR(27)+'[?8h';
+      XXABD07 = CHR(27)+'[2P'+CHR (13)+CHR (10);
+      XXERR02 = CHR(27)+'[7m**** ERROR: ';
+      XXINC01 = CHR(27)+'[?5h';
+      XXEIN01 = XXINC01;
+      XXMNU03 = CHR(27)+'[K';
+      XXABD11 = '  '+CHR(27)+'[7mPAUSE'+CHR(27)+'[0m   ';
+      XXABD12 = ' ***'+CHR(27)+'[K';
+      XXERR03 = ' ****'+CHR(27)+'[0m'+CHR(7);
+      XXPRP03 = ';1H'+CHR(27)+'#6'+CHR(27)+'#3'+CHR(10)+CHR(27)+'#6'+CHR(27)+'#4';
+      XXABD03 = ';1H'+CHR(27)+'D'+CHR(27)+'#6'+CHR(27)+'#3'+CHR(27)+'D'+CHR(27)
+               +'#6'+CHR(27)+'#4'+CHR(27)+'[1;';
+      XXMNU02 = ']'+CHR (13)+CHR (10);
+      XXABD02 = 'r'+CHR(27)+'[';
+      XXABD05 = 'r'+CHR(27)+'[2;1H'+CHR(27)+'M'+CHR(27)+'#6'+CHR(27)+'#4'+CHR(27)+'M'
+               +CHR(27)+'#6'+CHR(27)+'#3'+CHR(27)+'[1;';
+ 
+ 
+TYPE GAME_INDX = 0..GAME_SIZE;
+     STRING = VARYING [255] OF CHAR;
+     THING = (NOTHING,WAYOUT,BORDER,EARTH,MAGMA, { !"#$}
+              LYINGSTONE,ROLLINGSTONE,LYINGDIAMONT,ROLLINGDIAMONT, {%&'(}
+              BUTTERFLY0,BUTTERFLY1,BUTTERFLY2,BUTTERFLY3, {)*+,}
+              SQUAREFLY0,SQUAREFLY1,SQUAREFLY2,SQUAREFLY3, {-./0}
+              SMASH0,SMASH1,SMASH2,SMASH3, {1234}
+              CRASH0,CRASH1,CRASH2,CRASH3, {5678}
+              NORMALWALL,LIVINGWALL,SLEEPINGWALL, {9:;}
+              HAMSTER, {<}
+              THING_HIGH);
+     GAME_STATUS = (L_COMIN,L_ALIVE,L_DEAD,L_COUNT,L_COMOUT,L_ENDLVL);
+     GAME_AREA = ARRAY [GAME_INDX,GAME_INDX] OF THING;
+     T_CAVE_NAMES = ^ R_CAVE_NAMES;
+     R_CAVE_NAMES = RECORD NEXT : T_CAVE_NAMES; NAME : STRING; END;
+     $SQUAD = [QUAD,UNSAFE] RECORD LO,HI:INTEGER; END;
+ 
+VAR AREA,OLDY:GAME_AREA;
+    PREDCYC4:ARRAY [0..3] OF 0..3;
+    L_STAT:GAME_STATUS;
+    CAVE_NAMES:T_CAVE_NAMES;
+    COMMAND,TASTE_LINX,TASTE_REXZ,TASTE_OBEN,TASTE_UNTN,
+            SCHAU_LINX,SCHAU_REXZ,SCHAU_OBEN,SCHAU_UNTN,MAINC,IS_FLASH:CHAR;
+    OK,GO,PAUSE,WINNY,MAGMA_CLOSED,MAGMA_SURROUNDED:BOOLEAN;
+    CAVE_ID,LINE,NEXTCAVE,FIRSTCAVE,GAMEFONT200,GAMEFONT300,CAVEROOT:STRING;
+    PICTURE:ARRAY [0..3,THING] OF 0..255;
+    FLASHPICT:ARRAY [THING] OF CHAR;
+    SIZ_X,SIZ_Y,CYCLE4,QOS_A,QOS_B,POS_A,POS_B,HAM_A,HAM_B,HAMPA,HAMPB,
+      NUMP,SCORE,NEED_DIAM,HAVE_DIAM,VAL0_DIAM,VAL1_DIAM,LEFT_TIME,DOPLAY,
+      LW_ACTIVE,SCRPA,SCRPB,BONUS_HAM,HEIGHT,WIDTH,STATUS_C,MAXCAVE,
+      MAGMA_GROW,NOKEYDONE:INTEGER;
+    INPCH:PACKED ARRAY [1..1] OF CHAR;
+    CHIN,CHOUT:[WORD] 0..65535;
+    TIMER:$SQUAD;
+    OUTINX:INTEGER;
+    OUTBUF:PACKED ARRAY [1..OUTBUFLEN] OF CHAR;
+    RANDOM_SEED:UNSIGNED;
+    TO_BE_GIVEN_OUT:PACKED ARRAY [0..GAME_SIZE] OF BOOLEAN;
+    WIZARD:BOOLEAN;
+    DOIT,DOITTOO:BOOLEAN:=FALSE;
+    DATF:TEXT;
+ 
+(************************* RANDOM *************************)
+ 
+PROCEDURE RANDOMIZE;
+TYPE QUADWORD = ARRAY [BOOLEAN] OF UNSIGNED;
+VAR TEMP:QUADWORD;
+BEGIN
+$GETTIM (TEMP);
+RANDOM_SEED := TEMP [FALSE];
+END;
+ 
+FUNCTION RANDOM (N:INTEGER) : INTEGER;
+VAR RDUMMY:REAL;
+ 
+  FUNCTION MTH$RANDOM (VAR SEED:UNSIGNED) : REAL;
+  EXTERN;
+ 
+BEGIN
+RDUMMY := MTH$RANDOM (RANDOM_SEED);
+RANDOM := ORD (RANDOM_SEED MOD 2147483648) MOD N;
+END;
+ 
+ 
+ 
+(*************************** TYPES **************************)
+ 
+ 
+ 
+FUNCTION THETHING (I:INTEGER) : THING;
+(* CONVERSION INTEGER -> THING (GNAGNA) *)
+TYPE TRIX = RECORD CASE BOOLEAN OF
+             FALSE:(T:THING);
+              TRUE:(I:INTEGER);
+               END;
+VAR T:TRIX;
+BEGIN
+T.I := I;
+THETHING := T.T;
+END;
+ 
+ 
+ 
+(****************************** OUTPUT *******************************)
+ 
+PROCEDURE OUTIT;
+(* PUFFER OUTBUF AUF DEN BILDSCHIRM *)
+BEGIN
+IF OUTINX>0 THEN
+  $QIOW (CHAN:=CHOUT,
+         FUNC:=IO$_WRITEVBLK,
+         P1:=OUTBUF,P2:=OUTINX);
+OUTINX := 0;
+END;
+ 
+PROCEDURE OUTCHR (C:CHAR);
+BEGIN
+IF OUTINX = OUTBUFLEN THEN OUTIT;
+OUTINX := OUTINX+1;
+OUTBUF [OUTINX] := C;
+END;
+ 
+PROCEDURE OUTSTR (S:STRING);
+VAR I:INTEGER;
+BEGIN
+I := 1;
+WHILE I <= LENGTH (S) DO
+  BEGIN
+  OUTCHR (S [I]);
+  I := I+1;
+  END;
+END;
+ 
+PROCEDURE OUTINT (I,L:INTEGER);
+VAR S:STRING;
+BEGIN
+WRITEV (S,I:L);
+OUTSTR (S);
+END;
+ 
+PROCEDURE CENTRIX (S:STRING; WIDTH:INTEGER);
+VAR I:INTEGER;
+BEGIN
+I := WIDTH+WIDTH;
+I := I+I+4-LENGTH (S);
+WHILE I > 0 DO
+  BEGIN
+  OUTCHR (' ');
+  I := I-2;
+  END;
+I := 1;
+WHILE I <= LENGTH (S) DO
+  BEGIN
+  OUTCHR (S [I]);
+  I := I+1;
+  END;
+OUTSTR (CRLF);
+END;
+ 
+PROCEDURE FLASHMODE (ON:CHAR);
+(* SET SCREEN FLASH MODE *)
+BEGIN
+IF ON <> IS_FLASH THEN
+  BEGIN
+  IS_FLASH := ON;
+  OUTSTR (CSI); OUTCHR (ON); OUTCHR ('m');
+  END;
+END;
+ 
+ 
+(***************************** ERROR *************************)
+ 
+PROCEDURE ERROR (N:STRING);
+(* ERROR & STOP *)
+VAR K:INTEGER;
+BEGIN
+WRITE (XXERR01:42);
+FOR K := 0 TO 50 DO WRITELN;
+WRITELN (XXERR02,N,XXERR03);
+HALT;
+END;
+ 
+ 
+ 
+(********************* TIMING *********************)
+ 
+PROCEDURE SCHEDULE (LOTIME:INTEGER);
+BEGIN
+TIMER.LO := -LOTIME;
+$SCHDWK (DAYTIM := TIMER);
+END;
+ 
+ 
+ 
+(****************************** SCREEN *******************************)
+ 
+PROCEDURE GOTOXY (X,Y:INTEGER);
+(* CURSOR NACH (X,Y), LINXOBEN IST (0,0) *)
+BEGIN
+OUTSTR (CSI); OUTINT (Y+1,1); OUTCHR (';'); OUTINT (X+1,1); OUTCHR ('H');
+END;
+ 
+PROCEDURE GOTOPS (H,V:INTEGER);
+(* POSITION FUER DEN KLOTZ BEI (H,V) *)
+BEGIN
+GOTOXY (H+H,V+V+1);
+END;
+ 
+PROCEDURE GOTOQS (H,V:INTEGER);
+(* POSITION FUER DEN KLOTZ BEI (H,V) (UNTERE HAELFTE) *)
+BEGIN
+GOTOXY (H+H,V+V+2);
+END;
+ 
+PROCEDURE GOTOHD (X:INTEGER);
+(* POSITION CURSOR FOR HEADLINE *)
+BEGIN
+OUTSTR (XXAA901); OUTINT (X+1,1); OUTCHR ('H');
+END;
+ 
+PROCEDURE PAGE;
+(* BILDSCHIRM LOESCHEN *)
+BEGIN
+OUTSTR (XXPAG01); (* CLEAR *)
+END;
+ 
+PROCEDURE PREPPAGE;
+(* BILDSCHIRM LOESCHEN UND EINTEILEN ("ELFMAL" 2HEIGHT, EINMAL NORMAL) *)
+VAR I:INTEGER;
+BEGIN
+OUTSTR (XXPRP01);
+I := 2;
+WHILE I <= HEIGHT+HEIGHT+2 DO
+  BEGIN
+  OUTSTR (CSI);
+  OUTINT (I,1);
+  OUTSTR (XXPRP03);
+  I := I+2;
+  END;
+END;
+ 
+PROCEDURE PUTPIC (X,Y:INTEGER; T:THING);
+(* AN DER POSITION (X,Y) DAS DING T *)
+VAR N:INTEGER;
+BEGIN
+GOTOPS (X,Y);
+N := PICTURE [CYCLE4,T];
+FLASHMODE (FLASHPICT [T]);
+OUTCHR (CHR(N)); OUTCHR (CHR(N+1));
+OUTCHR (CHR(8)); OUTCHR (CHR(8)); OUTCHR (CHR(10));
+OUTCHR (CHR(N)); OUTCHR (CHR(N+1));
+END;
+ 
+PROCEDURE PUTPIC0 (X,Y:INTEGER; VAR F:GAME_AREA; A,B:GAME_INDX);
+(* AN DER POSITION (X,Y) AUS DEM FELD F *)
+BEGIN
+PUTPIC (X,Y,F [B+Y,A+X]);
+END;
+ 
+PROCEDURE PUTPICX (Y:INTEGER; VAR F:GAME_AREA; A,B:GAME_INDX);
+(* AN DER POSITION (0..,Y) AUS DEM FELD F *)
+VAR X,N:INTEGER;
+    T:THING;
+BEGIN
+OUTSTR (CSI); OUTINT (Y+Y+2,1); OUTSTR (';1H');
+FOR X := 0 TO WIDTH DO
+  BEGIN
+  T := F [B+Y,A+X];
+  N := PICTURE [CYCLE4,T];
+  FLASHMODE (FLASHPICT [T]);
+  OUTCHR (CHR (N)); OUTCHR (CHR (N+1));
+  END;
+OUTSTR (CRLF);
+FOR X := 0 TO WIDTH DO
+  BEGIN
+  T := F [B+Y,A+X];
+  N := PICTURE [CYCLE4,T];
+  FLASHMODE (FLASHPICT [T]);
+  OUTCHR (CHR (N)); OUTCHR (CHR (N+1));
+  END;
+END;
+ 
+PROCEDURE PUTPICY (X:INTEGER; VAR F:GAME_AREA; A,B:GAME_INDX);
+(* AN DER POSITION (X,0..) AUS DEM FELD F *)
+VAR Y,N:INTEGER;
+    T:THING;
+BEGIN
+OUTSTR (XXAA902); OUTINT (X+X+1,1); OUTCHR ('H');
+FOR Y := 0 TO HEIGHT DO
+  BEGIN
+  T := F [B+Y,A+X];
+  N := PICTURE [CYCLE4,T];
+  FLASHMODE (FLASHPICT [T]);
+  OUTCHR (CHR (N)); OUTCHR (CHR (N+1));
+  OUTCHR (CHR (8)); OUTCHR (CHR (8)); OUTCHR (CHR (10));
+  OUTCHR (CHR (N)); OUTCHR (CHR (N+1));
+  IF Y<HEIGHT THEN
+    BEGIN OUTCHR (CHR (8)); OUTCHR (CHR (8)); OUTCHR (CHR (10)) END;
+  END;
+END;
+ 
+PROCEDURE PUTPIC1 (VAR F:GAME_AREA; A,B:GAME_INDX);
+(* AN DER POSITION (0..,0..) AUS DEM FELD F *)
+VAR X,Y:INTEGER;
+BEGIN
+OUTCHR (CHR(14));
+FOR Y := 0 TO HEIGHT DO
+  PUTPICX (Y,F,A,B);
+END;
+ 
+PROCEDURE ABDRUCK (VAR FN,FO:GAME_AREA; VAR NA,NB,OA,OB:INTEGER);
+VAR N,X,Y,X0,X1,Y0,Y1,XA,XB:INTEGER;
+    T:THING;
+    TIMESTR:PACKED ARRAY [1..11] OF CHAR;
+ 
+BEGIN
+OUTCHR (CHR(14)); (* SO FOR SELECT G1 AS LOWER HALF FONT (00.7F) *)
+X0 := 0;
+X1 := WIDTH;
+Y0 := 0;
+Y1 := HEIGHT;
+IF NB>OB THEN
+  BEGIN
+  OB := OB+1;
+  OUTSTR (XXABD01);
+  OUTINT (HEIGHT+HEIGHT+3,1);
+  OUTSTR (XXABD02);
+  OUTINT (HEIGHT+HEIGHT+3,1);
+  OUTSTR (XXABD03);
+  OUTINT (HEIGHT+HEIGHT+4,1);
+  OUTCHR ('r'); (* SCROLL REGION 0..23 *)
+  PUTPICX (HEIGHT,FN,OA,NB);
+  Y1 := HEIGHT-1;
+  END;
+IF NB<OB THEN
+  BEGIN
+  OB := OB-1;
+  OUTSTR (XXABD04);
+  OUTINT (HEIGHT+HEIGHT+3,1);
+  OUTSTR (XXABD05);
+  OUTINT (HEIGHT+HEIGHT+4,1);
+  OUTCHR ('r'); (* SCROLL REGION 0..23 *)
+  PUTPICX (0,FN,OA,NB);
+  Y0 := 1;
+  END;
+IF NA>OA THEN
+  BEGIN
+  OA := OA+1;
+  OUTSTR (XXABD06);
+  Y := HEIGHT+HEIGHT+1;
+  WHILE Y >= 0 DO
+    BEGIN
+    OUTSTR (XXABD07);
+    Y := Y-1;
+    END;
+  PUTPICY (WIDTH,FN,NA,NB);
+  X1 := WIDTH-1;
+  END;
+IF NA<OA THEN
+  BEGIN
+  OA := OA-1;
+  OUTSTR (XXABD08);
+  Y := HEIGHT+HEIGHT+1;
+  WHILE Y >= 0 DO
+    BEGIN
+    OUTSTR (XXABD09);
+    Y := Y-1;
+    END;
+  PUTPICY (0,FN,NA,NB);
+  X0 := 1;
+  END;
+FOR Y := Y0 TO Y1 DO
+  BEGIN
+  FOR X := X0 TO X1 DO
+    TO_BE_GIVEN_OUT [X] := PICTURE [CYCLE4,FN [NB+Y,NA+X]] <>
+                           PICTURE [PREDCYC4 [CYCLE4],FO [OB+Y,OA+X]];
+  TO_BE_GIVEN_OUT [X1+1] := FALSE;
+  FOR X := X0 TO X1 DO
+    IF TO_BE_GIVEN_OUT [X] THEN
+      BEGIN
+      XA := X;
+      GOTOPS (X,Y);
+      REPEAT
+        T := FN [NB+Y,NA+XA];
+        FLASHMODE (FLASHPICT [T]);
+        N := PICTURE [CYCLE4,T];
+        OUTCHR (CHR(N)); OUTCHR (CHR(N+1));
+        TO_BE_GIVEN_OUT [XA] := FALSE;
+        XA := XA+1;
+      UNTIL NOT TO_BE_GIVEN_OUT [XA];
+      IF XA-1 = X THEN
+        BEGIN
+        OUTCHR (CHR(8)); OUTCHR (CHR(8)); OUTCHR (CHR(10));
+        OUTCHR (CHR(N)); OUTCHR (CHR(N+1));
+        END
+      ELSE
+        BEGIN
+        GOTOQS (X,Y);
+        FOR XB := X TO XA-1 DO
+          BEGIN
+          T := FN [NB+Y,NA+XB];
+          FLASHMODE (FLASHPICT [T]);
+          N := PICTURE [CYCLE4,T];
+          OUTCHR (CHR(N)); OUTCHR (CHR(N+1));
+          END;
+        END;
+      END;
+  END;
+FLASHMODE ('0');
+OUTSTR (XXABD10); (* SI FOR SELECT G0 AS LOWER HALF FONT (00.7F) *)
+IF L_STAT IN [L_COMIN,L_COMOUT] THEN
+  BEGIN
+  GOTOHD (0);
+  CENTRIX ('  *** '+CAVE_ID+XXABD12,WIDTH);
+  END ELSE
+IF CYCLE4=0 THEN
+  BEGIN
+  OUTSTR (XXABD13); OUTINT (HAVE_DIAM,5);
+  OUTSTR (' NEED:');
+  IF HAVE_DIAM<NEED_DIAM THEN OUTINT (NEED_DIAM,5)
+                         ELSE OUTSTR ('*****');
+  OUTSTR (' DIAM:');
+  IF HAVE_DIAM<NEED_DIAM THEN OUTINT (VAL0_DIAM,4)
+                         ELSE OUTINT (VAL1_DIAM,4);
+  TIME (TIMESTR);
+  OUTSTR ('  TIME:');
+  OUTCHR (TIMESTR[1]); OUTCHR (TIMESTR[2]); OUTCHR ('.');
+  OUTCHR (TIMESTR[4]); OUTCHR (TIMESTR[5]);
+  IF PAUSE THEN OUTSTR (XXABD11)
+  ELSE
+    BEGIN
+    OUTSTR (' LEFT:');
+    IF LEFT_TIME > 0 THEN
+      BEGIN
+      IF LEFT_TIME < 16 THEN FLASHMODE ('7');
+      OUTINT (LEFT_TIME,4);
+      FLASHMODE ('0');
+      END
+    ELSE OUTSTR ('****');
+    END;
+  OUTSTR ('  MEN:');
+  OUTINT (NUMP,3);
+  OUTSTR (' SCORE:');
+  OUTINT (SCORE,9);
+  END;
+END;
+ 
+ 
+ 
+(***************************** KOPPLUNG ***************************)
+ 
+PROCEDURE INCSCORE (I:INTEGER);
+BEGIN
+IF (SCORE+I) DIV 500 > SCORE DIV 500 THEN
+  BEGIN
+  NUMP := NUMP+1;
+  OUTSTR (XXINC01);
+  END;
+SCORE := SCORE + I;
+END;
+ 
+FUNCTION RANDOMAGMA : BOOLEAN;
+BEGIN
+RANDOMAGMA := RANDOM (MAGMA_GROW) = 0;
+MAGMA_SURROUNDED := FALSE;
+END;
+ 
+PROCEDURE EINDRUCK (VAR F,O:GAME_AREA);
+CONST SETWAYBOR = [WAYOUT,BORDER];
+VAR X,Y:GAME_INDX;
+    WENT:BOOLEAN;
+BEGIN
+MAGMA_SURROUNDED := TRUE;
+FOR Y := 0 TO SIZ_Y DO
+  FOR X := 0 TO SIZ_X DO
+    IF O [Y,X] = F [Y,X] THEN
+    CASE F [Y,X] OF
+      MAGMA:
+        IF MAGMA_CLOSED THEN F [Y,X] := LYINGDIAMONT ELSE
+        IF LEFT_TIME <= MAGMA_COOL THEN F [Y,X] := LYINGSTONE ELSE
+          BEGIN
+          CASE F [Y-1,X] OF
+            NOTHING,EARTH:
+              IF RANDOMAGMA THEN F [Y-1,X] := MAGMA;
+            BUTTERFLY0,BUTTERFLY1,BUTTERFLY2,BUTTERFLY3:
+              F [Y-1,X] := SMASH0;
+            SQUAREFLY0,SQUAREFLY1,SQUAREFLY2,SQUAREFLY3:
+              F [Y-1,X] := CRASH0;
+            END;
+          CASE F [Y+1,X] OF
+            NOTHING,EARTH:
+              IF RANDOMAGMA THEN F [Y+1,X] := MAGMA;
+            BUTTERFLY0,BUTTERFLY1,BUTTERFLY2,BUTTERFLY3:
+              F [Y+1,X] := SMASH0;
+            SQUAREFLY0,SQUAREFLY1,SQUAREFLY2,SQUAREFLY3:
+              F [Y+1,X] := CRASH0;
+            END;
+          CASE F [Y,X-1] OF
+            NOTHING,EARTH:
+              IF RANDOMAGMA THEN F [Y,X-1] := MAGMA;
+            BUTTERFLY0,BUTTERFLY1,BUTTERFLY2,BUTTERFLY3:
+              F [Y,X-1] := SMASH0;
+            SQUAREFLY0,SQUAREFLY1,SQUAREFLY2,SQUAREFLY3:
+              F [Y,X-1] := CRASH0;
+            END;
+          CASE F [Y,X+1] OF
+            NOTHING,EARTH:
+              IF RANDOMAGMA THEN F [Y,X+1] := MAGMA;
+            BUTTERFLY0,BUTTERFLY1,BUTTERFLY2,BUTTERFLY3:
+              F [Y,X+1] := SMASH0;
+            SQUAREFLY0,SQUAREFLY1,SQUAREFLY2,SQUAREFLY3:
+              F [Y,X+1] := CRASH0;
+            END;
+          END;
+      LYINGSTONE:
+        CASE F [Y+1,X] OF
+          NOTHING:
+            BEGIN
+            F [Y,X] := NOTHING;
+            F [Y+1,X] := ROLLINGSTONE;
+            END;
+          LYINGSTONE,LYINGDIAMONT,NORMALWALL:
+            IF (F [Y,X+1] = NOTHING) AND (F [Y+1,X+1] = NOTHING) THEN
+              BEGIN
+              F [Y,X+1] := ROLLINGSTONE;
+              F [Y,X] := NOTHING;
+              END ELSE
+            IF (F [Y,X-1] = NOTHING) AND (F [Y+1,X-1] = NOTHING) THEN
+              BEGIN
+              F [Y,X-1] := ROLLINGSTONE;
+              F [Y,X] := NOTHING;
+              END;
+          END;
+      ROLLINGSTONE:
+        IF F [Y+1,X] = NOTHING THEN
+          BEGIN
+          F [Y+1,X] := ROLLINGSTONE;
+          F [Y,X] := NOTHING;
+          END ELSE
+        IF F [Y+1,X] = SLEEPINGWALL THEN
+          BEGIN
+          IF LW_ACTIVE < 0 THEN LW_ACTIVE := MAGMA_GROW;
+          F [Y,X] := NOTHING;
+          IF LW_ACTIVE <> 0 THEN
+            IF F[Y+2,X] = NOTHING THEN F[Y+2,X] := ROLLINGDIAMONT;
+          END ELSE
+        IF F [Y+1,X] = LIVINGWALL THEN
+          BEGIN
+          F [Y,X] := NOTHING;
+          IF F[Y+2,X] = NOTHING THEN F[Y+2,X] := ROLLINGDIAMONT;
+          END ELSE
+        IF F [Y+1,X] IN [SQUAREFLY0..SQUAREFLY3] THEN F [Y+1,X] := CRASH0 ELSE
+        IF F [Y+1,X] IN [BUTTERFLY0..BUTTERFLY3] THEN F [Y+1,X] := SMASH0
+        ELSE F [Y,X] := LYINGSTONE;
+      LYINGDIAMONT:
+        CASE F [Y+1,X] OF
+          NOTHING:
+            BEGIN
+            F [Y,X] := NOTHING;
+            F [Y+1,X] := ROLLINGDIAMONT;
+            END;
+          LYINGSTONE,LYINGDIAMONT,NORMALWALL:
+            IF (F [Y,X+1] = NOTHING) AND (F [Y+1,X+1] = NOTHING) THEN
+              BEGIN
+              F [Y,X+1] := ROLLINGDIAMONT;
+              F [Y,X] := NOTHING;
+              END ELSE
+            IF (F [Y,X-1] = NOTHING) AND (F [Y+1,X-1] = NOTHING) THEN
+              BEGIN
+              F [Y,X-1] := ROLLINGDIAMONT;
+              F [Y,X] := NOTHING;
+              END;
+          END;
+      ROLLINGDIAMONT:
+        IF F [Y+1,X] = NOTHING THEN
+          BEGIN
+          F [Y+1,X] := ROLLINGDIAMONT;
+          F [Y,X] := NOTHING;
+          END ELSE
+        IF F [Y+1,X] = SLEEPINGWALL THEN
+          BEGIN
+          IF LW_ACTIVE < 0 THEN LW_ACTIVE := MAGMA_GROW;
+          F [Y,X] := NOTHING;
+          IF LW_ACTIVE <> 0 THEN
+            IF F[Y+2,X] = NOTHING THEN F[Y+2,X] := ROLLINGSTONE;
+          END ELSE
+        IF F [Y+1,X] = LIVINGWALL THEN
+          BEGIN
+          F [Y,X] := NOTHING;
+          IF F[Y+2,X] = NOTHING THEN F[Y+2,X] := ROLLINGSTONE;
+          END ELSE
+        IF F [Y+1,X] IN [SQUAREFLY0..SQUAREFLY3] THEN F [Y+1,X] := CRASH0 ELSE
+        IF F [Y+1,X] IN [BUTTERFLY0..BUTTERFLY3] THEN F [Y+1,X] := SMASH0
+        ELSE F [Y,X] := LYINGDIAMONT;
+      BUTTERFLY0:
+        IF F [Y-1,X] = NOTHING THEN
+          BEGIN
+          F [Y-1,X] := BUTTERFLY1;
+          F [Y,X] := NOTHING;
+          END ELSE
+        IF F [Y,X-1] = NOTHING THEN
+          BEGIN
+          F [Y,X-1] := BUTTERFLY0;
+          F [Y,X] := NOTHING;
+          END
+        ELSE F [Y,X] := BUTTERFLY3;
+      BUTTERFLY1:
+        IF F [Y,X+1] = NOTHING THEN
+          BEGIN
+          F [Y,X+1] := BUTTERFLY2;
+          F [Y,X] := NOTHING;
+          END ELSE
+        IF F [Y-1,X] = NOTHING THEN
+          BEGIN
+          F [Y-1,X] := BUTTERFLY1;
+          F [Y,X] := NOTHING;
+          END
+        ELSE F [Y,X] := BUTTERFLY0;
+      BUTTERFLY2:
+        IF F [Y+1,X] = NOTHING THEN
+          BEGIN
+          F [Y+1,X] := BUTTERFLY3;
+          F [Y,X] := NOTHING;
+          END ELSE
+        IF F [Y,X+1] = NOTHING THEN
+          BEGIN
+          F [Y,X+1] := BUTTERFLY2;
+          F [Y,X] := NOTHING;
+          END
+        ELSE F [Y,X] := BUTTERFLY1;
+      BUTTERFLY3:
+        IF F [Y,X-1] = NOTHING THEN
+          BEGIN
+          F [Y,X-1] := BUTTERFLY0;
+          F [Y,X] := NOTHING;
+          END ELSE
+        IF F [Y+1,X] = NOTHING THEN
+          BEGIN
+          F [Y+1,X] := BUTTERFLY3;
+          F [Y,X] := NOTHING;
+          END
+        ELSE F [Y,X] := BUTTERFLY2;
+      SQUAREFLY0:
+        IF F [Y+1,X] = NOTHING THEN
+          BEGIN
+          F [Y+1,X] := SQUAREFLY3;
+          F [Y,X] := NOTHING;
+          END ELSE
+        IF F [Y,X-1] = NOTHING THEN
+          BEGIN
+          F [Y,X-1] := SQUAREFLY0;
+          F [Y,X] := NOTHING;
+          END
+        ELSE F [Y,X] := SQUAREFLY1;
+      SQUAREFLY1:
+        IF F [Y,X-1] = NOTHING THEN
+          BEGIN
+          F [Y,X-1] := SQUAREFLY0;
+          F [Y,X] := NOTHING;
+          END ELSE
+        IF F [Y-1,X] = NOTHING THEN
+          BEGIN
+          F [Y-1,X] := SQUAREFLY1;
+          F [Y,X] := NOTHING;
+          END
+        ELSE F [Y,X] := SQUAREFLY2;
+      SQUAREFLY2:
+        IF F [Y-1,X] = NOTHING THEN
+          BEGIN
+          F [Y-1,X] := SQUAREFLY1;
+          F [Y,X] := NOTHING;
+          END ELSE
+        IF F [Y,X+1] = NOTHING THEN
+          BEGIN
+          F [Y,X+1] := SQUAREFLY2;
+          F [Y,X] := NOTHING;
+          END
+        ELSE F [Y,X] := SQUAREFLY3;
+      SQUAREFLY3:
+        IF F [Y,X+1] = NOTHING THEN
+          BEGIN
+          F [Y,X+1] := SQUAREFLY2;
+          F [Y,X] := NOTHING;
+          END ELSE
+        IF F [Y+1,X] = NOTHING THEN
+          BEGIN
+          F [Y+1,X] := SQUAREFLY3;
+          F [Y,X] := NOTHING;
+          END
+        ELSE F [Y,X] := SQUAREFLY0;
+      SMASH0:
+        BEGIN
+        F [Y  ,X  ] := SMASH1;
+        IF NOT (F [Y+1,X  ] IN SETWAYBOR) THEN F [Y+1,X  ] := SMASH1;
+        IF NOT (F [Y-1,X  ] IN SETWAYBOR) THEN F [Y-1,X  ] := SMASH1;
+        IF NOT (F [Y  ,X+1] IN SETWAYBOR) THEN F [Y  ,X+1] := SMASH1;
+        IF NOT (F [Y+1,X+1] IN SETWAYBOR) THEN F [Y+1,X+1] := SMASH1;
+        IF NOT (F [Y-1,X+1] IN SETWAYBOR) THEN F [Y-1,X+1] := SMASH1;
+        IF NOT (F [Y  ,X-1] IN SETWAYBOR) THEN F [Y  ,X-1] := SMASH1;
+        IF NOT (F [Y+1,X-1] IN SETWAYBOR) THEN F [Y+1,X-1] := SMASH1;
+        IF NOT (F [Y-1,X-1] IN SETWAYBOR) THEN F [Y-1,X-1] := SMASH1;
+        END;
+      SMASH1:
+        F [Y,X] := SMASH2;
+      SMASH2:
+        F [Y,X] := SMASH3;
+      SMASH3:
+        F [Y,X] := LYINGDIAMONT;
+      CRASH0:
+        BEGIN
+        F [Y  ,X  ] := CRASH1;
+        IF NOT (F [Y+1,X  ] IN SETWAYBOR) THEN F [Y+1,X  ] := CRASH1;
+        IF NOT (F [Y-1,X  ] IN SETWAYBOR) THEN F [Y-1,X  ] := CRASH1;
+        IF NOT (F [Y  ,X+1] IN SETWAYBOR) THEN F [Y  ,X+1] := CRASH1;
+        IF NOT (F [Y+1,X+1] IN SETWAYBOR) THEN F [Y+1,X+1] := CRASH1;
+        IF NOT (F [Y-1,X+1] IN SETWAYBOR) THEN F [Y-1,X+1] := CRASH1;
+        IF NOT (F [Y  ,X-1] IN SETWAYBOR) THEN F [Y  ,X-1] := CRASH1;
+        IF NOT (F [Y+1,X-1] IN SETWAYBOR) THEN F [Y+1,X-1] := CRASH1;
+        IF NOT (F [Y-1,X-1] IN SETWAYBOR) THEN F [Y-1,X-1] := CRASH1;
+        END;
+      CRASH1:
+        F [Y,X] := CRASH2;
+      CRASH2:
+        F [Y,X] := CRASH3;
+      CRASH3:
+        F [Y,X] := NOTHING;
+      LIVINGWALL:
+        IF LW_ACTIVE <= 0 THEN F [Y,X] := SLEEPINGWALL;
+      SLEEPINGWALL:
+        IF LW_ACTIVE > 0 THEN F [Y,X] := LIVINGWALL;
+      END;
+IF MAGMA_SURROUNDED THEN MAGMA_CLOSED := TRUE;
+IF L_STAT = L_ALIVE THEN
+  IF (F [HAM_B,HAM_A] = SMASH1) OR
+     (F [HAM_B,HAM_A] = CRASH1) THEN L_STAT := L_DEAD;
+IF L_STAT = L_ALIVE THEN
+  BEGIN
+  WENT := FALSE;
+  CASE F [HAM_B+HAMPB,HAM_A+HAMPA] OF
+    NOTHING,EARTH:
+      WENT := TRUE;
+    WAYOUT:
+      IF GO THEN
+        IF HAVE_DIAM >= NEED_DIAM THEN
+          BEGIN
+          F [HAM_B,HAM_A] := NOTHING;
+          HAM_A := HAM_A + HAMPA;
+          HAM_B := HAM_B + HAMPB;
+          L_STAT := L_COUNT;
+          WINNY := TRUE;
+          END;
+    LYINGSTONE:
+      IF HAMPB=0 THEN
+        IF CYCLE4=0 THEN
+          IF F [HAM_B,HAM_A+HAMPA+HAMPA] = NOTHING THEN
+            BEGIN
+            F [HAM_B,HAM_A+HAMPA+HAMPA] := LYINGSTONE;
+            WENT := TRUE;
+            END;
+    LYINGDIAMONT:
+      BEGIN
+      WENT := TRUE;
+      IF HAVE_DIAM < NEED_DIAM THEN INCSCORE (VAL0_DIAM)
+                               ELSE INCSCORE (VAL1_DIAM);
+      HAVE_DIAM := HAVE_DIAM+1;
+      OUTCHR (CHR (7));
+      IF HAVE_DIAM = NEED_DIAM THEN
+        BEGIN
+        OUTSTR (XXEIN01);
+        OUTIT;
+        END;
+      END;
+    END;
+  IF WENT THEN
+    IF GO THEN
+      BEGIN
+      F [HAM_B,HAM_A] := NOTHING;
+      HAM_A := HAM_A + HAMPA;
+      HAM_B := HAM_B + HAMPB;
+      F [HAM_B,HAM_A] := HAMSTER;
+      END
+    ELSE F [HAM_B+HAMPB,HAM_A+HAMPA] := NOTHING;
+  END;
+IF L_STAT = L_ALIVE THEN
+  BEGIN
+  IF ([F [HAM_B,HAM_A+1],F [HAM_B,HAM_A-1],F [HAM_B+1,HAM_A],F [HAM_B-1,HAM_A]]
+      * [SQUAREFLY0..SQUAREFLY3]) <> [] THEN
+    BEGIN
+    F [HAM_B,HAM_A] := CRASH0;
+    L_STAT := L_DEAD;
+    END ELSE
+  IF ([F [HAM_B,HAM_A+1],F [HAM_B,HAM_A-1],F [HAM_B+1,HAM_A],F [HAM_B-1,HAM_A]]
+      * [BUTTERFLY0..BUTTERFLY3]) <> [] THEN
+    BEGIN
+    F [HAM_B,HAM_A] := SMASH0;
+    L_STAT := L_DEAD;
+    END;
+  END;
+IF L_STAT = L_ALIVE THEN
+  IF F [HAM_B-1,HAM_A] IN [ROLLINGSTONE,ROLLINGDIAMONT] THEN
+    BEGIN
+    F [HAM_B,HAM_A] := CRASH0;
+    L_STAT := L_DEAD;
+    END ELSE
+  IF O [HAM_B-1,HAM_A] IN [ROLLINGSTONE,ROLLINGDIAMONT] THEN
+    BEGIN
+    F [HAM_B,HAM_A] := CRASH0;
+    L_STAT := L_DEAD;
+    END;
+IF L_STAT = L_ALIVE THEN
+  IF (LEFT_TIME = 0) AND NOT WIZARD THEN
+    BEGIN
+    F [HAM_B,HAM_A] := CRASH0;
+    L_STAT := L_DEAD;
+    END;
+IF WIZARD THEN
+BEGIN
+  F [HAM_B,HAM_A] := HAMSTER;
+  IF L_STAT = L_DEAD THEN L_STAT := L_ALIVE;
+  IF DOITTOO THEN 
+      IF F [HAM_B+HAMPB,HAM_A+HAMPA] = LYINGSTONE THEN 
+        F [HAM_B+HAMPB,HAM_A+HAMPA] := NOTHING;
+  IF DOIT THEN
+      IF NOT (F [HAM_B+HAMPB,HAM_A+HAMPA] IN SETWAYBOR) THEN 
+          IF NOT (F [HAM_B+2*HAMPB,HAM_A+2*HAMPA] IN SETWAYBOR) THEN 
+             F [HAM_B+2*HAMPB,HAM_A+2*HAMPA] := CRASH0;
+  DOIT:=FALSE;
+END;
+END;
+ 
+PROCEDURE INIT_PROG;
+(* DO INITIALIZE PROGRAM *)
+ 
+CONST VT200 = 110;
+      VT300 = 112;
+ 
+VAR LINE:STRING;
+    I:INTEGER;
+    C:CHAR;
+    THI:THING;
+    HELP:T_CAVE_NAMES;
+    DEV_RESULT:RECORD
+               CLASS,TYP:[BYTE]0..255;
+               SIZE:[WORD]0..65535;
+               BTC1,BTC2,BTC3,PLEN:[BYTE]0..255;
+               EXTTC:UNSIGNED;
+               END;
+    IOSB:[QUAD]RECORD
+         IOSTAT,BUF_LEN,TERM_LEN,TERMINATOR:[WORD]0..65535;
+         END;
+ 
+BEGIN
+$ASSIGN ('SYS$OUTPUT',CHOUT);
+$ASSIGN ('SYS$INPUT',CHIN);
+$QIOW (CHAN:=CHOUT,FUNC:=IO$_SENSEMODE,IOSB:=IOSB,P1:=DEV_RESULT,P2:=12);
+IF NOT ((DEV_RESULT.TYP IN [VT200]) OR (DEV_RESULT.TYP IN [VT300])) THEN
+  ERROR ('terminal device mode must be VT200 or VT300. ');
+WIDTH := (DEV_RESULT.SIZE-1) DIV 4-1;
+HEIGHT := (DEV_RESULT.PLEN-2) DIV 2-1;
+OUTINX := 0;
+TIMER.HI := -1;
+IS_FLASH := '0';
+DOPLAY := 0;
+SCORE := 0;
+PREDCYC4 [0] := 1;
+PREDCYC4 [1] := 2;
+PREDCYC4 [2] := 3;
+PREDCYC4 [3] := 0;
+RANDOMIZE;
+OPEN (DATF,'B$DASH_IN',HISTORY:=READONLY);
+RESET (DATF);
+READLN (DATF,CAVEROOT);
+READLN (DATF,GAMEFONT200);
+READLN (DATF,GAMEFONT300);
+READLN (DATF,TASTE_LINX,TASTE_REXZ,TASTE_OBEN,TASTE_UNTN,
+             SCHAU_LINX,SCHAU_REXZ,SCHAU_OBEN,SCHAU_UNTN);
+IF ([TASTE_LINX,TASTE_REXZ,TASTE_OBEN,TASTE_UNTN,
+     SCHAU_LINX,SCHAU_REXZ,SCHAU_OBEN,SCHAU_UNTN] * [' ','O'..'R'])
+  <> [] THEN ERROR ('key defined twice (QRPO ).');
+CLOSE (DATF);
+IF (DEV_RESULT.TYP IN [VT300]) THEN
+  OPEN (DATF,GAMEFONT300,HISTORY:=READONLY)
+ELSE
+  OPEN (DATF,GAMEFONT200,HISTORY:=READONLY);
+RESET (DATF);
+WHILE NOT EOF (DATF) DO
+  BEGIN
+  READLN (DATF,LINE);
+  OUTSTR (LINE);
+  END;
+CLOSE (DATF);
+OPEN (DATF,CAVEROOT,HISTORY:=READONLY);
+RESET (DATF);
+READLN (DATF,MAXCAVE);
+CAVE_NAMES := NIL;
+FOR I := 1 TO MAXCAVE DO
+  BEGIN
+  IF EOF (DATF) THEN ERROR ('wrong number of caves.');
+  HELP := CAVE_NAMES;
+  NEW (CAVE_NAMES);
+  CAVE_NAMES^.NEXT := HELP;
+  READLN (DATF);
+  READLN (DATF,CAVE_NAMES^.NAME);
+  REPEAT READLN (DATF,C); UNTIL EOF (DATF) OR (C = 'X');
+  END;
+PICTURE [0,NOTHING] := 32;
+PICTURE [0,WAYOUT] := 34;
+PICTURE [0,BORDER] := 36;
+PICTURE [0,EARTH] := 38;
+PICTURE [0,MAGMA] := 40;
+PICTURE [0,LYINGSTONE] := 42;
+PICTURE [0,ROLLINGSTONE] := 42;
+PICTURE [0,LYINGDIAMONT] := 44;
+PICTURE [0,ROLLINGDIAMONT] := 44;
+PICTURE [0,BUTTERFLY0] := 46;
+PICTURE [0,BUTTERFLY1] := 46;
+PICTURE [0,BUTTERFLY2] := 46;
+PICTURE [0,BUTTERFLY3] := 46;
+PICTURE [0,SQUAREFLY0] := 48;
+PICTURE [0,SQUAREFLY1] := 48;
+PICTURE [0,SQUAREFLY2] := 48;
+PICTURE [0,SQUAREFLY3] := 48;
+PICTURE [0,CRASH0] := 50;
+PICTURE [0,CRASH1] := 52;
+PICTURE [0,CRASH2] := 54;
+PICTURE [0,CRASH3] := 56;
+PICTURE [0,SMASH0] := 58;
+PICTURE [0,SMASH1] := 60;
+PICTURE [0,SMASH2] := 62;
+PICTURE [0,SMASH3] := 64;
+PICTURE [0,NORMALWALL] := 66;
+PICTURE [0,LIVINGWALL] := 68;
+PICTURE [0,SLEEPINGWALL] := 66;
+PICTURE [0,HAMSTER] := 74;
+PICTURE [1] := PICTURE [0];
+PICTURE [1,BUTTERFLY0] := 72;
+PICTURE [1,BUTTERFLY1] := 72;
+PICTURE [1,BUTTERFLY2] := 72;
+PICTURE [1,BUTTERFLY3] := 72;
+PICTURE [1,SQUAREFLY0] := 70;
+PICTURE [1,SQUAREFLY1] := 70;
+PICTURE [1,SQUAREFLY2] := 70;
+PICTURE [1,SQUAREFLY3] := 70;
+PICTURE [2] := PICTURE [0];
+PICTURE [3] := PICTURE [1];
+FOR THI := NOTHING TO THING_HIGH DO
+  FLASHPICT [THI] := '0';
+FLASHPICT [MAGMA] := '5';
+FLASHPICT [LIVINGWALL] := '5';
+END;
+ 
+PROCEDURE PLAY_UP (CAVE,NUMH:INTEGER);
+(* LET NUMH TIMES PLAY IN CAVE *)
+ 
+PROCEDURE MANEKEN (A,B,C,D:INTEGER);
+BEGIN
+CASE CYCLE4 OF
+  0:PICTURE [0,HAMSTER] := A;
+  1:PICTURE [1,HAMSTER] := B;
+  2:PICTURE [2,HAMSTER] := C;
+  3:PICTURE [3,HAMSTER] := D;
+  END;
+END;
+ 
+PROCEDURE INIT_UP (VAR AREA:GAME_AREA);
+(* INIT WITH GAMEUP *)
+VAR X,Y,W,H,N,RAND_PRIV:INTEGER;
+    D:CHAR;
+    C:TEXT;
+ 
+  FUNCTION PRIVR (M:INTEGER) : INTEGER;
+  BEGIN
+  RAND_PRIV := (43 * RAND_PRIV + 713) MOD 16777259;
+  PRIVR := RAND_PRIV MOD M;
+  END;
+ 
+  PROCEDURE PUTPIF (D:CHAR; X,Y:INTEGER);
+  BEGIN
+  IF (X>=0) AND (X<=SIZ_X) AND (Y>=0) AND (Y<=SIZ_Y) THEN
+    IF (ORD (D) - ORD (' ')) IN [ORD (NOTHING) .. ORD (PRED (HAMSTER))] THEN
+      AREA [Y,X] := THETHING (ORD (D) - ORD (' '))
+    ELSE ERROR ('illegal field in cave.')
+  ELSE ERROR ('coordinate out of range.');
+  END;
+ 
+  PROCEDURE PUTBOX (D:CHAR; X,Y,W,H:INTEGER);
+  VAR I,J:INTEGER;
+  BEGIN
+  FOR I := Y TO Y+H-1 DO
+    FOR J := X TO X+W-1 DO
+      PUTPIF (D,J,I);
+  END;
+ 
+BEGIN
+FOR Y := 0 TO GAME_SIZE DO
+  FOR X := 0 TO GAME_SIZE DO
+    AREA [Y,X] := NOTHING;
+RESET (DATF);
+READLN (DATF);
+N := CAVE;
+WHILE N > 0 DO
+  BEGIN
+  READLN (DATF);
+  READLN (DATF);
+  REPEAT
+    READLN (DATF,D);
+  UNTIL D = 'X';
+  N := N-1;
+  END;
+READLN (DATF,SIZ_X,SIZ_Y,HAM_A,HAM_B,NEED_DIAM,VAL0_DIAM,VAL1_DIAM,
+        LEFT_TIME,BONUS_HAM,RAND_PRIV,MAGMA_GROW);
+READLN (DATF,CAVE_ID);
+SIZ_X := SIZ_X-1;
+SIZ_Y := SIZ_Y-1;
+IF (SIZ_X > GAME_SIZE) OR (SIZ_Y > GAME_SIZE) THEN
+  ERROR ('cave too big.');
+REPEAT
+  READ (DATF,D);
+  IF NOT (D IN ['S','B','F','R','L','X']) THEN ERROR ('unknown cave command.');
+  CASE D OF
+    'S':BEGIN
+        READLN (DATF,D,X,Y);
+        PUTPIF (D,X,Y);
+        END;
+    'B':BEGIN
+        READLN (DATF,D,X,Y,W,H);
+        PUTBOX (D,X,Y,W,H);
+        END;
+    'F':BEGIN
+        READLN (DATF,D,X,Y,W,H);
+        PUTBOX (D,X,Y,W,1);
+        PUTBOX (D,X,Y+H-1,W,1);
+        PUTBOX (D,X,Y,1,H);
+        PUTBOX (D,X+W-1,Y,1,H);
+        END;
+    'R':BEGIN
+        READLN (DATF,D,X,Y,W,H,N);
+        WHILE N > 0 DO
+          BEGIN
+          PUTPIF (D,PRIVR (W)+X,PRIVR (H)+Y);
+          N := N-1;
+          END;
+        END;
+    'L':BEGIN
+        READLN (DATF,D,X,Y,W,H,N);
+        WHILE N > 0 DO
+          BEGIN
+          PUTPIF (D,X,Y);
+          X := X+W;
+          Y := Y+H;
+          N := N-1;
+          END;
+        END;
+    END;
+UNTIL D = 'X';
+AREA [HAM_B,HAM_A] := HAMSTER;
+FOR Y := 0 TO SIZ_Y DO
+  BEGIN
+  IF AREA [Y,0] <> WAYOUT THEN AREA [Y,0] := BORDER;
+  IF AREA [Y,SIZ_X] <> WAYOUT THEN AREA [Y,SIZ_X] := BORDER;
+  END;
+FOR X := 1 TO SIZ_X DO
+  BEGIN
+  IF AREA [0,X] <> WAYOUT THEN AREA [0,X] := BORDER;
+  IF AREA [SIZ_Y,X] <> WAYOUT THEN AREA [SIZ_Y,X] := BORDER;
+  END;
+L_STAT := L_COMIN;
+STATUS_C := 8;
+HAVE_DIAM := 0;
+CYCLE4 := 1;
+PICTURE [CYCLE4,HAMSTER] := 32;
+POS_A := HAM_A - WIDTH DIV 2;
+POS_B := HAM_B - HEIGHT DIV 2;
+IF POS_A > SIZ_X - WIDTH THEN POS_A := SIZ_X - WIDTH;
+IF POS_A < 0 THEN POS_A := 0;
+IF POS_B > SIZ_Y - HEIGHT THEN POS_B := SIZ_Y - HEIGHT;
+IF POS_B < 0 THEN POS_B := 0;
+PREPPAGE;
+PUTPIC1 (AREA,POS_A,POS_B);
+QOS_A := POS_A;
+QOS_B := POS_B;
+HAMPA := 0;
+HAMPB := 0;
+INPCH [1] := ' ';
+PAUSE := FALSE;
+WINNY := FALSE;
+SCRPA := 0;
+SCRPB := 0;
+LW_ACTIVE := -1;
+MAGMA_CLOSED := FALSE;
+NOKEYDONE := 0;
+SCHEDULE (2*MOMENT);
+OUTIT;
+$HIBER;
+OUTCHR (CHR(7));
+OUTIT;
+END;
+ 
+BEGIN
+SCORE := 0;
+NUMP := NUMH;
+REPEAT
+  INIT_UP (AREA);
+  REPEAT
+    SCHEDULE (MOMENT);
+    OLDY := AREA;
+    INPCH [1] := CHR (0);
+    $QIOW(CHAN:=CHIN,
+          FUNC:=IO$_READVBLK+IO$M_NOECHO+IO$M_NOFILTR+IO$M_TIMED,
+          P1:=INPCH,P2:=1);
+    IF INPCH [1] = CHR (0) THEN NOKEYDONE := NOKEYDONE + 1
+    ELSE
+      BEGIN
+      NOKEYDONE := 0;
+      IF (INPCH [1] IN ['O','P','Q','R','o','p','q','r']) OR
+         ((INPCH [1] IN ['B','b','D','d']) AND WIZARD) THEN
+        BEGIN
+        IF INPCH [1] > 'Z' THEN
+          INPCH [1] := CHR (ORD (INPCH [1]) - (ORD ('o') - ORD ('O')));
+        CASE INPCH [1] OF
+          'B':DOIT := TRUE;
+          'D':DOITTOO := NOT DOITTOO;
+          'O':PAUSE := FALSE;
+          'P':PAUSE := TRUE;
+          'Q':BEGIN
+              BONUS_HAM := 0;
+              NUMP := 0;
+              L_STAT := L_COMOUT;
+              STATUS_C := 4;
+              END;
+          'R':BEGIN
+              L_STAT := L_COMOUT;
+              STATUS_C := 4;
+              END;
+          END;
+        END
+      ELSE
+      CASE L_STAT OF
+        L_ALIVE:
+          BEGIN
+          IF INPCH [1] = TASTE_LINX THEN BEGIN HAMPA :=-1; HAMPB := 0; GO := TRUE  END ELSE
+          IF INPCH [1] = TASTE_OBEN THEN BEGIN HAMPA := 0; HAMPB :=-1; GO := TRUE  END ELSE
+          IF INPCH [1] = TASTE_REXZ THEN BEGIN HAMPA := 1; HAMPB := 0; GO := TRUE  END ELSE
+          IF INPCH [1] = TASTE_UNTN THEN BEGIN HAMPA := 0; HAMPB := 1; GO := TRUE  END ELSE
+          IF INPCH [1] = SCHAU_LINX THEN BEGIN HAMPA :=-1; HAMPB := 0; GO := FALSE END ELSE
+          IF INPCH [1] = SCHAU_OBEN THEN BEGIN HAMPA := 0; HAMPB :=-1; GO := FALSE END ELSE
+          IF INPCH [1] = SCHAU_REXZ THEN BEGIN HAMPA := 1; HAMPB := 0; GO := FALSE END ELSE
+          IF INPCH [1] = SCHAU_UNTN THEN BEGIN HAMPA := 0; HAMPB := 1; GO := FALSE END ELSE
+          IF INPCH [1] = ' '        THEN BEGIN HAMPA := 0; HAMPB := 0 END;
+          END;
+        L_DEAD:
+          IF WIZARD THEN L_STAT:=L_ALIVE ELSE
+          BEGIN
+          IF INPCH [1] = TASTE_LINX THEN POS_A := POS_A-1 ELSE
+          IF INPCH [1] = TASTE_OBEN THEN POS_B := POS_B-1 ELSE
+          IF INPCH [1] = TASTE_REXZ THEN POS_A := POS_A+1 ELSE
+          IF INPCH [1] = TASTE_UNTN THEN POS_B := POS_B+1;
+          END;
+        END;
+      END;
+    IF PAUSE OR (L_STAT <> L_ALIVE) THEN
+      BEGIN
+      HAMPA := 0;
+      HAMPB := 0;
+      END;
+    IF NOT PAUSE THEN
+      BEGIN
+      IF LW_ACTIVE > 0 THEN LW_ACTIVE := LW_ACTIVE - 1;
+      IF CYCLE4 = 0 THEN
+        IF LEFT_TIME > 0 THEN LEFT_TIME := LEFT_TIME-1;
+      EINDRUCK (AREA,OLDY);
+      END;
+    IF L_STAT = L_ALIVE THEN
+      BEGIN
+      IF HAM_A - WIDTH DIV 4 < POS_A THEN SCRPA := -1 ELSE
+      IF HAM_A - 3 * WIDTH DIV 4 > POS_A THEN SCRPA := 1 ELSE
+      IF (HAM_A - WIDTH DIV 2) DIV 2 = POS_A DIV 2 THEN SCRPA := 0;
+      IF HAM_B - HEIGHT DIV 4 < POS_B THEN SCRPB := -1 ELSE
+      IF HAM_B - 3 * HEIGHT DIV 4 > POS_B THEN SCRPB := 1 ELSE
+      IF (HAM_B - HEIGHT DIV 2) DIV 2 = POS_B DIV 2 THEN SCRPB := 0;
+      POS_A := POS_A + SCRPA;
+      POS_B := POS_B + SCRPB;
+      END;
+    IF POS_A > SIZ_X - WIDTH THEN POS_A := SIZ_X - WIDTH;
+    IF POS_A < 0 THEN POS_A := 0;
+    IF POS_B > SIZ_Y - HEIGHT THEN POS_B := SIZ_Y - HEIGHT;
+    IF POS_B < 0 THEN POS_B := 0;
+    IF CYCLE4=0 THEN CYCLE4 := 3
+                ELSE CYCLE4 := CYCLE4-1;
+    IF L_STAT = L_COUNT THEN
+      BEGIN
+      IF LEFT_TIME > 0 THEN
+        IF LEFT_TIME > 7 THEN
+          BEGIN
+          INCSCORE (7);
+          LEFT_TIME := LEFT_TIME-7;
+          STATUS_C := 1;
+          END
+        ELSE
+          BEGIN
+          INCSCORE (LEFT_TIME);
+          LEFT_TIME := 0;
+          STATUS_C := 0;
+          END
+      ELSE L_STAT := L_COMOUT;
+      GOTOHD (48);
+      OUTINT (LEFT_TIME,4);
+      GOTOHD (68);
+      OUTINT (SCORE,9);
+      OUTIT;
+      END;
+    IF STATUS_C = 0 THEN
+      CASE L_STAT OF
+        L_COMIN: L_STAT := L_ALIVE;
+        L_COUNT: BEGIN STATUS_C := 4; L_STAT := L_COMOUT END;
+        L_COMOUT: L_STAT := L_ENDLVL;
+        END
+    ELSE STATUS_C := STATUS_C-1;
+    CASE L_STAT OF
+      L_ALIVE:
+        BEGIN
+        IF NOKEYDONE < 0 THEN MANEKEN (76,78,76,78) ELSE
+        IF HAMPA > 0 THEN MANEKEN (80,82,80,82) ELSE
+        IF HAMPA < 0 THEN MANEKEN (84,86,84,86) ELSE
+        IF HAMPB <> 0 THEN MANEKEN (88,90,88,90)
+        ELSE
+          BEGIN
+          IF (NOKEYDONE > 23) AND (RANDOM (14) = 0) THEN
+            NOKEYDONE := - 8 - RANDOM (8);
+          MANEKEN (74,74,74,74);
+          END;
+        END;
+      L_COMIN:
+        CASE STATUS_C OF
+          7:PICTURE [CYCLE4,HAMSTER] := 50;
+          6:PICTURE [CYCLE4,HAMSTER] := 54;
+          5:PICTURE [CYCLE4,HAMSTER] := 56;
+          4:PICTURE [CYCLE4,HAMSTER] := 58;
+          3:PICTURE [CYCLE4,HAMSTER] := 60;
+          2:PICTURE [CYCLE4,HAMSTER] := 62;
+          1:PICTURE [CYCLE4,HAMSTER] := 64;
+        END;
+      END;
+    ABDRUCK (AREA,OLDY,POS_A,POS_B,QOS_A,QOS_B);
+    OUTIT;
+    $HIBER;
+  UNTIL L_STAT = L_ENDLVL;
+  IF BONUS_HAM > 0 THEN
+    BEGIN
+    IF WINNY THEN NUMP := NUMP + BONUS_HAM;
+    WINNY := TRUE;
+    END;
+  IF WINNY THEN
+    CAVE := (CAVE+1) MOD MAXCAVE
+  ELSE
+    BEGIN
+    NUMP := NUMP-1;
+    IF NUMP<1 THEN CAVE := -1;
+    END;
+  SCHEDULE (2*MOMENT);
+  $HIBER;
+UNTIL CAVE < 0;
+OUTSTR (XXPLY01);
+END;
+ 
+PROCEDURE MENUE;
+VAR C:CHAR;
+    HELP:T_CAVE_NAMES;
+    D:INTEGER;
+BEGIN
+PAGE;
+OUTCHR (CHR(15));
+FOR C := '3' TO '4' DO
+  BEGIN
+  OUTSTR (XXMNU01);
+  OUTCHR (C);
+  CENTRIX ('BOULDER DASH',WIDTH DIV 2);
+  END;
+OUTSTR (CRLF);
+CENTRIX ('VMS/VT200 version 2.1 (w)1988 Oskar Schirmer',WIDTH);
+CENTRIX ('VMS/VT300 graphics created by Zamphir, master of the pan flutes',WIDTH);
+CENTRIX ('-',WIDTH);
+CENTRIX ('Es geht darum, Diamanten zu sammeln...',WIDTH);
+CENTRIX ('Ein Maennlein kann man steuern mit den Tasten '
+          +TASTE_OBEN+' und '+TASTE_UNTN+' (vertical)',WIDTH);
+CENTRIX ('sowie '+TASTE_LINX+' und '+TASTE_REXZ+
+         ' (horizontal), die Leertaste stoppt es.',WIDTH);
+CENTRIX ('Greifen kann man entsprechend mit den Tasten '+SCHAU_LINX+
+         ' nach links, '+SCHAU_REXZ+' nach rechts,',WIDTH);
+CENTRIX ('mit '+SCHAU_OBEN+' hoch & mit '+SCHAU_UNTN+' runter.',WIDTH);
+CENTRIX ('Abbrechen kann man das Spiel mit Q, die aktuelle Runde mit R.',WIDTH);
+CENTRIX ('Mit P kann man eine Pause einlegen, die per O beendet wird.',WIDTH);
+CENTRIX ('Wenns einen erwischt hat, wiederholt R die Runde,',WIDTH);
+CENTRIX ('man kann aber noch das Fenster bewegen (...).',WIDTH);
+GOTOXY (2*WIDTH-6,2*HEIGHT-3);
+OUTSTR ('[SCORE = ');
+OUTINT (SCORE,1);
+OUTSTR (XXMNU02);
+CENTRIX ('ENTRY CAVE:         ',WIDTH);
+CENTRIX ('Bitte mit < und > waehlen, dann SPACE druecken, Ende per X.',WIDTH);
+REPEAT
+  GOTOXY (2*WIDTH+4,2*HEIGHT-2);
+  D := MAXCAVE - DOPLAY - 1;
+  HELP := CAVE_NAMES;
+  WHILE D>0 DO
+    BEGIN
+    D := D-1;
+    HELP := HELP^.NEXT;
+    END;
+  OUTSTR (HELP^.NAME);
+  OUTSTR (XXMNU03);
+  GOTOXY (2*WIDTH,2*HEIGHT);
+  OUTIT;
+  $QIOW (CHAN:=CHIN,
+         FUNC:=IO$_READVBLK+IO$M_NOECHO+IO$M_CVTLOW+IO$M_NOFILTR,
+         P1:=INPCH,P2:=1);
+  MAINC := INPCH [1];
+  IF MAINC = '>' THEN DOPLAY := (DOPLAY+1) MOD MAXCAVE ELSE
+  IF MAINC = '<' THEN DOPLAY := (DOPLAY-1+MAXCAVE) MOD MAXCAVE;
+UNTIL MAINC IN ['X',' ','W'];
+WIZARD:=MAINC = 'W'; 
+END;
+ 
+BEGIN
+INIT_PROG;
+REPEAT
+  MENUE;
+  IF MAINC <> 'X' THEN PLAY_UP (DOPLAY,3);
+UNTIL MAINC = 'X';
+CLOSE (DATF);
+OUTIT;
+END.

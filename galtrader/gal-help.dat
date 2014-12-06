@@ -1,0 +1,92 @@
+main
+The following options are available from the main (MAIN>) menu.
+(b)roadcast       Sends a message to all the current players in the galaxy.
+(ba)ank           Pay a visit to the local Galactic Bank branch office.
+(c)heck status    Displays information about yourself and your ship.
+(j)ump            Engage your hyperspace drive and travel to another world.
+(l)and            When orbiting a world, activate your Delison drive to land.
+(o)ptions         Toggle default settings.
+(p)lanet          Display information on the current planet.
+(q)uit            Retire from galactic trading immediately.
+(s)end            Send a message to a specified player in the galaxy.
+(su)spend         Place your character in suspended animation.
+(t)rade           Pay a visit to the trading center on the current planet.
+(tu)ne		  Tune comLink channels.
+(w)ho             Ask the Galactic Police for a list of all free traders.
+          
+     
+     
+     
+     
+     
+     
+trade
+The following options are available from the trade (TRADE>) menu.
+(b)uy             Buy cargo from the trading center.
+(c)heck status    Displays information about yourself and your ship.
+(e)quipment       Purchase equipment for your ship.
+(f)uel            Buy fuel for your ship.
+(p)rices          Get a list of the current trading prices.
+(s)ell            Sell cargo you have in your ship to the trading center.
+(u)se computer    Activate your trading computer (if fitted.)
+(x)change ship    Visit the used ship dealer and see what he has to offer.
+(q)uit trading    Leave the trading center and return to the main menu.
+     
+     
+     
+     
+     
+     
+     
+     
+     
+     
+     
+comp
+The following options are available from the trading computer (COMP>) menu.
+(i)tem        View the prices by planet for a given commodity.
+(p)rices      View the trading computer's estimated prices for a planet.
+(pl)anets     View the list of planets on which the computer has data.
+(q)uit        Stop using the trading computer and return to trade menu.
+     
+     
+     
+     
+     
+     
+     
+     
+     
+     
+     
+     
+     
+     
+     
+     
+manual
+(a)head full,+  Advance in your current direction as fast as your drives go.
+(ah)ead slow    Advance in your current direction at a slower speed.
+(ab)andon       Abandon your ship (if you have an escape capsule.)
+(bo)ard         Board an abandonned ship or starbase specified.
+(b)oadcast      Send a message to all players in the galaxy.
+(c)heck status  Displays information about yourself and your ship.
+(cl)oak (ls)j   Activate/Deactivate your cloaking device/LSJ.
+(d)odge         Take evasive action to reduce the chance of being hit.
+(e)energy bomb  Use an energy bomb (if fitted.)
+(ec)m           Activate/Deactivate your electronic counter measures.
+(f)orward       Fire your forward laser (if fitted.)
+(fl)ush         Open your cargo doors and flush your cargo hold.
+(j)ump          Attempt to reactivate your jump drive and leave the planet.
+(m)issile       Fire a single (or multiple if MFMR fitted) missile.
+(o)ptions       Toggle default settings.
+(r)ear          Fire your rear laser (if fitted.)
+(s)end          Send a message to a single player in the galaxy.
+(sa)nd          Use your sandblaster to produce a cloud of sand (if fitted.)
+(st)op, -       Stop motion.  Leaves ship swung through 180 degrees
+(lt)eft turn, [ Rotate left 45 degrees
+(rt)ight turn,] Rotate right 45 degrees
+     
+     
+     
+

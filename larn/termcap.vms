@@ -1,0 +1,81 @@
+sl|lpr|printer|print|printing|line printer:\
+	:cr=^M:do=^J:nl=^J:bl=^G:le=^H:bs:co#132:hc:os:
+su|dumb|un|unknown:\
+	:am:bl=^G:co#80:cr=^M:do=^J:nl=^J:
+sx|ansi|any ansi terminal with pessimistic assumptions:\
+	:co#80:li#24:cl=50\E[;H\E[2J:\
+	:bs:am:cm=\E[%i%d;%dH:nd=\E[C:up=\E[A:\
+	:ce=\E[K:ho=\E[H:pt:
+#
+# not sure if vt102 belongs exactly here, but it works with rainbow
+# emulation of a vt102...
+#
+dr|vt100p|vt102-80|vt100p-nam|dec vt100p:\
+	:am:al=\E[L:bl=^G:bs:cd=50\E[J:ce=3\E[K:cl=50\E[;H\E[2J:\
+	:cm=10\E[%i%d;%dH:co#80:cr=^M:cs=\E[%i%d;%dr:dc=\E[P:\
+	:dl=\E[M:do=^J:ei=\E[4l:ho=\E[H:im=\E[4h:is=\E[1;24r\E[24;1H:\
+	:k1=\EOP:k2=\EOQ:k3=\EOR:k4=\EOS:kb=^H:kd=\EOB:ke=\E[?1l\E>:\
+	:kl=\EOD:kr=\EOC:ks=\E[?1h\E=:ku=\EOA:le=^H:li#24:md=2\E[1m:\
+	:mr=2\E[7m:mb=2\E[5m:me=2\E[m:mi:nd=\E[C:nl=^J:pt:rc=\E8:\
+	:rf=/usr/lib/tabset/vt100:rs=\E>\E[?3l\E[?4l\E[?5l\E[?7h\E[?8h:\
+	:sc=\E7:se=\E[m:so=\E[7m:sr=\EM:ta=^I:ue=\E[m:up=\E[A:us=\E[4m:\
+	:vt#3:xn:
+da|vt200|VT200-80|vt2xx|vt200-80|vt220|vt220-80|vt200-nam|dec vt200:\
+	:ae=4\E(B:as=2\E(<:se=2\E[27m:ue=2\E[24m:tc=vt100p:
+dd|vt200-132|vt220-132|VT200-132|vt200-w|dec vt200 132 cols:\
+	:co#132:tc=vt200:
+db|vt300|vt300-80|vt3xx|dec vt300|vt320|vt320-80|vt300-nam|VT300-80|dec vt300 80 cols:\
+	:ds=\E[1$}\E[;H\E[K\E[0$}:\
+	:es:fs=\E[0$}:hs:ts=\E[1$}\E[;H\E[K:\
+	:tc=vt200:
+dc|vt300-132|vt320-132|vt300-w|VT300-132|dec vt300 132 cols:\
+	:co#132:tc=vt300:
+d0|vt100|VT100-80|vt100-80|vt100-am|dec vt100:\
+	:cr=^M:do=^J:nl=^J:bl=^G:co#80:li#24:cl=50\E[;H\E[2J:\
+	:le=^H:bs:am:cm=5\E[%i%d;%dH:nd=2\E[C:up=2\E[A:\
+	:ce=3\E[K:cd=50\E[J:so=2\E[7m:se=2\E[m:us=2\E[4m:ue=2\E[m:\
+	:md=2\E[1m:mr=2\E[7m:mb=2\E[5m:me=2\E[m:is=\E[1;24r\E[24;1H:\
+	:rs=\E>\E[?3l\E[?4l\E[?5l\E[?7h\E[?8h:ks=\E[?1h\E=:ke=\E[?1l\E>:\
+	:ku=\EOA:kd=\EOB:kr=\EOC:kl=\EOD:kb=^H:\
+	:ho=\E[H:k1=\EOP:k2=\EOQ:k3=\EOR:k4=\EOS:ta=^I:pt:sr=5\EM:vt#3:xn:\
+	:sc=\E7:rc=\E8:cs=\E[%i%d;%dr:
+d1|vt100-nam|vt100 w/no am:\
+	:am@:xn@:tc=vt100-am:
+d3|vt132|vt132-80|dec vt132:\
+	:al=99\E[L:dl=99\E[M:ip=7:dc=7\E[P:ei=\E[4l:im=\E[4h:xn:dN#30:tc=vt100:
+d4|vt132-132|vt132 132 cols:\
+	:co#132:tc=vt132:
+d6|vt125|vt125-80|vt125-am|DEC vt125:\
+	:cr=^M:do=^J:nl=^J:bl=^G:co#80:li#24:cl=50\E[H\E[2J:\
+	:le=^H:am:bs:cm=5\E[%i%d;%dH:nd=2\E[C:up=2\E[A:ce=3\E[K:cd=50\E[J:\
+	:so=2\E[7m:se=2\E[m:us=2\E[4m:ue=2\E[m:md=2\E[1m:mr=2\E[7m:mb=2\E[5m:\
+	:me=2\E[m:is=\E[1;24r\E[24;1H\E>\E[?3l\E[?4l\E[?5l\E[?7h\E[?8h:\
+	:ks=\E[?1h\E=:ke=\E[?1l\E>:ku=\EOA:kd=\EOB:\
+	:kr=\EOC:kl=\EOD:kb=^H:ho=\E[H:k1=\EOP:k2=\EOQ:k3=\EOR:k4=\EOS:ta=^I:\
+	:pt:sr=5\EM:vt#3:sc=\E7:rc=\E8:cs=\E[%i%d;%dr:
+dt|vt100-132|vt100-w|dec vt100 132 cols (w/advanced video):\
+	:co#132:li#24:rs=\E>\E[?3h\E[?4l\E[?5l\E[?8h:tc=vt100-am:
+dv|vt100-w-nam|dec vt100 132 cols (w/advanced video), no am:\
+	:co#132:li#24:rs=\E>\E[?3h\E[?4l\E[?5l\E[?8h:vt@:tc=vt100-nam:
+dw|vt52|vt52-80|dec vt52:\
+	:cr=^M:do=^J:nl=^J:bl=^G:\
+	:le=^H:bs:cd=\EJ:ce=\EK:cl=\EH\EJ:cm=\EY%+ %+ :co#80:li#24:nd=\EC:\
+	:ta=^I:pt:sr=\EI:up=\EA:ku=\EA:kd=\EB:kr=\EC:kl=\ED:kb=^H:
+kb|h19|heath|h19-b|h19b|heathkit|heath-19|z19|zenith|heathkit h19:\
+	:cr=^M:nl=^J:bl=^G:\
+	:al=1*\EL:am:le=^H:bs:cd=\EJ:ce=\EK:cl=\EE:cm=\EY%+ %+ :co#80:dc=\EN:\
+	:dl=1*\EM:do=\EB:ei=\EO:ho=\EH:im=\E@:li#24:mi:nd=\EC:as=\EF:ae=\EG:\
+	:ms:ta=^I:pt:sr=\EI:se=\Eq:so=\Ep:up=\EA:vs=\Ex4:ve=\Ey4:\
+	:kb=^h:ku=\EA:kd=\EB:kl=\ED:kr=\EC:kh=\EH:kn#8:\
+	:k1=\ES:k2=\ET:k3=\EU:k4=\EV:k5=\EW:\
+	:l6=blue:l7=red:l8=white:k6=\EP:k7=\EQ:k8=\ER:\
+	:es:hs:ts=\Ej\Ex5\Ex1\EY8%+ \Eo:fs=\Ek\Ey5:ds=\Ey1:
+kA|h19-a|h19a|heath-ansi|heathkit-a|heathkit h19 ansi mode:\
+	:cr=^M:nl=^J:bl=^G:\
+	:al=1*\E[1L:am:le=^H:bs:cd=\E[J:ce=\E[K:cl=\E[2J:cm=\E[%i%2;%2H:co#80:\
+	:dc=\E[1P:dl=1*\E[1M:do=\E[1B:ei=\E[4l:ho=\E[H:im=\E[4h:li#24:mi:\
+	:nd=\E[1C:as=\E[10m:ae=\E[11m:ms:ta=^I:pt:se=\E[0m:so=\E[7m:up=\E[1A:\
+	:vs=\E[>4h:ve=\E[>4l:kb=^h:ku=\E[1A:kd=\E[1B:kl=\E[1D:kr=\E[1C:\
+	:kh=\E[H:kn#8:k1=\EOS:k2=\EOT:k3=\EOU:k4=\EOV:k5=\EOW:l6=blue:\
+	:l7=red:l8=white:k6=\EOP:k7=\EOQ:k8=\EOR:\
+	:sr=\EM:is=\E<\E[>1;2;3;4;5;6;7;8;9l\E[0m\E[11m\E[?7h:

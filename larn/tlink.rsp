@@ -1,0 +1,7 @@
+main.obj object.obj create.obj tok.obj display.obj +
+global.obj data.obj io.obj monster.obj action.obj  +
+iventory.obj vms.obj store.obj diag.obj help.obj   +
+config.obj nap.obj bill.obj scores.obj signal.obj  +
+moreobj.obj spheres.obj spells.obj movem.obj       +
+regen.obj fortune.obj savelev.obj msdos.obj        +
+fgetlr.obj tgoto.obj tgetent.obj tgetstr.obj tputs.obj

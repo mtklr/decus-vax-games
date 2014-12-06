@@ -1,0 +1,62 @@
+   File Name		Archive #	Description
+-----------------------------------------------------------
+ MANIFEST                   1	This shipping list
+ Makefile.unix              2	Makefile for U*ix.
+ README                     1	General readme
+ action.c                   9	
+ bill.c                     8	
+ config.c                  12	
+ create.c                   8	
+ data.c                     4	
+ descrip.mms               12	MMS build file for VAX/VMS
+ diag.c                     9	
+ display.c                  5	
+ fgetlr.c                  12	Termcap support for VMS/MS-DOS.
+ fortune.c                 10	
+ global.c                   2	
+ header.h                  12	
+ help.c                    12	
+ io.c                       3	
+ iventory.c                10	
+ larn.ftn                  12	Fortune File
+ larn.maz                   7	Maze file
+ larn.opt                  12	Sample options file.  Rename to .larnopts for U*ix.
+ larn123.doc                7	Documentation for Larn V12.3
+ larn123.fix               11	List of changes since Larn V12.0
+ larndefs.h                12	
+ larnhlp.txt                9	Help file without ansi escape sequences
+ larnhlp.uue               10	Uuencoded help file with ansi escape sequences
+ main.c                     1	
+ makefile.os2              12	OS/2-Microsoft C Makefile
+ makefile.pc               11	MS-DOS, Turbo C++ Makefile
+ monster.c                  6	
+ monsters.h                 9	
+ moreobj.c                  3	
+ movem.c                    4	
+ msdos.c                   10	MS-DOS Specific code.
+ nansi.doc                 11	Docs for NANSI.SYS, a MS-DOS ANSI.SYS replacement
+ nansisys.uue              12	UUENCODED NANSI.SYS
+ nap.c                     12	
+ object.c                   2	
+ objects.h                 12	
+ os2larn.def                5	OS/2 Build support
+ os2larn.lnk                4	OS/2 Build support
+ patchlev.h                 3	
+ player.h                  12	
+ regen.c                   11	
+ savelev.c                 12	
+ scores.c                   8	
+ signal.c                  11	
+ spells.c                   6	
+ spheres.c                 11	
+ store.c                    5	
+ termcap.pc                 5	Termcap file for MS-DOS.
+ termcap.vms               12	Termcap file for VMS.
+ tgetent.c                 10	Termcap support for VMS/MS-DOS.
+ tgetstr.c                 11	Termcap support for VMS/MS-DOS.
+ tgoto.c                    1	Termcap support for VMS/MS-DOS.
+ tlink.rsp                  4	Turbo C++ MS-DOS Build support
+ tok.c                      9	
+ tputs.c                    7	Termcap support for VMS/MS-DOS.
+ vms.c                     11	VMS Specific code.
+ vmsreadme.txt              6	VMS Specific Readme

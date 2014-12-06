@@ -1,0 +1,8 @@
+* Program CENTIPEDE by Paul Denize.
+* For compilation you will need files INTERACT.OLB and UTIL.OLB
+* which can be found in the LIBRARY directory.
+*
+CENTIPEDE.$PACKAGE
+CENTIPEDE.1
+CENTIPEDE.2
+CENTIPEDE.3

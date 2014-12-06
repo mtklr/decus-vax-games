@@ -1,0 +1,10 @@
+	.Title	Users
+
+        .entry  users, ^M<>
+        movzwl  g^sys$gw_ijobcnt, r0
+        ret
+
+	.entry	max_users, ^M<>
+        movzwl  g^sys$gw_ijoblim, r0
+	ret
+        .end    ; remember to link with SYS$SYSTEM:SYS.STB/SELECTIVE

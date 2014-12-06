@@ -1,0 +1,49 @@
+	.title	map	map a file into memory
+
+	$secdef
+
+
+	.psect	$$rwdata rd, wrt, noexe, rel, pic, con, noshr, long
+
+	.align	long
+fab:
+	$fab	fac=<GET>, shr=<GET>, fop=<UFO>
+
+
+	.psect	$$code	rd, nowrt, exe, rel, pic, con, shr, long
+
+	.align	long
+inadr:
+	.long	1, 1			; map file into p0 space
+
+
+	.entry	-
+map_file, ^m<r2, r3>
+;+
+;	status = map_file ( file-name.descr, start-addr, end-addr )
+;
+;	"status" is TRUE if operation was successful
+;	"start-addr" and "end-addr" are LONGWORD integers
+;
+;	Maps the specified file onto the end of virtual memory
+;-
+	moval	fab, r3
+	movq	@4(ap), r0		; r0 = length, r1 = address
+	movb	r0, fab$b_fns(r3)	; set file name size
+	movl	r1, fab$l_fna(r3)	; set file name address
+	$open	fab=(r3)
+	blbc	r0, 100$		; br if error
+
+	subl2	#8, sp			; make room for retadr
+	movl	sp, r2			; save address of retadr
+
+	$crmpsc_s inadr=inadr, retadr=(r2), flags=#sec$m_expreg, -
+		chan=fab$l_stv(r3)
+	blbc	r0, 100$		; br if error
+
+	movl	(r2), @8(ap)		; return start address
+	movl	4(r2), @12(ap)		; return end address
+100$:
+	ret				; with error in r0
+
+	.end

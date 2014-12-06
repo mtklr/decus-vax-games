@@ -1,0 +1,9 @@
+* Program ASTEROIDS by Graham Joyce and Stephan Spadoni.
+* For compilation you will need file UTIL.OLB which can be found in the
+* LIBRARY directory.
+*
+ASTEROIDS.$PACKAGE
+ASTEROIDS.1
+ASTEROIDS.2
+ASTEROIDS.3
+ASTEROIDS.4

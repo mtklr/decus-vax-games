@@ -1,0 +1,18 @@
+!************************************SHROOM*************************************
+define verb SHROOM
+   image DISK$USERDISK1:[MAS0.MASLIB.GAMES.SHROOM]SHROOM.EXE
+   qualifier MAPKEY
+      nonnegatable
+      value (default="kljh")
+   qualifier MUSHROOM
+      nonnegatable
+      value (default="@")
+   qualifier SEGMENT
+      nonnegatable
+      value (default="o")
+   qualifier WALL
+      nonnegatable
+      value (default="#")
+   qualifier DIRECTORY
+      nonnegatable
+      value (default="DISK$USERDISK1:[MAS0.MASLIB.GAMES.SHROOM]")

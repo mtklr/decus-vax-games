@@ -1,0 +1,7 @@
+* Program MOLE by Paul Denize.
+* For compilation you will need files INTERACT.PEN and INTERACT.OLB
+* which can be found in the LIBRARY directory.
+*
+MOLE.$PACKAGE
+MOLE.1
+MOLE.2

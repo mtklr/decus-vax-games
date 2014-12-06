@@ -1,0 +1,11 @@
+* Program MQIX by Rex Croft and Murray Speight (1983).
+* For compilation you will need file UTIL.OLB
+* which can be found in the LIBRARY directory.
+*
+MQIX.$PACKAGE
+MQIX.1
+MQIX.2
+MQIX.3
+MQIX.4
+MQIX.5
+MQIX.6

@@ -1,0 +1,7 @@
+* Program CHICKEN by Paul Denize.
+* For compilation you will need files INTERACT.PEN and INTERACT.OLB
+* which can be found in the LIBRARY directory.
+*
+CHICKEN.$PACKAGE
+CHICKEN.1
+CHICKEN.2

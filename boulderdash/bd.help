@@ -1,0 +1,42 @@
+1 BOULDERDASH
+A well written version of the popular game "Boulderdash".  Not sure what
+the goal is so there is no external help :-).  If you can translate the
+German text, please send e-mail to user MASTER@UBVMS
+
+Read "Hardware Requirements"!!!
+
+2 PossibleHelp
++-------------------------------------------------------+
+|							|
+|		      BOULDER DASH			|
+|							|
++-------------------------------------------------------+
+
+(w) 1988 Oskar Schirmer
+
+Es handelt sich hierbei um den versuch, ein echtzeitspiel
+auf einem grossrechner unterzubringen (...).
+
+0. wichtig: nach dem starten titelseite lesen !
+
+1. boulder dash (als spiel):
+es geht darum, ein maenneken durch eine hoehle zu steuern,
+diamanten zu finden, zu sammeln und schliesslich den ausgang
+zu benutzen. fuer gesammelte diamanten gibz punkte (DIAM:),
+die zahl der benoetigten diamanten steht unter NEED:.
+fuer die ganze aktion steht die unter LEFT: gezaehlte zeit
+zur verfuegung. im uebrigen sind die level mehr oder weniger
+vom original auf dem apple uebernommen und sie sind alle
+machbar !!! viel spass.
+
+2 HardwareRequirements
+an hardware wird benoetigt:
+
+eine hinreichend eilige vax mit allem drum&dran (was das genau ist,
+sagt ihnen bestimmt gerne die auskunft).
+zum beispiel ein vt220-terminal, das in der lage ist, sixel-grafic
+anzuzeigen und zwar sollte das die daten mit einer rate von einigen
+kbaud, will heissen etwa 9600 oder 19200 baud. alles andere hat mit
+echtzeit nix mehr zu tun.
+
+You *MUST* be on a VT200 or greater series terminal to play this.

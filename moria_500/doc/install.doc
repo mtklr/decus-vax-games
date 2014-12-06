@@ -1,0 +1,48 @@
+Installation Docs for Moria UB 5.00   - Written by Nick B Triantos
+-----------------------------------     State University of New York at Buffalo
+
+Note that although this version of Moria is called version 5.00, it is NOT
+version 5.00 as released by the authors of the program.  This program has
+been modified by William Palter and myself, Nick B Triantos, to the extent
+that it can no longer be considered a 4.8x version.  There are various features
+in this version that can only be found in this version.
+
+
+
+The files you should get is a Backup Save Set containing the following:
+
+MORIA.PAS  - The main Pascal source program to the game
+*.INC      - These files are all of the include files used when compiling
+             MORIA.PAS.  They have been created to ease finding certain sections
+             of code.
+*.MAR      - These are the MACRO source files for some subroutines which
+             are needed by MORIA.PAS.
+HINTS.RNH  - The Runoff source for a file which contains some simple hints
+             for Moria contributed by users here at the University of Buffalo.
+MORIA.EXE  - The actual executable file.  This file should only have execute
+             protection set.
+ATTACK.DAT - This file contains some data for the wizards which isn't actually
+             used by the game, but is somewhat useful. No protection settings
+             are necessary.                  
+HOURS.DAT  - A file containing the valid hours for playing Moria.  Read
+             protection only must be set.
+MONSTERIN.DAT - This file contains the actual monster data used for Moria.
+                It is much easier to add/delete/modify a monster by reading
+                them all in at the beginning, so we use this.  World read
+                protection is necessary.
+MORIA.DAT     - This file is displayed as the opening page of Moria when
+                it is executed.  Messages can be changed, but please don't
+                change the credits.  World read protection is necessary.
+MORIACHR.DAT  - This file contains the database of valid Moria saved
+                characters.  It is an encrypted file and so editing it may
+                corrupt it.  World read+write+execute are necessary on this
+                file.
+MORIAHLP.HLB  - The on-line help file for Moria.  World read necessary.
+MORIATOP.DAT  - The high score file for Moria.  World read+write is necessary.
+MORIAWIZ.DAT  - This is a datafile contianing the usernames of all valid
+                wizards.  Note that in our version of Moria, there is no
+                password; just a check on who is in this file.  The wizards
+                should be very careful as to who's name(s) is/are put in
+                this file.  The usernames should appear each on a seperate
+                line, with no leading or trailing spaces, and no blank lines
+                in the file.  World read is necessary.

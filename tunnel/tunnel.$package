@@ -1,0 +1,6 @@
+* Program TUNNEL by Paul Denize and Simon Travaglia.
+* For compilation you will need files INTERACT.PEN, INTERACT.OLB, and UTIL.OLB,
+* which can be found in the LIBRARY directory.
+*
+TUNNEL.$PACKAGE
+TUNNEL.1

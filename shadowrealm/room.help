@@ -1,0 +1,8 @@
+level - This determines how difficult the randoms which are generated will be.
+        A random monsters "level" is what it is customized as (points), plus
+        it's particular class points.
+kind  - This is for random generation.  Put a 1 here for random generation,
+        otherwise leave it 0.
+size  - How many characters high/wide the room is.
+exits - Each room may have a face exit to other rooms. (Or itself for
+        wraparound.)

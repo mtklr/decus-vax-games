@@ -1,0 +1,9 @@
+* Program DIG by Ian Thornborough (1984).
+* For compilation you will need files INTERACT.PEN and INTERACT.OLB
+* which can be found in the LIBRARY directory.
+*
+DIG.$PACKAGE
+DIG.1
+DIG.2
+DIG.3
+DIG.4

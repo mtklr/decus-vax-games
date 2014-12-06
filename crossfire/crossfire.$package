@@ -1,0 +1,8 @@
+* Program CROSSFIRE by Donald Neal (1986).
+* For compilation you will need files INTERACT.PEN and INTERACT.OLB
+* which can be found in the LIBRARY directory.
+*
+CROSSFIRE.$PACKAGE
+CROSSFIRE.1
+CROSSFIRE.2
+CROSSFIRE.3

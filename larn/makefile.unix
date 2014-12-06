@@ -1,0 +1,22 @@
+#
+OBJ=	action.o bill.o config.o create.o data.o diag.o display.o \
+	fortune.o global.o help.o io.o iventory.o main.o monster.o \
+	moreobj.o movem.o msdos.o nap.o object.o regen.o savelev.o \
+	scores.o signal.o spells.o spheres.o store.o \
+	tok.o vms.o
+#
+#
+
+# Add -DSIG_RTNS_INT to the CFLAGS line for older Unixes that return
+# int ptr rather than void ptr from the call to signal().
+#
+CFLAGS= -DBSD -D'LARNHOME="/usr/users/routley/larncc/"'
+
+larn123: $(OBJ)
+	cc -o larn123 $(OBJ) -ltermcap
+
+.c.o: 
+	cc $(CFLAGS) -c $*.c 
+
+.c: header.h larndefs.h player.h monsters.h objects.h patchlev.h
+

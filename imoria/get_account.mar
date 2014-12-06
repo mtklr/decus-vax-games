@@ -1,0 +1,37 @@
+	.Title	Get_Account
+
+
+;	Pascal calling sequence
+;
+;	account : packed array [1..8] of char ;
+;
+;	PROCEDURE get_account ( account : [STDESC] Packed array [1..8] of char );
+;	EXTERN;
+;
+;		get_account(account);
+;
+
+	$JPIDEF
+
+jpi_list:
+	.WORD	8		; buffer length
+	.WORD	JPI$_ACCOUNT	; jpi item code
+return_address:
+	.BLKL	1		; return address (filled in later)
+	.LONG	0		; return length (not used)
+	.LONG	JPI$C_LISTEND	; end of list
+
+
+	.Entry	Get_Account, ^M<>
+
+	MOVL	4(AP), return_address
+
+	$GETJPIW_S -
+		ITMLST = jpi_list
+	BLBS	R0, ok
+
+	$EXIT_S	CODE = R0		; exit with appropriate error message
+
+ok:	RET
+
+	.End

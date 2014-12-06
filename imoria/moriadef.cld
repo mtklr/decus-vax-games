@@ -1,0 +1,21 @@
+module moriadef
+
+define verb moria
+	parameter p1,		label=finam value(type=$file)
+	qualifier wizard,	label=wizard,	nonnegatable,
+				value(default="doublespeak")
+	qualifier score,	label=score,	nonnegatable,
+				value(default="100")
+	qualifier restore,	label=restore,	nonnegatable,
+				value(type=$file, default=sys$scratch:moriachr.sav)
+	qualifier undead,	label=undead,	nonnegatable,
+				value(type=$file, default=sys$scratch:moriachr.sav)
+	qualifier trap,		label=trap,	negatable,
+				value(default="10")
+	qualifier top		label=top,	negatable,	default
+				value(default="20")
+	qualifier hear		label=warn,	negatable
+	qualifier difficulty	label=difficulty,
+				nonnegatable,	value(default=3)
+	disallow (any2(score,trap,restore) or (top and restore) or
+		 (top and score))

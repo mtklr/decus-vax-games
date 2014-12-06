@@ -1,0 +1,118 @@
+  See TYPES.INC under creature_type for a complete list of all
+  variables for creatures.
+ 
+                Attack types:
+                1       Normal attack
+                2       Poison Strength
+                3       Confusion attack
+                4       Fear attack
+                5       Fire attack
+                6       Acid attack
+                7       Cold attack
+                8       Lightning attack
+                9       Corrosion attack
+                10      Blindness attack
+                11      Paralysis attack
+                12      Steal Money
+                13      Steal Object
+                14      Poison
+                15      Lose dexterity
+                16      Lose constitution
+                17      Lose intelligence
+                18      Lose wisdom
+                19      Lose experience
+                20      Aggravation
+                21      Disenchants
+                22      Eats food
+                23      Eats light
+                24      Eats charges
+                25      Vampire Bite
+                26      Turn to stone
+                27      Mind Flayer attack
+                28      Hell Horse attack
+                99      Blank
+ 
+                Attack descriptions:
+                1       hits you.
+                2       bites you.
+                3       claws you.
+                4       stings you.
+                5       touches you.
+                6       kicks you.
+                7       gazes at you.
+                8       breathes on you.
+                9       spits on you.
+                10      makes a horrible wail.
+                11      embraces you.
+                12      crawls on you.
+                13      releases a cloud of spores.
+                14      begs you for money.
+                15      You've been slimed.
+                16      crushes you.
+                17      tramples you.
+                18      drools on you.
+                99      is repelled.
+ 
+        Example:  For a creature which bites for 1d6,then stings for
+                  2d4 and loss of dex you would use:
+                        '1 2 1d6|15 4 2d4'
+
+
+ 
+                CMOVE flags:
+Movement.       00000001        Move only to attack
+        .       00000002        Move,attack normal
+        .       00000008        20% random movement
+        .       00000010        40% random movement
+        .       00000020        75% random movement
+Special +       00010000        Invisible movement
+        +       00020000        Move through door
+        +       00040000        Move through wall
+        +       00080000        Move through creatures
+        +       00100000        Picks up objects
+        +       00200000        Multiply monster
+Carries =       01000000        Carries objects.
+        =       02000000        Carries gold.
+        =       04000000        Has 60% of time.
+        =       08000000        Has 90% of time.
+        =       10000000        1d2 objects/gold.
+        =       20000000        2d2 objects/gold.
+        =       40000000        4d2 objects/gold.
+Special ~       80000000        Win-the-Game creature.
+ 
+                SPELL Flags:
+Frequency       000001    1     These add up to x.  Then
+(1 in x).       000002    2     if RANDINT(X) = 1 the
+        .       000004    4     creature casts a spell.
+        .       000008    8
+Spells  =       000010  Teleport short (blink)
+        =       000020  Teleport long
+        =       000040  Teleport player to monster
+        =       000080  Cause light wound
+        =       000100  Cause serious wound
+        =       000200  Hold person (Paralysis)
+        =       000400  Cause blindness
+        =       000800  Cause confusion
+        =       001000  Cause fear
+        =       002000  Summon monster
+        =       004000  Summon undead
+        =       008000  Slow Person
+        =       010000  Drain Mana
+        =       020000  Not Used
+        =       040000  Not Used
+Breaths +       080000  Breath Lightning
+        +       100000  Breath Gas
+        +       200000  Breath Acid
+        +       400000  Breath Frost
+        +       800000  Breath Fire
+ 
+                CDEFENSE flags:
+
+     0001   Hurt by Slay Dragon.         0100   Hurt by Light-Wand.
+     0002   Hurt by Slay Monster.        0200   Hurt by Stone-to-Mud.
+     0004   Hurt by Slay Evil.           0400   Only hit by magical weapon.
+     0008   Hurt by Slay Undead.         0800   Not used.
+     0010   Hurt by Frost.               1000   Cannot be charmed or slept.
+     0020   Hurt by Fire.                2000   Can be seen with infra-vision.
+     0040   Hurt by Poison.              4000   Max Hit points.
+     0080   Hurt by Acid.                8000   Not used.

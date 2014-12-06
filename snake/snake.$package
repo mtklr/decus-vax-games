@@ -1,0 +1,10 @@
+* Program SNAKE by Rex Croft and Murray Speight (1982).
+* For compilation you will need file UTIL.OLB
+* which can be found in the LIBRARY directory.
+*
+SNAKE.$PACKAGE
+SNAKE.1
+SNAKE.2
+SNAKE.3
+SNAKE.4
+SNAKE.5

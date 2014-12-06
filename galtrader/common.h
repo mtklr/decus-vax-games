@@ -1,0 +1,31 @@
+common (dstatus) &
+	long scanner_id, &
+	long text_length, &
+	long new_pid, &
+	long control_id, &
+	string pname=7, &
+	long ring,ray,   &
+	long keyboard_id, &
+	long io_id, &
+	long text_id, &
+	long big_id, &
+	long trade_id, &
+	long status_id, &
+	long menu_id, &
+	long row_pos,col_pos, &
+	long manual_id, &
+	long planet_id, &
+	long scanner_displayed, &
+	long scroll_ok, &
+	long error_id, &
+	long pending_error, &
+	long dpos, &
+	long denergy, &
+	long ddir, &
+	long dcredits, &
+	long dfuel, &
+	long dmissiles, &
+	long cloak, &
+	long lsj, &
+	long ecm
+

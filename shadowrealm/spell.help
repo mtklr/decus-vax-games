@@ -1,0 +1,50 @@
+Effect     - Can be a hurt or freeze type spell.
+Offensive  - For random monster's information.
+             (Teleportation would be defensive...)
+Element    - The physical make-up of the spell (fire, force, etc...)
+Caster     - If the caster is to be effected by the spell. (in addition to everyone
+	     else)
+Mana       - How much mana is expended by the caster.
+             If the spell is used as a natural or equipped weapon, mana is
+             not expended.
+Difficulty - How hard it is to cast the spell.
+             Success chance = (random # 0..100 + proficiency > difficulty)
+Cast. time - time it takes to cast spell (in hundredths of a second).
+Duration   - If the spell is long lasting, this is how long it lasts.
+	     (seconds)
+Casterdesc - Text message caster sees when casting spell.
+Victimdesc - Text message victim sees when being hit by spell.
+Prompt     - If there is no prompt specified, for an offensive spell,
+	     it uses your target as coordinates.  For a defensive spell,
+	     it uses your coordinates.
+	     If there is a prompt specified, it will ask for destination
+	     coordinates for a defensive spell.
+Pretty much meaningless right now.
+Icon       - Character which represents the spell on the screen.
+Rendition  - Special attributes of the character (blinking, bold...)
+
+Geometry   - Shape the spell takes the form of  (circle, square, line)
+    Circle : Geoparm 1 determines the inner circle's radius (0 for most cases)
+           : Geoparm 2 determines the outer radius of the circle.
+    Square : Geoparm 1 determines the width of the square (ok, so it should be
+	     called a rectangle)
+           : Geoparm 2 determines the heigth of the square.
+
+Hurt spells- Damage others when they get hit.
+    Parm1  : Max random damage done.
+    Parm2  : Randomness of damage done (1 = uniform dist, 2, 3, 4 = sharper bell
+             curve.
+    Parm3  : Not used.
+    Parm4  : Range of spell.
+
+Heal spells- Just use a hurt spell, but put a negative number for Parm1
+
+Freeze spells - Freeze others for a while.
+    Parm1  : Max freeze time.
+    Parm2  : Randomness of freeze time (as above)
+    Parm3  : Not used.
+    Parm4  : Range of spell.
+
+Teleport spells - Randomly teleports those hit
+    Parm1  : Range of teleportation
+    Parm4  : Range of spell

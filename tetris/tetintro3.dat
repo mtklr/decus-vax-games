@@ -1,0 +1,22 @@
+[2J[1H[1m#3        WELCOME TO TETRIS!
+#4        WELCOME TO TETRIS!
+[m
+Welcome to the VAX version of the Russian game of the same name.
+
+Rotate the falling shapes to fill in complete horizontal lines causeing them
+to vanish.  The more lines you can vanish at once, the greater your score.
+If you completely clear the screen on your last move, you'll get a big
+bonus!
+(0
+#6lqqqqk lqk  lqk  lqk     lqk  lqk  lqk
+#6xCTRLx-xWx  xQx  xPx     x4x  x5x  x6x
+#6mqqqqj mqj  mqj  mqj     mqj  mqj  mqj
+   REDRAW SCREEN         QUIT      PAUSE           LEFT     ROTATE     RIGHT
+
+#6lqqqqqqqqqqqqqqqqqqqk         lqk
+#6x     SPACE BAR     x         x2x  
+#6mqqqqqqqqqqqqqqqqqqqj         mqj  (B
+                 DROP                                        DOWN
+
+
+             <<<<  PRESS THE [SPACE BAR] TO BEGIN!  >>>>  

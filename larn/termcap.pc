@@ -1,0 +1,26 @@
+#
+# Monochrome IBMPC.
+#	This is a termcap for the NANSI.SYS device driver.
+#	It is the same as the ANSI termcap, except NANSI supports
+#	line insert (al) and delete (dl) while ANSI does not.
+#
+ibmpc-mono:\
+	:co#80:\
+	:li#24:\
+	:cl=\E[;H\E[2J:\
+	:bs:\
+	:ho=\E[H:\
+	:cm=\E[%i%2;%2H:\
+	:up=\E[A:\
+	:xd=\E[B:\
+	:nd=\E[C:\
+	:bc=\E[D:\
+	:ce=\E[K:\
+	:ti=\E[m:\
+	:te=\E[m:\
+	:so=\E[1m:\
+	:se=\E[m:\
+	:us=\E[4m:\
+	:ue=\E[m:\
+	:al=\E[L:\
+	:dl=\E[M:

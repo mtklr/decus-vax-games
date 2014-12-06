@@ -1,0 +1,13 @@
+!************************************LEVELR*************************************
+define verb LEVELR
+   image DISK$USERDISK1:[MAS0.MASLIB.GAMES.SHROOM]LEVELR.EXE
+   qualifier WALL
+      nonnegatable
+      value (default="#")
+   qualifier DIRECTORY
+      nonnegatable
+      value (default="DISK$USERDISK1:[MAS0.MASLIB.GAMES.SHROOM]")
+   qualifier BRIGHT
+      nonnegatable
+   qualifier NOBACKUP
+      nonnegatable

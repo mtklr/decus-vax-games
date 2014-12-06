@@ -1,0 +1,26 @@
+Shuffle:
+
+	I wrote this as a way to learn curses.
+
+	I have successfully compiled and run shuffle on a Sequent
+	running under 4.2BSD and a HP9000 running under HP-UX
+
+	When I first wrote this I had a little knowledge of how to
+	make the code portable, so if you patch the code to run on
+	another system I would REALLY appreciate your input and code.
+
+	Stephan Dasia
+	stephand@maestro.htsa.aha.nl
+	stephand@htsa.UUCP
+	...!hp4nl!htsa!stephand
+
+To compile on VMS:
+
+        CC each file independently, then
+        LINK GAME,MAIN,SWITCH,VISUAL,XRAND,SYS$LIBRARY:VAXCCURSE/LIBRARY,
+             SYS$LIBRARY:VAXCRTL
+        RENAME GAME.EXE to SHUFFLE.EXE
+
+     -Nick Triantos
+        MASNICK @ UBVMS.CC.BUFFALO.EDU
+        MASNICK @ UBVMS.BITNET

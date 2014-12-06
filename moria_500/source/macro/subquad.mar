@@ -1,0 +1,30 @@
+	.title	sub_quadtime
+;
+;	call sequence
+;
+;	call sub_quadtime(a, b, c)
+;
+;	where a, b, and c are quadword system time buffers
+;
+;	c = a - b
+;
+a = 4
+b = 8
+c = 12
+sub_quadtime::	.word	^m<r2>
+		movq	@a(ap),r0	; minuend in registers
+		movl	b(ap),r2	; address of subtrahend in r2
+		subl	(r2),r0		; subtract low order half
+		sbwc	4(r2),r1	; subtract high@order half with carry
+;
+;	we now have the time increment between a and b.  The system
+;	form of a delta time is the negative of this.  We get this by
+;	subtracting from 0.
+;
+		movl	c(ap),r2	; address of destination in r2
+		clrl	(r2)		; set to 0
+		clrl	4(r2)
+		subl	r0,(r2)		; subtract low half
+		sbwc	r1,4(r2)	; subtract high half
+		ret
+		.end

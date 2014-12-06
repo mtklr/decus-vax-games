@@ -1,0 +1,12 @@
+Patch 1
+=======
+Prompted by Pat Ryan, fix a bug in the dropobj() code in main.c that
+allowed the player to drop a negative amount of gold.  In the process, fix
+the backwards carriage return logic when printing the error response.
+Document the new SIG_RETURNS_INT #define introduced by Bill Randle when the
+software was posted.
+Prompted by Lasse Oestergaard, guard against out-of-bound array references
+in movem.c when on the Home level.  Also fixed a bug where a 'smart' monster
+would fail to move towards the player when the player was on the boundary.
+Prompted by Mitch Gorman, make the EXTRA #define compile and work under
+MS-DOS.

@@ -1,0 +1,10 @@
+[
+  Environment
+    ('VT100.PEN')
+]
+
+MODULE VT100;
+
+%INCLUDE 'VT100_ESC_SEQS.PAS'
+
+END.

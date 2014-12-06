@@ -1,0 +1,7 @@
+* Program DOOR by Paul Denize.
+* For compilation you will need files INTERACT.PEN and INTERACT.OLB
+* which can be found in the LIBRARY directory.
+*
+DOOR.$PACKAGE
+DOOR.1
+DOOR.2

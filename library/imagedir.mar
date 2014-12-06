@@ -1,0 +1,82 @@
+	.title	imagedir	find directory image was run from
+
+;+
+;	Modified 25-Jul-1985 to handle VMS V4 rooted directory specs
+;-
+
+	$jpidef
+
+	.psect	$code4	rd, nowrt, exe, rel, pic, con, shr, long
+
+log:	.ascii	'IMAGE_DIR'
+log_len = . - log
+
+	.align	word
+	.entry	-
+image_dir, ^m<r2,r3,r4,r5>
+;+
+;	status = image_dir()
+;
+;	assigns the disk and directory that the current image is stored in
+;	to the logical "image_dir"
+;
+;	status	system service status code
+;-
+	moval	-(sp), r4		; address of return length
+	subl2	#256, sp		; allocate room for image name
+	movl	sp, r3			; remember its address
+
+	pushl	#0			; end of item list
+	pushl	r4			; return length address
+	pushl	r3			; buffer address
+	pushl	#256!<jpi$_imagname@16> ; length and item code
+	movl	sp, r1			; address of item list
+
+	$getjpi_s itmlst=(r1)		; get info for this process
+	blbc	r0, 1000$		; br if error
+
+	subl2	#4*4, sp		; remove item list from stack
+;+
+;	now search for end of directory name ("]" or ">")
+;-
+	movzwl	(r4), r4		; get full length of image name
+	movl	r3, r5			; get address
+10$:
+	locc	#^A/:/, r4, (r5)	; look for end of logical name
+	beql	20$			; br if not found
+
+	subl3	#1, r0, r4		; get new length
+	addl3	#1, r1, r5		; get new address
+	brb	10$			; look for another colon
+20$:
+	locc	#^A/]/, r4, (r5)	; find closing bracket
+	beql	40$			; br if not found
+
+	subl3	#1, r0, r4		; get new length
+	addl3	#1, r1, r5		; get new address
+	brb	20$			; look for another "]"
+40$:
+	locc	#^A/>/, r4, (r5)	; find closing bracket
+	beql	60$			; br if not found
+
+	subl3	#1, r0, r4		; get new length
+	addl3	#1, r1, r5		; get new address
+	brb	40$			; look for another ">"
+60$:
+
+100$:
+	pushl	r3			; address of eqlnam
+	subl3	r3, r5, -(sp)		; get length of eqlnam
+	movl	sp, r2			; save address of descriptor
+
+	pushab	W^log			; address of lognam
+	pushl	#log_len		; length of lognam
+	movl	sp, r3			; save address of descriptor
+
+	$crelog_s tblflg=#2, lognam=(r3), eqlnam=(r2) ; create process logical
+;	blbc	r0, 1000$		; br if error
+1000$:
+	ret				; which will clean up the stack
+
+
+	.end

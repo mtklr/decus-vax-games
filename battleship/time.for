@@ -1,0 +1,126 @@
+********************************************
+C FUNCTION TIME_OKAY 
+C    RETURNS TRUE IF IT'S A VALID TIME FOR PLAYING
+C      OR PLAYER HAS PRIVELEGE TO PLAY DURING OFF HOURS
+C ELSE
+C    RETURNS FALSE TO CALLING PROGRAM
+C
+C    AUTHOR:  CLIFFORD MOON
+C    SITE:    UT-PANAM
+C    DATE:    09/14/89  
+C
+      LOGICAL FUNCTION TIME_OKAY(IDUMMY)
+
+      CHARACTER*120     CURRENT_IMAGE_NAME
+      CHARACTER*120     FILENAME
+      CHARACTER*10      BATTLE_TIME(24)
+      CHARACTER*20      DUMMY_LINE
+      CHARACTER*2       HOUR,GET_HOUR
+      CHARACTER         AUTH_CHAR
+      INTEGER   	TODAY,LN,DAY_OF_WEEK
+      PARAMETER 	JPI$IMAGNAME = '00000207'X
+
+      TIME_OKAY  =  	.TRUE.
+      TODAY      =	DAY_OF_WEEK(IDUMMY)
+
+      CALL GET_JPI(JPI$IMAGNAME,CURRENT_IMAGE_NAME,IDUMMY)
+
+      I =  INDEX(CURRENT_IMAGE_NAME,']')
+
+      FILENAME = CURRENT_IMAGE_NAME(1:I)//'BATTLESHIP_TIMES.DAT'
+      II = ILN(FILENAME)
+      FILENAME = FILENAME(1:II)
+
+      OPEN (
+     -      UNIT   = 5,
+     -      STATUS = 'OLD',
+     -      ERR    = 4,
+     -      FILE = FILENAME)
+
+      READ (
+     -       5,
+     -       FMT = '(A10)',
+     -       ERR = 4,
+     -       END = 5) DUMMY_LINE
+
+      INSIDE = .TRUE.
+      III = 1
+
+      DO WHILE (INSIDE)
+         READ (
+     -          5,
+     -          FMT = '(A10)',
+     -          ERR = 5,
+     -          END = 5) BATTLE_TIME(III)
+         III = III + 1
+      ENDDO
+ 
+ 5    CLOSE(5)
+      INSIDE = .FALSE.
+
+      HOUR = GET_HOUR(IDUMMY)
+      CALL CCTI(HOUR,IHOUR)
+      IHOUR = IHOUR + 1
+
+      AUTH_CHAR = BATTLE_TIME(IHOUR)(TODAY:TODAY)
+
+      IF (AUTH_CHAR .NE. '.') TIME_OKAY = .FALSE.
+      RETURN
+
+ 4    TIME_OKAY = .TRUE.
+      RETURN
+      END
+
+
+      
+C RETURN THE CURRENT HOUR
+C 00 - 23 HOURS
+C
+C
+ 
+      CHARACTER*2 FUNCTION GET_HOUR(IDUMMY)
+
+      INTEGER*4   LIB$DATE_TIME,STATUS
+      CHARACTER*23 DATE_TIME
+
+      STATUS = LIB$DATE_TIME(DATE_TIME)
+      I      = INDEX(DATE_TIME,':')
+      
+      GET_HOUR = DATE_TIME(I-2:I-1)
+      END
+
+************************************************************
+C
+C     GET DAY OF WEEK IN INTEGER FORM 
+C     1 = MONDAY....7 = SUNDAY
+C
+C
+      INTEGER FUNCTION DAY_OF_WEEK(IDUMMY)
+
+      INTEGER*4     SYS$BINTIM,STATUS,LIB$DATE_TIME,LIB$DAY_OF_WEEK
+      INTEGER*4     CURRENT_TIME(2)
+      CHARACTER*23  DATE_TIME
+
+      STATUS =      LIB$DATE_TIME(DATE_TIME)
+      IF (.NOT. STATUS) CALL LIB$SIGNAL(%VAL(STATUS))
+
+      STATUS =      SYS$BINTIM(DATE_TIME,CURRENT_TIME)
+      IF (.NOT. STATUS) CALL LIB$SIGNAL(%VAL(STATUS))
+
+      STATUS =      LIB$DAY_OF_WEEK(CURRENT_TIME,IDAY)
+      IF (.NOT. STATUS) CALL LIB$SIGNAL(%VAL(STATUS))
+
+      DAY_OF_WEEK = IDAY
+      END
+
+
+      SUBROUTINE CCTI(STRING,INTEGER)
+C
+C     WRITTEN BY RAY RENTERIA of IRONLOGIC
+C     Copyright (C) to IRONLOGIC 1989
+C     Date: JAN-16-89
+C
+      CHARACTER*(*) STRING
+      STATUS = OTS$CVT_TI_L(STRING,INTEGER)
+      RETURN
+      END

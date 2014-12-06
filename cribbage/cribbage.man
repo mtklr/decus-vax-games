@@ -1,0 +1,66 @@
+
+
+
+CRIBBAGE(6)         UNIX Programmer's Manual          CRIBBAGE(6)
+
+
+
+NAME
+     cribbage - play the computer in cribbage
+
+SYNOPSIS
+     cribbage [-v] [-l limit]
+
+HP-UX COMPATIBILITY
+     Level:    HP-UX/STANDARD
+
+     Origin:   Hewlett Packard
+
+DESCRIPTION
+     _C_r_i_b_b_a_g_e allows the user to play a game of cribbage  against
+     the computer.
+
+     All the rules of cribbage are implemented.
+
+     The -_v option sets verbose mode, which allows the player  to
+     see how the computer is counting hand points.
+
+     The -_l option allows you to specify the number of points  to
+     play up to - the default is 150 points...
+
+AUTHOR
+     Dave Taylor, Hewlett Packard Colorado Network Operation
+
+SEE ALSO
+     _H_o_y_l_e'_s _R_u_l_e_s _o_f _t_h_e _G_a_m_e_s _f_o_r _i_n_s_t_r_u_c_t_i_o_n_s
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Printed 2/18/86                                                 1
+
+
+

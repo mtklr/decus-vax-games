@@ -1,0 +1,15 @@
+I have had quite a few requests for a compiled version of the three files
+in this directory.  Since all waikato.ac.nz games use the compiled versions,
+it made sense to offer these, since the source is available anyway.  Don't
+forget to transfer them in binary mode.
+
+This directory contains:
+
+INTERACT.OLB
+INTERACT.PEN
+UTIL.OLB
+
+If you encounter any problems, e-mail me (masmummy@ubvms.cc.buffalo.edu).
+
+Thanks,
+Bill

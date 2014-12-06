@@ -1,0 +1,103 @@
+I received a translated version of this file after asking a friend of mine at
+the Oldenburg University of Germany to help me out with the words.  Most of it
+makes sense but still some is hard to understand.  Hopefully, though, this will
+give you an idea of what is said in the help file.
+ 
+Good luck and auf wiedersehn....Jeff Imes 
+                                V222LRTV
+================================================================================
+================================================================================
+ 
+BOULDERDASH                                                                     
+                                                                                
+  A well written version of the popular game "Boulderdash".  Not sure what      
+  the goal is so there is no external help :-).  If you can translate the       
+  German text, please send e-mail to user MASTER@UBVMS                          
+                                                                                
+  Read "Hardware Requirements"!!!                                               
+                                                                                
+                                                                                
+                                                                                
+  Additional information available:                                             
+                                                                                
+  PossibleHelp          HardwareRequirements                                    
+                                                                                
+                                                                                
+BOULDERDASH                                                                     
+                                                                                
+  HardwareRequirements                                                          
+                                                                                
+    an hardware wird benoetigt:                                                 
+    needed hardware                                                             
+                                                                                
+    eine hinreichend eilige vax mit allem drum&dran (was das genau ist,         
+                                                                                
+    sagt ihnen bestimmt gerne die auskunft).                                    
+    a decent-fast vax with alot of nifty gadgets.Ask the informations ,         
+    they'll be happy to tell you.                                               
+                                                                                
+                                                                                
+    zum beispiel ein vt220-terminal, das in der lage ist, sixel-grafic          
+    a vt220-terminal, for example, which is able to show sixel-graphic          
+                                                                                
+    anzuzeigen und zwar sollte das die daten mit einer rate von einigen         
+   with a rate of circa 9600 or 19200 baud.                                     
+    everthing else isn't realtime anymore.                                      
+    kbaud, will heissen etwa 9600 oder 19200 baud. alles andere hat mit         
+    echtzeit nix mehr zu tun.                                                   
+                                                                                
+    You *MUST* be on a VT200 or greater series terminal to play this.           
+                                                                                
+                                                                                
+BOULDERDASH                                                                     
+                                                                                
+  PossibleHelp                                                                  
+                                                                                
+    +-------------------------------------------------------+                   
+    |                                                   |                       
+    |                 BOULDER DASH                      |                       
+    |                                                   |                       
+    +-------------------------------------------------------+                   
+                                                                                
+    (w) 1988 Oskar Schirmer                                                     
+                                                                                
+    Es handelt sich hierbei um den versuch, ein echtzeitspiel                   
+    auf einem grossrechner unterzubringen (...).                                
+  This is a try to install a real-time game on a mainframe.                     
+                                                                                
+                                                                                
+    0. wichtig: nach dem starten titelseite lesen !                             
+       important: read title-page after you started !                          
+                                                                                
+    1. boulder dash (als spiel):                                                
+                    (as a game)                                                 
+    es geht darum, ein maenneken durch eine hoehle zu steuern,                  
+                                                                                
+the goal is to move a 'man' thru a cave, find and collect diamonds              
+and use the exit at the end.                                                
+youll get points for collected diamonds.                                   
+the number of needed diamonds is (written7given) under DIAM.                   
+:    diamanten zu finden, zu sammeln und schliesslich den ausgang               
+                                                                                
+    zu benutzen. fuer gesammelte diamanten gibz punkte (DIAM:),                 
+    die zahl der benoetigten diamanten steht unter NEED:.                       
+                                                                                
+Behind LEFT: is the time you're given to complete this level.                   
+                                                                                
+    fuer die ganze aktion steht die unter LEFT: gezaehlte zeit                  
+                                                                                
+                                                                                
+    zur verfuegung. im uebrigen sind die level mehr oder weniger                
+    vom original auf dem apple uebernommen und sie sind alle                    
+    machbar !!! viel spass.                                                     
+the levels are more or less the same as on the Apple and they are all (....)    
+                                                                                
+(..) Don't know the word: it mean, that you can do any levels, none of them     
+are impossible.                                                                 
+                                                                                
+                                                                                
+                                                                                
+That's it. Hope the game runs and I could help you. Have fun. Peter             
+================================================================================
+Well, that's all I can help you with.  Thanks to Peter (don't remember his last 
+name) at Oldenburg.  --Jeff

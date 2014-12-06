@@ -1,0 +1,49 @@
+        .title        DEBUGFLAG - returns a boolean true if debug is on
+
+        $clidef       ; want prog arg list definitions
+        $sfdef        ; stack frame definitions
+
+        .psect        $code        exe, rd, nowrt, pic, shr
+
+;        .align        word
+        .entry        -
+Debug_Flag, ^m<r2, r3, r4>
+
+;
+; FUNCTION  Debug_Flag
+;
+; this procedure can be called at any depth of nesting  it traces back through 
+; the call frames to the mainline frame to access the mainline arg list. 
+; mainline call frame is recognized by being the second-outermost frame.
+;
+
+        movl    fp, r1                   ; start tracing back through saved fp's
+        movl    sf$l_save_fp(r1), r2     ; back another frame
+        movl    sf$l_save_fp(r2), r3     ; and another
+2000$:
+        movl    sf$l_save_fp(r3), r4
+        beqlu   8000$                    ; no more => end
+        movl    r2, r1
+        movl    r3, r2
+        movl    r4, r3
+        brb     2000$
+8000$:
+        movl    sf$l_save_ap(r1), r1     ; get mainline ap
+        movl    cli$l_linkflag(r1), r2   ; and return link flags
+        movl    cli$l_cliflag(r1), r3    ; and return link flags
+
+;   r2[0] = link/deb 
+;   r3[0] = run/[no]deb
+;   r3[1] = /nodeb or /deb
+
+        bbss    #1, r3, 9000$            ; run/deb
+        bbss    #0, r3, 8500$            ; run/nodeb
+        bbss    #0, r2, 9000$            ; run     link/deb
+
+8500$:
+        clrl        r0
+        ret
+9000$:
+        movl    #1, r0
+        ret
+        .end

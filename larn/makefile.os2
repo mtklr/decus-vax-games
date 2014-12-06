@@ -1,0 +1,132 @@
+#
+# This is a makefile for OS/2 LARN V12.3
+#
+# This is written for MSC V6.00; it assumes NMAKE.
+#
+# This could probably build a DOS larn also, if the definition
+# of OS2LARN was removed from the cc command.
+#
+#
+OBJ = obj\ 
+CDEFS = -DOS2LARN -DDGK -DMSDOS -DSYSV -DDGK_MSDOS -DNOVARARGS
+cc    = cl $(CDEFS) -nologo -Zi -c -AL -Fo$(OBJ)
+
+OBJS =    $(OBJ)action.obj    $(OBJ)bill.obj      \
+  $(OBJ)config.obj    $(OBJ)create.obj    \
+  $(OBJ)data.obj      $(OBJ)diag.obj      \
+  $(OBJ)display.obj   $(OBJ)fgetlr.obj    \
+  $(OBJ)fortune.obj   $(OBJ)global.obj    \
+  $(OBJ)help.obj      $(OBJ)io.obj        \
+  $(OBJ)main.obj      $(OBJ)monster.obj   \
+  $(OBJ)moreobj.obj   $(OBJ)movem.obj     \
+  $(OBJ)msdos.obj     $(OBJ)nap.obj       \
+  $(OBJ)object.obj    $(OBJ)regen.obj     \
+  $(OBJ)savelev.obj   $(OBJ)scores.obj    \
+  $(OBJ)signal.obj    $(OBJ)spells.obj    \
+  $(OBJ)spheres.obj   $(OBJ)store.obj     \
+  $(OBJ)tgetent.obj   $(OBJ)tgetstr.obj   \
+  $(OBJ)tgoto.obj     $(OBJ)tputs.obj     \
+  $(OBJ)tok.obj       $(OBJ)vms.obj	  \
+  $(OBJ)iventory.obj
+
+larn.exe : $(OBJS)
+  link /CODEVIEW @os2larn.lnk
+
+$(OBJ)action.obj : action.c
+  $(cc) action.c
+
+$(OBJ)bill.obj : bill.c
+  $(cc) bill.c
+
+$(OBJ)config.obj : config.c
+  $(cc) config.c
+
+$(OBJ)create.obj : create.c
+  $(cc) create.c
+
+$(OBJ)data.obj : data.c
+  $(cc) data.c
+
+$(OBJ)diag.obj : diag.c
+  $(cc) diag.c
+
+$(OBJ)display.obj : display.c
+  $(cc) display.c
+
+$(OBJ)fgetlr.obj : fgetlr.c
+  $(cc) fgetlr.c
+
+$(OBJ)fortune.obj : fortune.c
+  $(cc) fortune.c
+
+$(OBJ)global.obj : global.c
+  $(cc) global.c
+
+$(OBJ)help.obj : help.c
+  $(cc) help.c
+
+$(OBJ)io.obj : io.c
+  $(cc) io.c
+
+$(OBJ)iventory.obj : iventory.c
+  $(cc) iventory.c
+
+$(OBJ)main.obj : main.c
+  $(cc) main.c
+
+$(OBJ)monster.obj : monster.c
+  $(cc) monster.c
+
+$(OBJ)moreobj.obj : moreobj.c
+  $(cc) moreobj.c
+
+$(OBJ)movem.obj : movem.c
+  $(cc) movem.c
+
+$(OBJ)msdos.obj : msdos.c
+  $(cc) msdos.c
+
+$(OBJ)nap.obj : nap.c
+  $(cc) nap.c
+
+$(OBJ)object.obj : object.c
+  $(cc) object.c
+
+$(OBJ)regen.obj : regen.c
+  $(cc) regen.c
+
+$(OBJ)savelev.obj : savelev.c
+  $(cc) savelev.c
+
+$(OBJ)scores.obj : scores.c
+  $(cc) scores.c
+
+$(OBJ)signal.obj : signal.c
+  $(cc) signal.c
+
+$(OBJ)spells.obj : spells.c
+  $(cc) spells.c
+
+$(OBJ)spheres.obj : spheres.c
+  $(cc) spheres.c
+
+$(OBJ)store.obj : store.c
+  $(cc) store.c
+
+$(OBJ)tgetent.obj : tgetent.c
+  $(cc) tgetent.c
+
+$(OBJ)tgetstr.obj : tgetstr.c
+  $(cc) tgetstr.c
+
+$(OBJ)tgoto.obj : tgoto.c
+  $(cc) tgoto.c
+
+$(OBJ)tputs.obj : tputs.c
+  $(cc) tputs.c
+
+$(OBJ)tok.obj : tok.c
+  $(cc) tok.c
+
+$(OBJ)vms.obj : vms.c
+  $(cc) vms.c

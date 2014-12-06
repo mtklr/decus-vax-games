@@ -1,0 +1,41 @@
+
+Here is the source to Larn V12.3.  I had made a number of changes without
+changing the save file format, so I decided to make another distribution
+before making the big leap to V14.0.
+
+This distribution incorporates all the changes distributed as Patches to V12.2,
+a few others that were suggested but not sent out as patches, plus my own
+development.  See LARN123.FIX for a partial list.
+
+The source correctly compiles and executes under DEC Ultrix (BSD), using the cc
+compiler.  The enclosed makefile.unix is for U*ix systems (rename to Makefile).
+I've endevoured to make Larn buildable under SYSV, and it builds/runs correctly
+with Ultrix V3.1's SYSTEM_FIVE environment, so I expect its fairly close to
+being usable under SYSV as well.
+
+The source correctly compiles and executes under VAX/VMS, using the VAX C V3.x
+compiler.  The enclosed descrip.mms is a MMS file for building under VAX/VMS.
+See the VMSREADME.TXT for some more VMS-related information.
+
+The source correctly compiles and executes under MS-DOS, using Turbo C++ V1.0.
+I am no longer able to verify that it compiles using Turbo C V2.0.  The
+makefile.pc and tlink.rsp are for building the MS-DOS Larn.  
+
+The source correctly compiles and executes under OS/2, using Microsoft C.
+The makefile.os2, os2larn.def and os2larn.lnk are for building the OS/2 Larn.  
+
+I am interested in receiving source changes that allow Larn to be ported or
+built correctly on other architectures or operating systems.  I am also 
+interested in constructive changes or additions to improve the game.  
+
+Bug fixes, bug reports, and requests welcome.
+
+I am reachable at tle.enet.dec.com!routley or routley@tle.enet.dec.com.
+Because I cannot provide a stable mail address, all USmail should be sent to:
+
+Kevin Routley
+Digital Equipment Corporation
+ZKO2-3/N30
+110 Spitbrook Road
+Nashua, NH  03060
+

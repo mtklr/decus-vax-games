@@ -1,0 +1,8 @@
+* Program PACMAN by Martin Reid (1982).
+* For compilation you will need files INTERACT.PEN and INTERACT.OLB
+* which can be found in the LIBRARY directory.
+*
+PACMAN.$PACKAGE
+PACMAN.1
+PACMAN.2
+PACMAN.3

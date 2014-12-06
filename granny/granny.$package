@@ -1,0 +1,7 @@
+* Program GRANNY by Paul Denize.
+* For compilation you will need files INTERACT.PEN and INTERACT.OLB
+* which can be found in the LIBRARY directory.
+*
+GRANNY.$PACKAGE
+GRANNY.1
+GRANNY.2

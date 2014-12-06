@@ -1,0 +1,31 @@
+	.title	SLEEP - delay for specified interval
+	$ssdef			; want ss$_insfarg
+	.psect	$code	pic, shr, rd, nowrt, exe
+	.entry	-
+sleep, ^m<r2, r3>
+; Subroutine Sleep(Seconds, Fraction)
+; Integer*4 Seconds, Fraction
+	seconds = 4		; param offset
+	fraction = 8		; optional fraction, in 100 ns units
+	sleep_efn = 0		; which event flag to use
+	cmpb	(ap), #1	; how many args?
+	beqlu	2100$
+	bgtru	2200$
+	movl	#ss$_insfarg, r0 ; none - error
+	brb	9000$
+2100$:	clrl	r1		; one arg, so fraction part is zero
+	brb	2900$
+2200$:	mnegl	@fraction(ap), r1 ; else get fraction part
+2900$:	mnegl	@seconds(ap), r0 ; make negative
+	emul	#10000000, r0, r1, r2	; convert to proper units in r2, r3
+	movq	r2, -(sp)	; push time onto stack
+	movaq	(sp), r2	; remember address
+	$setimr_s-		; set timer
+		efn=#sleep_efn,-
+		daytim=(r2)	; address of time value
+	blbc	r0, 9000$
+	$waitfr_s-		; wait for timer
+		efn=#sleep_efn
+9000$:	ret			; done
+
+	.end

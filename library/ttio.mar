@@ -1,0 +1,896 @@
+	.title	TTIO	Terminal IO routines ($QIO's)
+;+
+;	Routines to do IO via $QIO's to get special features.
+;-
+.if ne 0
+1 TTIO
+This is a group of routines to enable you to perform efficient/special
+input and/or output to a terminal.
+2 TT_INIT
+CALL TT_INIT( type )
+
+"type" is an integer variable which indicates the input you wish.
+
+"type" = 0  ordinary line input
+         1  efficient single character input if available
+         2  line input with escape sequences
+2 TT_SET_FUNC
+Sets the read function modifiers and the wait time.  Once set, the options
+will stay in effect until changed.
+
+INTEGER TT_SET_FUNC
+
+I = TT_SET_FUNC( value [, seconds ] )
+
+"value" is a bit encoded integer specifying options required
+  Symbol      Hex value         Description
+IO$M_NOFILTR   '0200'X  Ctrl/U, Ctrl/R or Delete are passed to the user
+IO$M_PURGE     '0800'X  Type-ahead buffer is purged before the read
+IO$M_TIMED     '0080'X  Read must complete within specified time
+IO$M_TRMNOECHO '1000'X  The terminator character (if any) is not echoed
+
+"seconds"  maximum time a read may take in seconds
+"I" is the IO completion status code
+2 TT_SET_READF
+Sets the buffer address and length before calling TT_SET_READF.
+
+INTEGER FUNCTION TT_SET_READF( buffer, buf_len )
+
+buffer	address of buffer or address of descriptor of buffer
+buf_len length of buffer.  If omitted then "buffer" is a descriptor
+
+Value of function is the I/O status completion code
+2 TT_SET_TERM
+Set terminator character mask
+
+CALL TT_SET_TERM( option, parameters... )
+
+option
+  0	normal terminators (any control char except LF VT FF TAB BS
+  1	parameter 1 is the address of a longword containing the
+   	terminator bit mask (first 32 characters only)
+   	eg. CALL TT_SET_TERM( 1, '00000001'X )
+   	    enable Control A as terminator
+  2	parameter 1 is address of # of bytes in terminator mask
+   	parameter 2 is address of array containing terminator bit mask
+  3	the following parameters are addresses of a byte containing
+   	the acsii code of the character to be a terminator.
+   	eg. CALL TT_SET_TERM( 3, 10, 13 )
+   	    enable LF and CR to be terminators
+2 TT_CTRLCAST
+
+CALL TT_CTRLCAST( subroutine )
+
+This causes the next control C to call the named routine.
+2 TT_1_CHAR
+INTEGER TT_1_CHAR
+
+I = TT_1_CHAR()
+
+"I" contains the ascii value of the character typed.
+This routine waits for the character and then returns it.
+Whatever options that are set (see TT_SET_OPTION) are applied. (not true)
+2 TT_1_CHAR_T
+INTEGER TT_1_CHAR_T
+
+I = TT_1_CHAR_T( seconds )
+
+This routine reads 1 character if typed within "seconds" time.
+"I" contains the ascii value of the character typed,
+ it is 0 if the read timed out.
+2 TT_1_CHAR_NOW
+INTEGER TT_1_CHAR_NOW
+
+I = TT_1_CHAR_NOW()
+
+"I" contains the ascii value of the character typed, or -1 if no
+character is available.  The character is not echoed.
+This routine returns immediately.
+2 TT_READ
+This routine reads a line from the terminal.
+
+INTEGER TT_READ
+I = TT_READ( buffer, buf_len, data_len [, term_len ] )
+  or
+I = TT_READ( buf_desc, , data_len [, term_len ] )
+
+"buffer" is the address of the input buffer
+"buf_len" is the length of the input buffer in bytes
+"data_len" will contain the number of characters read
+"term_len" (if specified) will contain the length of the terminator
+"I" will contain the IO completion status code
+
+"buf_desc" is the address of a descriptor of the input buffer
+
+2 TT_READF
+
+INTEGER FUNCTION TT_READF( data_len )
+data_len length of data read (# of characters) (not including term)
+
+This routine is used for reading a lot of data (presumably with
+echo reset). READF stands for READ FAST.
+TT_READF_SET must be called first.
+
+Value of function is the I/O status completion code
+2 TT_PROMPT
+This routine reads a line from the terminal.
+
+INTEGER TT_PROMPT
+I = TT_PROMPT( prompt, prompt_len, buffer, buf_len, data_len
+						[, term_len ] )
+  or
+I = TT_PROMPT( prompt_desc, , buf_desc, , data_len [, term_len ] )
+
+"prompt" is the address of a character string
+"prompt_len" is the length of the prompt character string
+"buffer" is the address of the input buffer
+"buf_len" is the length of the input buffer in bytes
+"data_len" will contain the number of characters read
+"term_len" (if specified) will contain the length of the terminator
+"I" will contain the IO completion status code
+
+"prompt_desc" is the address of a descriptor of the prompt string
+"buf_desc" is the address of a descriptor of the input buffer
+
+2 TT_WRITE
+CALL TT_WRITE( array, length )
+INTEGER length
+BYTE array( length )
+
+"array" is the address of the characters
+"length" is the number of characters to write
+
+The write is done in "noformat" (binary) mode.  This completely bypasses
+any checking done by the terminal driver eg. for tabs, escape sequences,
+or end of line wrapping.  
+2 TT_WRITE_S
+CALL TT_WRITE( array, length, efn )
+INTEGER length, efn
+BYTE array( length )
+
+"array" is the address of the characters
+"length" is the number of characters to write
+"efn" is the efn which will be set upon the writes completion
+	This routine does not wait for it to be set.
+
+Can be called synchronously with TT_WRITE.
+This is so that you can do 2 writes at the same time.
+It is designed for use within an AST procedure.
+2 TT_CANCEL
+CALL TT_CANCEL
+
+Cancels type-ahead.
+2 TT_CANCEL_IO
+CALL TT_CANCEL_IO
+
+Cancels all pending I/O requests that were issued via the TTIO routines.
+This will normally be called from within an AST procedure.
+2 Examples
+C	TEST TTIO ROUTINES
+C
+	INTEGER TT_PROMPT
+	CHARACTER PROMPT*16, BUF_IN*80
+	DATA PROMPT / 'ABCDEFGHIJKLMNO>' /
+C
+	CALL TT_INIT( 2 )
+C
+	DO J=1,10
+	  I = TT_PROMPT( PROMPT, , BUF_IN, , LEN_IN , LEN_TERM )
+	  TYPE *,I,LEN_IN, LEN_TERM
+	  TYPE *,BUF_IN(:LEN_IN)	! THE TERMINATOR IS AFTER THIS
+	END DO
+	END
+1 SLEEP_SET
+This routine, along with SLEEP_START and SLEEP_WAIT, allows your program
+to execute an asynchronous sleep.  You call SLEEP_SET to specify the length
+of time.  Then you call SLEEP_START to begin the timed period.  Control
+returns immediately to your image; you can then execute whatever code is
+required.  Then you call SLEEP_WAIT to wait for the timed period to expire.
+The timed period may have already finished, in which case control will
+return immediately.
+2 Parameters
+CALL SLEEP_SET( time , efn )
+
+"time" is the address of an integer specifying the timed period in
+       hundredths of a second.
+"efn"  is the address of an integer indicating which event flag to use.
+       Use 21 if you have no preference.  Must be less than 24.
+1 SLEEP_START
+This starts a timed period, as specified by the previous call to SLEEP_SET.
+
+CALL SLEEP_START
+
+Control returns immediately.
+1 SLEEP_WAIT
+This waits for the completion of a timed period, as started by the previous
+call to SLEEP_START
+
+CALL SLEEP_WAIT
+.endc
+	$dvidef
+	$iodef		; qio io$_...
+	$ttdef		; terminal characteristics
+
+
+	.psect	$rw_TT_channel$ wrt, rd, noexe, noshr, pic, long
+ttchan:
+	.long	; channel on which terminal is open (if non zero)
+
+	.psect	tt$rodata	nowrt, noexe, shr, pic, long
+
+ttname_descr:
+	.ascid	/TT/
+
+mbxcnv:
+	.ascid	/_MBA!UW:/	; convert mbx unit number to physical name
+
+mbxbuf_descr:
+	.word	mbxbuf_siz, 0
+	.address mbxbuf
+
+mbxitmlst:
+	.word	mbxname_len, dvi$_devnam
+	.address mbxname
+	.address mbxiosb		; return length, don't want
+	.long	0			; end of list
+
+	.align long
+
+	.psect	tt$rwbuf	wrt, noexe, noshr, pic, long
+
+mbxname_len = 64
+mbxname:			; room to hold the physical mbx name
+	.blkb	mbxname_len
+mbxname_descr:
+	.word	mbxname_len, 0
+	.address mbxname
+mbxiosb:
+	.long	0,0
+mbxbuf_siz = 32
+mbxbuf:
+	.blkb	mbxbuf_siz
+
+	.align	long
+ttbuf_siz = 128
+ttbuf:
+	.blkb	ttbuf_siz
+;outbuf_siz = 128
+;outbuf::
+;	.blkb	outbuf_siz
+
+ttiosb:
+	.long	0,0
+tt_func:
+	.long	io$_readvblk
+tt_p_func:
+	.long	io$_readprompt
+tt_timed:
+	.long			; wait time if specified
+tt_term_addr:
+	.long			; p4 parameter of read
+tt_term_quad:
+	.quad			; quad word pointed to be tt_term_addr
+tt_term_mask:
+	.blkb	16		; bit set if that char is a terminator (0-127)
+
+
+	.psect	tt$rwdata	wrt, noexe, noshr, pic, long
+
+mbxchan:
+	.word
+data_ready:
+	.word
+
+chars_left:
+	.long
+char_pointer:
+	.long
+
+sleep_time:
+	.long -100000*30, -1		; time to sleep (30/100ths default)
+
+ttmode:					; terminal chars changed
+	.quad
+ttsavemode:				; original terminal characteristics
+	.quad
+
+sleep_args:
+	.long	4
+sleep_efn:
+	.long	21	; event flag to use for sleeps
+	.address sleep_time
+	.long	0	; astadr
+	.long	0	; reqidt
+
+;outbuf_qio:
+;	$qio	func=io$_writevblk!io$m_noformat,-
+;		p1=outbuf
+output_qio:
+	$qio	func=io$_writevblk!io$m_noformat
+
+read_now_qio:
+	$qio	func=io$_readvblk!io$m_timed!io$m_noecho!io$m_nofiltr,-
+		iosb=ttiosb,-
+		p1=ttbuf, p2=ttbuf_siz, p3=0	; wait time = 0
+
+read_fast_qio:	; inittialized by TT_SET_READF
+	$qio	func=io$_ttyreadall!io$m_noecho, iosb=ttiosb
+
+tt_exit_blk:			; exit handler block
+	.long
+	.address tt_exit_handler
+	.long	1		; 1 argument
+	.address 10$
+10$:	.long	0		; exit reason
+
+
+	.psect	tt$code  nowrt, exe, shr, pic, long
+
+	.entry	-
+TT_INIT, ^m<r2>
+;+
+; CALL TT_INIT( type )
+; type	= 0, ordinary line input
+;	  1, single character input
+;	  2, line input with escape sequences
+;
+;	patch 16-Sep-1982
+;		Only allow 1 call to TT_INIT
+;-
+	tstw	ttchan		; if channel already allocated, return
+	beql	50$		; patch 16-Sep-1982
+	ret
+50$:
+	movl	@4(ap), r2	; get type code
+
+	caseb	r2, #0, #2
+20$:	.word	100$-20$
+	.word	200$-20$
+	.word	300$-20$
+100$:	; type 0 (line input)
+	$assign_s	devnam=ttname_descr, chan=ttchan
+	bsbw	error			; check for error
+	brw	1000$
+
+200$:	; type 1 (single character input)
+; Create a mailbox.  Assign a channel to terminal with an associated mailbox.
+	$crembx_s	chan=mbxchan, promsk=#^xFF00
+	bsbw		error
+
+;	$getchn_s	chan=mbxchan, pribuf=dibbuf_descr
+;	bsbw		error
+;	$fao_s		ctrstr=mbxcnv, outbuf=mbxname_descr,-
+;			outlen=mbxname_descr, p1=dibbuf+dib$w_unit
+
+	$getdvi_s	chan=mbxchan, itmlst=mbxitmlst
+	bsbw		error
+	locc		#0, #mbxname_len, mbxname  ; find trailing nulls
+	subl3		r0, #mbxname_len, r0
+	movw		r0, mbxname_descr	; store length of name
+
+	$assign_s	devnam=ttname_descr, chan=ttchan, - ; acmode=#^xFF00
+			mbxnam=mbxname_descr	; acmode fails in VMS 5.5
+	bsbw	error
+	bsbw	queue_mbxread		; start mail box read
+	brw	1000$
+
+300$:	; type 2 (line input with escape sequences)
+	$assign_s	devnam=ttname_descr, chan=ttchan
+	bsbw	error			; check for error
+	$qiow_s func=#io$_sensemode, chan=ttchan, -
+		iosb=ttiosb, p1=ttmode	; get terminal characteristics
+	bsbw	error
+	movzwl	ttiosb, r0
+	bsbw	error
+	movq	ttmode, ttsavemode	; save current terminal chars
+	$dclexh_s desblk=tt_exit_blk	; declare exit handler to restore
+					; terminal chars on exit.
+	bsbw	error
+	bbss	#tt$v_escape, ttmode+4, 310$	; want escape sequences
+310$:	$qiow_s func=#io$_setmode, chan=ttchan, -
+		iosb=ttiosb, p1=ttmode
+	bsbw	error
+	movzwl	ttiosb, r0
+	bsbw	error
+;	brbw	1000$
+
+1000$:
+;	movw	ttchan, outbuf_qio+qio$_chan		;store channel #
+	movw	ttchan, output_qio+qio$_chan		;store channel #
+	movw	ttchan, read_now_qio+qio$_chan		;store channel #
+;	$qiow_s	func=#io$_setmode!io$m_ctrlcast, chan=ttchan,-
+;		p1=control_c			; set control C trap
+	ret
+
+
+	.entry	-
+TT_SET_FUNC, ^m<>
+;+
+;	I = TT_SET_FUNC( value [, seconds ] )
+;	set read modifiers
+;-
+	movl	@4(ap), r0			; get modifiers
+	movl	#io$m_nofiltr!io$m_purge!io$m_timed!io$m_trmnoecho, r1
+					; get bits allowed to set
+	bicl2	r1, tt_func		; clear previous options
+	bicl2	r1, tt_p_func
+	mcoml	r1, r1			; get bits cannot change
+	bicl2	r1, r0			; make sure only change correct bits
+	bisl2	r0, tt_func		; and set new options
+	bisl2	r0, tt_p_func
+
+	cmpb	#1, (ap)		; check if "seconds" parameter here
+	bgtr	100$
+	ret
+100$:	movl	@8(ap), tt_timed	; store time
+	ret
+
+
+	.entry	-
+TT_SET_TERM, ^m<r2,r3>
+;+
+;	CALL TT_SET_TERM( option, parameters... )
+;	set terminator character mask
+;
+;	option
+;	0	normal terminators (any control char except LF VT FF TAB BS
+;	1	parameter 1 is the address of a longword containing the
+;		terminator bit mask (first 32 characters only)
+;		( 1, '00000001'X )	! enable Control A as terminator
+;	2	parameter 1 is address of # of bytes in terminator mask
+;		parameter 2 is address of array containing terminator bit mask
+;	3	the following parameters are addresses of a byte containing
+;		the acsii code of the character to be a terminator.
+;		( 3, 10, 13 )		! enable LF and CR to be terminators
+;-
+	subl3	#1, (ap)+, r0		; get number of parameters - 1
+	movl	@(ap)+, r1		; get option
+
+	caseb	r1, #0, #3
+10$:	.word	100$-10$
+	.word	200$-10$
+	.word	300$-10$
+	.word	400$-10$
+; fall thru to option 0
+100$:
+	clrl	tt_term_addr		; 0 means the default term mask
+	ret
+200$:	; option 1
+	sobgeq	r0, 210$		; see if another parameter
+	ret
+210$:	movl	@(ap)+, r3		; get longword terminator mask
+240$:	; r3 contains low 32 bits of terminator mask
+	clrl	r2			; first longword must be zero
+	movq	r2, tt_term_quad	; store it
+250$:	movaq	tt_term_quad, tt_term_addr ; set up pointer to quadword
+	ret
+
+300$:	; option 2	; param1 is # of bytes	; param2 if address of bytes
+	sobgeq	r0, 310$		; see if another parameter
+	ret
+310$:	movzbl	@(ap)+, tt_term_quad	; store # of bytes in term mask
+	sobgeq	r0, 320$		; see if another parameter
+	ret
+320$:	movl	@(ap)+, tt_term_quad+4	; store address of term bit mask
+	brb	250$			; go set up pointer and exit
+
+400$:	; option 3	; a list of ascii codes follow
+	movab	tt_term_mask, r3	; base of terminator bit mask
+	movl	r3, r1
+	clrq	(r1)+			; zero terminator bit mask
+	clrq	(r1)+			; 16 bytes (0-127)
+	clrq	(r1)+
+	clrq	(r1)+
+	clrl	r1			; maximum ascii code
+	clrl	r2			; we put ascii code in low byte
+	tstl	r0			; see if at least 1 parameter
+	bgtr	410$
+	ret
+410$:
+	bicb3	#^X80, @(ap)+, r2	; get ascii code (0-127)
+	cmpl	r2, r1			; bigger than previous maximum ?
+	bleq	420$
+	movl	r2, r1
+420$:	bbss	r2, (r3), 440$		; set bit
+440$:	sobgtr	r0, 410$		; do all parameters
+
+	addl2	#7, r1			; round up to nearest byte
+	divl2	#8, r1			; get # of bytes in term mask
+	cmpl	r1, #4			; if <= 4 bytes, use short format
+	bgtr	450$
+	movl	(r3), r3		; get first 4 bytes of mask in r3
+	brw	240$			; go store it and pointer and exit
+450$:
+	movl	r1, tt_term_quad	; store # of bytes for long format
+	movl	r3, tt_term_quad+4	; store address of term bit mask
+	brb	250$			; store pointer and exit
+
+
+
+	.entry	-
+TT_CTRLCAST,	^m<>
+;+
+;	CALL TT_CTRLCAST( routine address )
+;	enable a control C ast
+;-
+	$qiow_s func=#io$_setmode!io$m_ctrlcast, chan=ttchan, iosb=ttiosb, -
+		p1=@4(ap)
+	ret				; ignore all erros
+
+
+	.entry	-
+TT_1_CHAR,	^m<>
+;+
+;	I = TT_1_CHAR
+;	read 1 character.  Waits for it.
+;-
+	clrb	ttbuf
+	$qiow_s	func=#io$_readvblk!io$m_noecho!io$m_nofiltr,-
+		chan=ttchan, iosb=ttiosb,-
+		p1=ttbuf, p2=#1
+	cvtbl	ttbuf, r0
+	ret
+
+	.entry	-
+TT_1_CHAR_T,	^m<>
+;+
+;	I = TT_1_CHAR_T( seconds )
+;	read 1 character.  Waits "seconds" for it.
+;	returns 0 if times out
+;-
+	clrb	ttbuf
+	$qiow_s	func=#io$_readvblk!io$m_noecho!io$m_nofiltr!io$m_timed,-
+		chan=ttchan, iosb=ttiosb,-
+		p1=ttbuf, p2=#1, p3=@4(ap)
+	cvtbl	ttbuf, r0
+	ret
+
+	.entry	-
+TT_1_CHAR_NOW, ^m<>
+;+
+;	I = TT_1_CHAR_NOW()
+;	get next character if typed.  Returns immediately.
+;	I = -1 if no character available
+;-
+	tstl	chars_left		; have we used all characters ?
+	bgtr	50$			; no --> 50$
+	bbsc	#0, data_ready, 20$	; check if input ready
+5$:	mnegl	#1, r0			; no characters read
+	ret				; no
+20$:
+	$qiow_g read_now_qio
+	blbc	r0, 5$			; error
+;
+;	$qiow_s	func=#io$_writevblk,chan=ttchan,-	; debug write
+;		p1=ttbuf, p2=ttiosb+2, p4=#^x1000
+
+	movzwl	ttiosb+2, chars_left		; # chars read
+	movab	ttbuf, char_pointer		; store address of character
+50$:
+	decl	chars_left
+	movzbl	@char_pointer, r0		; get next char
+	incl	char_pointer			; point to next
+	ret
+
+
+	.entry	-
+TT_READ, ^m<r2,r3>
+;+
+;	INTEGER FUNCTION TT_READ( buffer, buf_len, data_len, term_len )
+;	buffer	address of buffer or address of descriptor of buffer
+;	buf_len length of buffer.  If omitted then "buffer" is a descriptor
+;	data_len length of data read (# of characters)
+;	term_len length of terminator
+;
+;	Value of function is the I/O status completion code
+;-
+	movl	8(ap), r2		; get buf_len
+	bneq	100$			; if <> 0 then it was specified
+	movq	@4(ap), r2		; get descriptor of buffer
+					; r2 = length, r3 = address
+	bicl2	#^XFFFF0000, r2		; want length only
+	brb	200$
+100$:
+	movl	(r2), r2		; get buffer length
+	movl	4(ap), r3		; get buffer address
+200$:
+	$qiow_s func=tt_func, chan=ttchan, iosb=ttiosb, -
+		p1=(r3), p2=r2, p3=tt_timed, p4=tt_term_addr
+	blbc	r0, 600$		; did $qio get an error.  yes --> 600$
+
+	movzwl	ttiosb+2, @12(ap)	; store # characters read
+	cmpb	(ap), #3		; enough arguments supplied
+	bleq	500$			; no --> 500$
+	movl	16(ap), r2		; does user want terminator length
+	beql	500$
+	movzwl	ttiosb+6, (r2)		; store terminator length
+500$:
+	movzwl	ttiosb, r0
+600$:
+	ret
+
+	.entry	-
+TT_READ_S, ^m<>
+;+
+;	CALL TT_READ_S( array, length, efn, iast, iosb )
+;	BYTE ARRAY( LENGTH )
+;	INTEGER iosb(2)
+;
+;	reads a line asynchronously
+;	will set "iast" to one when complete
+;-
+	$qio_s	func=tt_func, -
+		chan=ttchan, -
+		efn=@12(ap), -
+		iosb=@20(ap), -
+		astadr=tt_read_s_ast, -
+		astprm=@16(ap), -
+		p1=@4(ap), p2=@8(ap)
+	blbc	r0, 100$
+	ret
+100$:
+	bsbw	error
+	ret
+
+	.align	word
+	.entry	-
+TT_READ_S_AST, ^m<>
+	movl	#1, @4(ap)
+	ret
+
+
+	.entry	-
+TT_SET_READF, ^m<r2,r3>
+;+
+;	CALL TT_SET_READF( buffer, buf_len )
+;	buffer	address of buffer or address of descriptor of buffer
+;	buf_len length of buffer.  If omitted then "buffer" is a descriptor
+;-
+	movl	8(ap), r2		; get buf_len
+	bneq	100$			; if <> 0 then it was specified
+	movq	@4(ap), r2		; get descriptor of buffer
+					; r2 = length, r3 = address
+	bicl2	#^XFFFF0000, r2		; want length only
+	brb	200$
+100$:
+	movl	(r2), r2		; get buffer length
+	movl	4(ap), r3		; get buffer address
+200$:
+	movl	r3, read_fast_qio+qio$_p1	; address of buffer
+	movl	r2, read_fast_qio+qio$_p2	; length of buffer
+;	movl	tt_timed, read_fast_qio+qio$_p3 ; time out
+	movl	tt_term_addr, read_fast_qio+qio$_p4 ; terminator pointer
+;	movl	tt_func, read_fast_qio+qio$_func
+	movzwl	ttchan, read_fast_qio+qio$_chan
+
+	ret
+
+
+	.entry	-
+TT_READF, ^m<r2,r3>
+;+
+;	INTEGER FUNCTION TT_READF( data_len )
+;	data_len length of data read (# of characters) (not including term)
+;
+;	This routine is used for reading a lot of data in binary mode
+;	with no echo.  READF stands for READ FAST.
+;	TT_READF_SET must be called first
+;
+;	Value of function is the I/O status completion code
+;-
+
+	$qiow_g read_fast_qio
+	blbc	r0, 600$		; did $qio get an error.  yes --> 600$
+
+	movzwl	ttiosb+2, @4(ap)	; store # characters read
+	movzwl	ttiosb, r0
+600$:
+	ret
+
+
+	.entry	-
+TT_PROMPT, ^m<r2,r3,r4,r5>
+;+
+;	INTEGER FUNCTION TT_PROMPT( prompt, prompt_len,
+;		buffer, buf_len, data_len, term_len )
+;	prompt  address of prompt string or address of descriptor
+;	prompt_len  length of prompt string.  If omitted then "prompt"
+;						is a descriptor
+;	buffer	address of buffer or address of descriptor of buffer
+;	buf_len length of buffer.  If omitted then "buffer" is a descriptor
+;	data_len length of data read (# of characters)
+;	term_len length of terminator
+;
+;	Value of function is the I/O status completion code
+;-
+	movl	16(ap), r2		; get buf_len
+	bneq	100$			; if <> 0 then it was specified
+	movq	@12(ap), r2		; get descriptor of buffer
+					; r2 = length, r3 = address
+	bicl2	#^XFFFF0000, r2		; want length only
+	brb	200$
+100$:
+	movl	(r2), r2		; get buffer length
+	movl	12(ap), r3		; get buffer address
+200$:
+	movl	8(ap), r4		; get prompt_len
+	bneq	300$			; if <> 0 then it was specified
+	movq	@4(ap), r4		; get descriptor of prompt string
+					; r4 = length, r5 = address
+	bicl2	#^XFFFF0000, r4		; get length only
+	brb	400$
+300$:
+	movl	(r4), r4		; get prompt length
+	movl	4(ap), r5		; get prompt address
+400$:
+
+	$qiow_s func=tt_p_func, chan=ttchan, iosb=ttiosb, -
+		p1=(r3), p2=r2, p3=tt_timed, p5=r5, p6=r4
+	blbc	r0, 600$		; did $qio get an error.  yes --> 600$
+
+	movzwl	ttiosb+2, @20(ap)	; store # characters read
+	cmpb	(ap), #5		; enough arguments supplied
+	bleq	500$			; no --> 500$
+	movl	24(ap), r2		; does user want terminator length
+	beql	500$
+	movzwl	ttiosb+6, (r2)		; store terminator length
+500$:
+	movzwl	ttiosb, r0
+600$:
+	ret
+
+
+	.entry	-
+TT_MBX_READ,	^m<>
+;+
+; This is an AST routine which executes when the mailbox record has been read.
+; The record itself is a status message which is assumed to say that
+; unsolicited data is available at the terminal
+;-
+	blbc	mbxiosb, 100$		; on error, dont re-que read
+;	we could have SS$_CANCEL or SS$_ABORT from the $CANCEL in the
+;	exit handler
+	movb	#1, data_ready		; indicate data is there
+	bsbw	queue_mbxread		; queue another read request
+100$:
+	ret
+
+QUEUE_MBXREAD:
+	$qio_s	efn=#2, func=#io$_readvblk, chan=mbxchan, iosb=mbxiosb,-
+		astadr=tt_mbx_read,-
+		p1=mbxbuf, p2=#mbxbuf_siz
+	blbc	r0, 100$
+	rsb
+100$:
+	bsbw	error
+	rsb
+
+;TT_WRITE$:
+;+
+;	bsbw	ttwrite
+;	r3 contains length of buffer to write
+;	the buffer is outbuf
+;-
+;	movl	r3, outbuf_qio+qio$_p2		; store length of buffer
+;	$qiow_g	outbuf_qio
+;	blbc	r0, 100$
+;	rsb
+;100$:
+;	bsbw	error
+;	rsb
+
+	.entry	-
+TT_WRITE, ^m<>
+;+
+;	CALL TT_WRITE( array, length )
+;	BYTE ARRAY( LENGTH )
+;	writes buffer to terminal in noformat mode
+;-
+	movl	4(ap), output_qio+qio$_p1	; store address of buffer
+	movl	@8(ap), output_qio+qio$_p2	; store length of buffer
+	$qiow_g	output_qio
+	blbc	r0, 100$
+	ret
+100$:
+	bsbw	error
+	ret
+
+	.entry	-
+TT_WRITE_S, ^m<>
+;+
+;	CALL TT_WRITE_S( array, length, efn )
+;	BYTE ARRAY( LENGTH )
+;	writes buffer to terminal in noformat mode
+;	this puts the qio on the stack so that it can be called
+;	synchronously with TT_WRITE
+;-
+	$qio_s func=#io$_writevblk!io$m_noformat, -
+		chan=ttchan, -
+		efn=@12(ap), -
+		p1=@4(ap), p2=@8(ap)
+	blbc	r0, 100$
+	ret
+100$:
+	bsbw	error
+	ret
+
+	.entry -
+TT_CANCEL, ^m<>
+	clrl	r0
+	tstw	ttchan		; check channel is open
+	beql	100$
+	$qiow_s	func=#io$_readvblk!io$m_purge!io$m_timed,-
+		chan=ttchan, p1=ttbuf, p2=#0
+;###			; do read with 0 length buffer (p2)
+	clrl	chars_left	; for TT_1_char_now
+	clrl	data_ready	; say no data ready to read
+100$:
+	ret			; return with status in r0
+
+	.entry -
+TT_CANCEL_IO, ^m<>
+;+
+;	cancels I/O on channel
+;-
+	clrl	r0
+	tstw	ttchan		; check channel is open
+	beql	100$
+	$cancel_s chan=ttchan
+	bsbb	error
+100$:	ret			; return with status in r0
+
+ERROR:
+	blbs	r0, 100$
+	pushl	r0
+	calls	#1, G^lib$signal
+100$:
+	rsb
+
+;	.entry	-
+;control_c, ^m<>
+;	movb	#1, control_c_flag
+;	ret
+
+
+	.entry	-
+SLEEP_SET, ^m<>
+;+
+;	CALL SLEEP_SET( efn , time )
+;	INTEGER efn, time
+;	use "efn" as event flag
+;	sleep for "time" 100th's of a second
+;-
+	movl	@4(ap), sleep_efn
+	emul	#-100000, @8(ap), #0, sleep_time	; get delta time format
+	$setef_s efn=sleep_efn		; set ef in case SLEEP_START not called
+	ret
+
+	.entry	-
+SLEEP_START, ^m<>
+;+
+;	CALL SLEEP_START
+;	starts a timer
+;-
+	$setimr_g sleep_args
+	blbc	r0, 100$
+	ret
+100$:	bsbw	error
+	ret
+
+	.entry	-
+SLEEP_WAIT, ^m<>
+;+
+;	CALL SLEEP_WAIT
+;	waits for sleep efn to turn on
+;-
+	$waitfr_s efn=sleep_efn
+	ret
+
+tt_exit_handler = .
+	.word	^m<>
+	$qiow_s func=#io$_setmode, chan=ttchan, iosb=ttiosb -
+		p1=ttsavemode		; reset terminal mode
+;	if we get an error, too bad.
+	ret
+
+	.end

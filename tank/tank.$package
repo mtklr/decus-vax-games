@@ -1,0 +1,10 @@
+* Program TANK by Rex Croft and Murray Speight (1982).
+* For compilation you will need file UTIL.OLB
+* which can be found in the LIBRARY directory.
+*
+TANK.$PACKAGE
+TANK.1
+TANK.2
+TANK.3
+TANK.4
+TANK.5

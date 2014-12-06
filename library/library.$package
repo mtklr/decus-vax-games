@@ -1,0 +1,12 @@
+* This package produces INTERACT.OLB, UTIL.OLB, and INTERACT.PEN
+* which are used in various games created at waikato.ac.nz.
+*
+LIBRARY.$PACKAGE
+LIBRARY.1
+LIBRARY.2
+LIBRARY.3
+LIBRARY.4
+LIBRARY.5
+LIBRARY.6
+LIBRARY.7
+LIBRARY.8

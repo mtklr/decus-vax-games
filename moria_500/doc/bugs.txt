@@ -1,0 +1,6 @@
+   (1) Caps/Helms of Intelligence/Wisdom bought from the Black Market don't
+       increase your INT/WIS.
+ 
+   (3) ALL items bought from the BM, when further enchanted/disenchanted, will
+       only affect the total AC, but not the original amount of plusses of
+       those items.

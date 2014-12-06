@@ -1,0 +1,25 @@
+Hurt:
+  1 - attack form (fire,force, etc...)
+  2 - damage
+  3 - randomness of damage
+
+Race:
+  1 - Race number to be changed to.
+
+Door:
+  1 - Foreground to be toggled to.
+      One foreground simply replaces itself with another foreground,
+      so an open door will be replaced by a closed door.
+      (If you want, a closed door may be replaced by something else...)
+
+Class:
+  1 - The number of the class to be changed to.
+
+Shop:
+  1 - For a value of 0  :The shop is an op-only drop shop.
+			 Infinite # of items available.
+      For a value of -1 :Anyone can get/drop an item.
+			 Only one may be taken for one dropped.
+College:
+  1 - This will affect an attribute (Health, etc...)
+  2 - This will affect an proficiency.

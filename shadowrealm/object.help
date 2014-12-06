@@ -1,0 +1,5 @@
+Weight    - This is how much time (in hundredths) will be added to one's move
+            delay when carried.
+Component - What it takes to make the object.
+Parm      - Each object may have up to 20 parrameters.
+            A parameter can affect spell proficiencies, armor, etc.
