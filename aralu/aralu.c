@@ -1,34 +1,30 @@
-#include stdio
-#include smgdef
-#include descrip
-#include jpidef
-#include ctype
-#include math
-#include time
 #include "aralu.h"
-#include "random.c"
 
 
 cursor_on()
 {
-printf("\33[?25h");
+/* printf("\33[?25h"); */
+    curs_set(1);
 }
 
 cursor_off()
 {
-printf("\33[?25l");
+/* printf("\33[?25l"); */
+    curs_set(0);
 }
 
 enable_control()
 {
-int mask = 0x02000000;
-lib$enable_ctrl(&mask);
+/* int mask = 0x02000000; */
+/* lib$enable_ctrl(&mask); */
+    nocbreak();
 }
 
 disable_control()
 {
-int mask = 0x02000000;
-lib$disable_ctrl(&mask);
+/* int mask = 0x02000000; */
+/* lib$disable_ctrl(&mask); */
+    cbreak();
 }
 
 /*
@@ -49,13 +45,14 @@ short i = 0;
 short y, x;
 
 while( i< quan) { 				
-  y = random(MAXROWS);
-  x = random(MAXCOLS);
+  y = randnum(MAXROWS);
+  x = randnum(MAXCOLS);
   if ( ISCLEAR( map[y][x].mapchar)) { 
      map[y][x].mapchar = obj; 
      if ( ITEM_PROPS[identify( obj)][COMBINE]) map[y][x].number = 1;
-     else map[y][x].number = random( 5) + 1;
-     lib$wait(&0.008);		/* to give the random a better effect */
+     else map[y][x].number = randnum( 5) + 1;
+     /* lib$wait(&0.008);		/1* to give the random a better effect *1/ */
+     napms(8); /* to give the random a better effect */
      prt_char( map[y][x].mapchar, y, x);
      i++; 
   }
@@ -72,11 +69,11 @@ create( LSWORD, 2);
 create( DOOR, 2);
 create( STORE, 2);
 create( POTION, 2);
-create( CASH, random(5));
-create( MINE, random(8));
-create( PIT, random(8));
-create( SCROLL, random(5));
-if ( (obj_num = random( 6)) == 1) create( POTION, 1);
+create( CASH, randnum(5));
+create( MINE, randnum(8));
+create( PIT, randnum(8));
+create( SCROLL, randnum(5));
+if ( (obj_num = randnum( 6)) == 1) create( POTION, 1);
 else if ( obj_num==2) { create( SCROLL, 4); create( HAXE, 1); }
 else if ( obj_num==3) { create( AXE, 1); create( ARMOR, 1); }
 else if ( obj_num==4) { create( BOW, 1); create( ARROW, 10); }
@@ -153,12 +150,13 @@ while( holdmap[i].num != -5) {
 write_map()
 {
 int count;
-$DESCRIPTOR( map_desc, maparray);
+/* $DESCRIPTOR( map_desc, maparray); */
 
-map_desc.dsc$w_length = MAXCOLS;
+/* map_desc.dsc$w_length = MAXCOLS; */
   for (count=1;count<=MAXROWS;count++) { 
-      map_desc.dsc$a_pointer = &maparray[count-1][0];
-      smg$put_line(&dsp_main,&map_desc,0,0,0,0); 
+      /* map_desc.dsc$a_pointer = &maparray[count-1][0]; */
+      /* smg$put_line(&dsp_main,&map_desc,0,0,0,0); */ 
+      wprintw(dsp_main, "%s", &maparray[count - 1][0]);
   }
 
 prt_monsters();
@@ -174,7 +172,8 @@ double denom;
 
 while( !dead) {
 send = FALSE;
-if ( smg$read_keystroke(&kboard,&key,0,&timeout) != 556) {
+/* if ( smg$read_keystroke(&kboard,&key,0,&timeout) != 556) { */
+if ( (key=getchar()) != EOF) {
    send = TRUE;
    timeout_count--;
 }
@@ -205,7 +204,8 @@ do_acts()
 int monspeed, i, j, k;
 int limit;
 
-lib$wait(&DIFFICULTY);
+/* lib$wait(&DIFFICULTY); */
+napms(DIFFICULTY);
 moves++;
 if ( (moves % 500) == 0) get_time();
 for ( j = 0; j < NUMFLAGS; j++)
@@ -234,7 +234,7 @@ while( j++ < MAXMONSTERS*level) {
         if ( !stop_monst)		/* God flag for stopping monsters */
           move_monsters( k);
     }
-    else if ( random( 100) < monsters[k].reschance) resurrect( k);
+    else if ( randnum( 100) < monsters[k].reschance) resurrect( k);
     k++;
   } /* End FOR(i) loop */
 } /* End while */
@@ -255,14 +255,14 @@ while( !dead) {
 if ( dead) {
   prt_msg("Press RETURN to continue.");
   do {
-    smg$read_keystroke(&kboard,&d);
-  }while( d != 13);
+    /* smg$read_keystroke(&kboard,&d); */
+  }while( (d=getch()) != 13);
   prt_msg("Your backpack contained:");
   prt_inven();
   prt_msg("Press RETURN to continue.");
   do {
-    smg$read_keystroke(&kboard,&d);
-  }while( d != 13);
+    /* smg$read_keystroke(&kboard,&d); */
+  }while( (d=getch()) != 13);
 }
 if (ret == E_SAVED) ret = savegame();
 return( ret);
@@ -337,6 +337,7 @@ if ( (ret = readscreen()) != 0) errmess( ret);
 if (restored) sub_holdmap();
 
 /* game has been restored or re-started */
+initscr();
 disable_control();
 cursor_off();
 /*clear_buffer();*/
@@ -360,14 +361,15 @@ if ( (ret = gameloop()) == E_GAINLEVEL) {
   level++;
   MAXHEALTH = ((CON+level)*8);
   if ( (ret = readscreen()) != 0) errmess( ret);
-  smg$begin_pasteboard_update(&pb);
-  smg$erase_display(&dsp_main); 	/* clear original map */
+  /* smg$begin_pasteboard_update(&pb); */
+  /* smg$erase_display(&dsp_main); 	/1* clear original map *1/ */
+  wclear(dsp_main);
   change_viewport( ppos.y, ppos.x);	/* restarts the viewport */
   map[ppos.y][ppos.x].mapchar = '@';
   maparray[ppos.y][ppos.x] = '@';
   write_map();				/* print out new map */
   create_objects();
-  smg$end_pasteboard_update(&pb);
+  /* smg$end_pasteboard_update(&pb); */
 /*  if ( !flags[SPEED].valid && CURWEIGHT < MAXWEIGHT) speed = 1; */
   KEYPOSESS = GAINLEVEL = FALSE;
   monkilled = dely = delx = 0;
@@ -386,6 +388,7 @@ else {
   delete_windows(); 
   cursor_on();
   enable_control();
+  endwin();
   printf("Thank you for trying aralu.");
   exit( 0);
 }

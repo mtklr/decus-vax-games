@@ -1,5 +1,4 @@
-#include stat
-#include stdio
+#include <sys/stat.h>
 #include "aralu.h"
 
 static struct stat sfstat;

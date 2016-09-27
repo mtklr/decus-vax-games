@@ -1,14 +1,22 @@
+#include <stdio.h>
+#include <ctype.h>
+#include <math.h>
+#include <time.h>
+#include <curses.h>
+#include <string.h>
+#include <stdlib.h>
+
 #define	ISCLEAR( position)	(position == SPACE)
 #define location(chr,target) ((unsigned int)strchr(target,chr)-(unsigned int)target)
-#define upcase(str_to_do) {$DESCRIPTOR(a,str_to_do);STR$UPCASE(&a,&a);}
+/* #define upcase(str_to_do) {$DESCRIPTOR(a,str_to_do);STR$UPCASE(&a,&a);} */
 
-#define scorefile	"disk$userdisk1:[mas0.masandy.send.source.aralu]aralu.score"
-#define savefile        "sys$login:aralu.sav"
-#define monfile		"disk$userdisk1:[mas0.masandy.send.source.aralu]monsters.dat"
+#define scorefile	"aralu.score"
+#define savefile        "aralu.sav"
+#define monfile		"monsters.dat"
 
 /* Screenfiles MUST have MAXROWS x MAXCOLS lines in it, otherwise the game */
 /* will screw up fast. */
-#define screenpath      "disk$userdisk1:[mas0.masandy.send.source.aralu]"
+#define screenpath      "./"
 #define SUPERUSER	"MASANDY"
 #define MAXSCOREENTRIES 20  /* number of entries in the score file */
 #define SCRATIOV 	4   /* how close you get to the top/bottom */
@@ -16,7 +24,7 @@
 #define BONUS		200 /* bonus multiplier per level */
 #define ARROWDIST 	20  /* maximum arrow travel distance */
 #define MAXVIEWDIST	20  /* maximum distance a player can see in one dir */
-#define timeout 	0   /* Timeout for player input - don't change */
+#define plr_timeout 	0   /* Timeout for player input - don't change */
 
 #define TRUE		1
 #define FALSE		0
@@ -143,7 +151,8 @@ int a_posx, a_posy;	/* Position for the monster in the arena */
 int rival_num;		/* Monster number in the arena */
 double DIFFICULTY;	/* Difficulty level - DO NOT CHANGE in CREATE.C! */
 			/* define the following for the windows */
-int pb, kboard, dsp_main, dsp_status, dsp_inven, dsp_command, dsp_help;
+int pb, kboard;
+WINDOW *dsp_main, *dsp_status, *dsp_inven, *dsp_command, *dsp_help, *dsp_viewport;
 
 int random_seed, random_incl;	/* for randomize functions */
 

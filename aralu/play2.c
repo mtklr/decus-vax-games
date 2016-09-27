@@ -1,7 +1,3 @@
-#include stdio
-#include ctype
-#include time
-#include descrip
 #include "aralu.h"
 
 
@@ -38,7 +34,8 @@ return( ITEM_PROPS[number][COMBINE]);
 
 get_time()
 {
-int i, time_val;
+int i;
+time_t time_val;
 char time_msg[80];
 char *hour[2] = {"AM","PM"};
 struct tm *time_structure;
@@ -66,13 +63,16 @@ short grab_num( prompt)
 char *prompt;
 {
 char num[11];
-$DESCRIPTOR( prompt_d, prompt);
-$DESCRIPTOR( num_d, num);
+/* $DESCRIPTOR( prompt_d, prompt); */
+/* $DESCRIPTOR( num_d, num); */
 
-prompt_d.dsc$w_length = strlen( prompt);
-smg$erase_line(&dsp_command,&10,&1);
-smg$set_cursor_abs(&dsp_command,&10,&1);
-smg$read_string(&kboard,&num_d,&prompt_d,0,0,0,0,0,0,&dsp_command);
+/* prompt_d.dsc$w_length = strlen( prompt); */
+/* smg$erase_line(&dsp_command,&10,&1); */
+/* smg$set_cursor_abs(&dsp_command,&10,&1); */
+/* smg$read_string(&kboard,&num_d,&prompt_d,0,0,0,0,0,0,&dsp_command); */
+wmove(dsp_command, 10, 1);
+wclrtoeol(dsp_command);
+mvwgetstr(dsp_command, 10, 1, num);
 return( atoi( num));
 }
 
@@ -148,7 +148,7 @@ flags[MON_CONFUSE].moves = 0;
 check_blind()
 {
 prt_msg("Your vision clears...");
-smg$paste_virtual_display(&dsp_main,&pb,&2,&2);
+/* smg$paste_virtual_display(&dsp_main,&pb,&2,&2); */
 flags[BLIND].valid = FALSE;
 flags[BLIND].moves = 0;
 }
@@ -387,7 +387,7 @@ int x, y, mon_num;
 monsters_struct *mon_ptr;
 mon_ptr = &monsters[mon_num];
 
-if ( map[y][x].number == 9999) return;
+if ( map[y][x].number == 9999) return FALSE;
 if ( mon_ptr->dead ||         		  
      ( mon_ptr->posy != y  ||  mon_ptr->posx != x)) {	
   map[y][x].mapchar = SPACE;

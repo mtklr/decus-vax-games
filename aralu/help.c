@@ -1,6 +1,3 @@
-#include stdio
-#include descrip
-#include smgdef
 #include "aralu.h"
 
 
@@ -54,31 +51,47 @@ help()
 {
 int i;
 char dummy;
-$DESCRIPTOR( help_d, helptext);
-$DESCRIPTOR( ophelp_d, ophelp);
-$DESCRIPTOR( return_d, "Press any key to return to game");
-$DESCRIPTOR( opreturn_d, "Press any key to continue list");
+/* $DESCRIPTOR( help_d, helptext); */
+/* $DESCRIPTOR( ophelp_d, ophelp); */
+/* $DESCRIPTOR( return_d, "Press any key to return to game"); */
+/* $DESCRIPTOR( opreturn_d, "Press any key to continue list"); */
+char *return_d = "Press any key to return to game";
+char *opreturn_d = "Press any key to continue list";
 
 i = 0;
-smg$paste_virtual_display(&dsp_help,&pb,&2,&2);
+/* smg$paste_virtual_display(&dsp_help,&pb,&2,&2); */
    while( helptext[i] != NULL) {
-	help_d.dsc$w_length = strlen( helptext[i]);
-	help_d.dsc$a_pointer = helptext[i++];
- 	smg$put_line(&dsp_help,&help_d,0,0,0,0);
+	/* help_d.dsc$w_length = strlen( helptext[i]); */
+	/* help_d.dsc$a_pointer = helptext[i++]; */
+ 	/* smg$put_line(&dsp_help,&help_d,0,0,0,0); */
+        wprintw(dsp_help, "%s\n", helptext[i]);
+        i++;
    }
 if (operator) {
-smg$put_chars(&dsp_help,&opreturn_d,&21,&23,&SMG$M_ERASE_LINE,&SMG$M_REVERSE);
-smg$read_keystroke(&kboard,&dummy);
-smg$erase_display(&dsp_help);
+/* smg$put_chars(&dsp_help,&opreturn_d,&21,&23,&SMG$M_ERASE_LINE,&SMG$M_REVERSE); */
+standout();
+mvprintw(21, 23, "%s", opreturn_d);
+standend();
+/* smg$read_keystroke(&kboard,&dummy); */
+getch();
+/* smg$erase_display(&dsp_help); */
+wclear(dsp_help);
 i = 0;
    while( ophelp[i] != NULL) {
-	ophelp_d.dsc$w_length = strlen( ophelp[i]);
-	ophelp_d.dsc$a_pointer = ophelp[i++];
- 	smg$put_line(&dsp_help,&ophelp_d,0,0,0,0);
+	/* ophelp_d.dsc$w_length = strlen( ophelp[i]); */
+	/* ophelp_d.dsc$a_pointer = ophelp[i++]; */
+ 	/* smg$put_line(&dsp_help,&ophelp_d,0,0,0,0); */
+        wprintw(dsp_help, "%s\n", ophelp[i]);
+        i++;
    }
 }
-smg$put_chars(&dsp_help,&return_d,&21,&23,&SMG$M_ERASE_LINE,&SMG$M_REVERSE);
-smg$read_keystroke(&kboard,&dummy);
-smg$erase_display(&dsp_help);
-smg$unpaste_virtual_display(&dsp_help,&pb);
+/* smg$put_chars(&dsp_help,&return_d,&21,&23,&SMG$M_ERASE_LINE,&SMG$M_REVERSE); */
+standout();
+mvprintw(21, 23, "%s", return_d);
+standend();
+/* smg$read_keystroke(&kboard,&dummy); */
+getch();
+/* smg$erase_display(&dsp_help); */
+/* smg$unpaste_virtual_display(&dsp_help,&pb); */
+wclear(dsp_help);
 }

@@ -1,8 +1,7 @@
-#include stdio
 #include "aralu.h"
 
 
-explode( y, x, object, number, dir)
+void explode( y, x, object, number, dir)
 int y, x, number;
 char object, dir;
 {
@@ -20,7 +19,7 @@ switch( dir) {
   default: break;
 } /* End switch */
 
-smg$begin_pasteboard_update(&pb);
+/* smg$begin_pasteboard_update(&pb); */
 for( i = y-dexdist; i <= y+uexdist; i++)
  if ( i > 0 && i < MAXROWS) 
   for( j = x-lexdist; j <= x+rexdist; j++) {
@@ -49,7 +48,7 @@ for( i = y-dexdist; i <= y+uexdist; i++)
        prt_char( '*', i, j);
    }
  } /* End FOR2 */
-smg$end_pasteboard_update(&pb);
+/* smg$end_pasteboard_update(&pb); */
 
 /* clean up the mess */
 /* don't have to print out obstacles, since we didn't write over them */

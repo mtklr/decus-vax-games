@@ -1,7 +1,6 @@
-#include stdio
-#include descrip
-#include ctype
 #include "aralu.h"
+
+void do_attack(int mon_num, int bp_num, char spell, int dir);
 
 int eat( object) 
 char object;
@@ -38,8 +37,8 @@ mon_ptr = &monsters[i];
 	default: printf("Error finding direction.\n"); exit(1); /* Impossible */
   } /* End switch */
 
-  if ( (random( 100) < mon_ptr->follow) ||  flags[MON_CONFUSE].valid) { 
-    if ( random(4) < 2) dx = -dx; 
+  if ( (randnum( 100) < mon_ptr->follow) ||  flags[MON_CONFUSE].valid) { 
+    if ( randnum(4) < 2) dx = -dx; 
     else dy = -dy; 
   } 				/* if monsters are confused or their follow */
 				/* is poor, make them go the wrong way */
@@ -54,7 +53,7 @@ mon_ptr = &monsters[i];
 
 
 
-move_monsters( i)		/* move the monster 'i' toward the player */
+void move_monsters( i)		/* move the monster 'i' toward the player */
 int i;
 {
 /* For tdir[5], 0 = primary direction; 1 = alternate direction,
@@ -74,7 +73,7 @@ mon_ptr = &monsters[i];
 /* First see if the monster can fire -- is it in line with the player and if
    the fire percentage is high enough */
 if ( (mon_ptr->posy == ppos.y  ||  mon_ptr->posx == ppos.x) &&
-      random( 100) < mon_ptr->firec) {
+      randnum( 100) < mon_ptr->firec) {
   if ( mon_ptr->posy == ppos.y) { 
     if ( ppos.x < mon_ptr->posx) 
       { firey = 0; firex = -1; firechar = '-'; fdr = LEFT;}
@@ -88,9 +87,9 @@ if ( (mon_ptr->posy == ppos.y  ||  mon_ptr->posx == ppos.x) &&
   else printf("Error moving monster #%d.\n", i); /* should never happen */
   ax = mon_ptr->posx+firex; ay = mon_ptr->posy+firey;
   /* Check to see if the monster casts a spell -- 15% chance */
-  if ( mon_ptr->magic  &&  random(100) < 15) {
+  if ( mon_ptr->magic  &&  randnum(100) < 15) {
     firechar = '*';
-    m_spell = random( 2)+2;
+    m_spell = randnum( 2)+2;
     sprintf( fire_msg,"%s summons a %s!",
 	          		  mon_names[mon_ptr->n_num], spells[m_spell-1]);
     prt_msg( fire_msg);
@@ -237,8 +236,8 @@ monsters[num].underchar = SPACE;
 monsters[num].health = 3*(monsters[num].n_num+5);
 /* give him a new position */
 do {			  
-  monsters[num].posy = random( MAXROWS); 
-  monsters[num].posx = random( MAXCOLS);
+  monsters[num].posy = randnum( MAXROWS); 
+  monsters[num].posx = randnum( MAXCOLS);
  }while( !ISCLEAR( map[monsters[num].posy][monsters[num].posx].mapchar));
 }
 
@@ -272,8 +271,8 @@ if ( (mfile = fopen( monfile,"r")) != NULL) {
  	     &m->follow,&m->speed,&m->firec,&m->range,&m->reschance,&m->f_num,
 	     &m->dead,&m->fly,&m->magic,&m->hlspd);
      do {
-       x = random(MAXCOLS);
-       y = random(MAXROWS);
+       x = randnum(MAXCOLS);
+       y = randnum(MAXROWS);
      } while( !ISCLEAR( map[y][x].mapchar));
      m->posy = y; 
      m->posx = x;
@@ -304,8 +303,8 @@ if ( (mfile = fopen( monfile,"r")) != NULL) {
         nm->magic = m->magic;
         nm->hlspd = m->hlspd;
         do {
-          x = random(MAXCOLS);
-          y = random(MAXROWS);
+          x = randnum(MAXCOLS);
+          y = randnum(MAXROWS);
         } while( !ISCLEAR( map[y][x].mapchar));
         nm->posy = y; 
         nm->posy = y; 
@@ -355,7 +354,7 @@ if ( obj == ARROW)
 else
  sprintf(mon_attack,"%s %s.",mon_names[monsters[mon_num].n_num],
 				    attacks[monsters[mon_num].a_num]);
-damage_done = monsters[mon_num].dam + random( monsters[mon_num].dam);
+damage_done = monsters[mon_num].dam + randnum( monsters[mon_num].dam);
 if ( operator) { 
   sprintf(op_msg,"MSock: %d",damage_done);
   prt_msg(op_msg);
@@ -365,7 +364,7 @@ take_damage( damage_done, mon_names[monsters[mon_num].n_num]);
 }
 
 
-do_attack( mon_num, bp_num, spell, dir)
+void do_attack( mon_num, bp_num, spell, dir)
 int mon_num, bp_num, dir;
 char spell;
 {
@@ -400,7 +399,7 @@ if ( bp_num != 0) {
     sprintf(player_attack,"The bolt finds its mark and hits %s.",
     						mon_names[mon_ptr->n_num]);
     add_damage = BUSE / (level*2);
-    damage_done = random( add_damage)+1 + ITEM_PROPS[identify( ARROW)][DAMAGE];
+    damage_done = randnum( add_damage)+1 + ITEM_PROPS[identify( ARROW)][DAMAGE];
   } 
   else if ( weapon == ORB) {
     if ( spell == 'a') {
@@ -422,7 +421,7 @@ if ( bp_num != 0) {
     sprintf(player_attack,"%s explodes into dust!",mon_names[mon_ptr->n_num]);
     add_damage = 1000;
     }
-    damage_done = random( add_damage) + ITEM_PROPS[identify( ORB)][DAMAGE];  
+    damage_done = randnum( add_damage) + ITEM_PROPS[identify( ORB)][DAMAGE];  
     switch( BACKPACK[check_inven( ORB)].condition) {
 	case 1: prt_msg("The Orb's power is very slight.");
 	        sprintf(player_attack,"The effect of the spell is greatly reduced.");
@@ -440,16 +439,16 @@ if ( bp_num != 0) {
   }
   else if ( weapon == MINE) {
     sprintf(player_attack,"%s hits the mine!!",mon_names[mon_ptr->n_num]);
-    damage_done = random( ITEM_PROPS[identify( MINE)][DAMAGE]) + 1;
+    damage_done = randnum( ITEM_PROPS[identify( MINE)][DAMAGE]) + 1;
   }
   else if ( weapon == PIT) {
     sprintf(player_attack,"You hear %s wail in pain as it falls into a pit.",
 	    mon_names[mon_ptr->n_num]);
-    damage_done = random( 10) + 1;
+    damage_done = randnum( 10) + 1;
   }
   else {
-    add_damage = (STR - 14)/2 + random( 4);
-    damage_done = random( add_damage)+1 + ITEM_PROPS[identify( weapon)][DAMAGE];
+    add_damage = (STR - 14)/2 + randnum( 4);
+    damage_done = randnum( add_damage)+1 + ITEM_PROPS[identify( weapon)][DAMAGE];
     if ( BACKPACK[bp_num].condition < 1) damage_done = 1;
     else damage_done *= (0.20 * BACKPACK[bp_num].condition);
     if ( damage_done <= 1)
@@ -469,7 +468,7 @@ if ( bp_num != 0) {
 	             mon_names[mon_ptr->n_num],BACKPACK[bp_num].name);
 
     if ( (miss_chance = DEX - 10) < 0) miss_chance = 0;
-    mymiss = random( ITEM_PROPS[identify( weapon)][WEIGHT]/10)+1;
+    mymiss = randnum( ITEM_PROPS[identify( weapon)][WEIGHT]/10)+1;
     if ( operator) {
       sprintf(mymiss_msg,"Miss chance: %d",mymiss);
       prt_msg(mymiss_msg);
@@ -478,12 +477,12 @@ if ( bp_num != 0) {
       sprintf(player_attack,"You swing wildly at the %s and miss!",mon_names[mon_ptr->n_num]);
       damage_done = 0;
     }
-    else if ( random( 100) < 8 && BACKPACK[bp_num].condition < 2) {
+    else if ( randnum( 100) < 8 && BACKPACK[bp_num].condition < 2) {
            sprintf(player_attack,"Your %s shatters into a thousand pieces.",
 	 	     BACKPACK[bp_num].name);
 	   break_weapon( bp_num);
     }
-    else if ( random( 100) < 5) {
+    else if ( randnum( 100) < 5) {
       sprintf(player_attack,"Your %s finds its way to %s's heart.",
 	             BACKPACK[bp_num].name,mon_names[mon_ptr->n_num]);
       damage_done = 1000;	/* automatic kill */
@@ -494,14 +493,14 @@ else {						/* bare handed attack */
   sprintf(player_attack,"You graze %s with your fists.",
 				     mon_names[mon_ptr->n_num]);
     add_damage = (STR - 14)/2;
-    damage_done = random( add_damage)+1 + ITEM_PROPS[HANDS][DAMAGE];
+    damage_done = randnum( add_damage)+1 + ITEM_PROPS[HANDS][DAMAGE];
 }
 if ( operator) { 
   sprintf(op_msg,"PSock: %d",damage_done);
   prt_msg(op_msg);
 }
 
-if ( random( 100) < 8 && damage_done > 0 && bp_num != 0) {
+if ( randnum( 100) < 8 && damage_done > 0 && bp_num != 0) {
   if ( weapon == ORB) bp_num = check_inven( ORB);
   else if ( weapon == ARROW) bp_num = check_inven( BOW);
   if ( weapon != MINE  &&  weapon != PIT  &&  weapon != ORB) {
@@ -513,7 +512,7 @@ if ( random( 100) < 8 && damage_done > 0 && bp_num != 0) {
 prt_msg(player_attack);
 mon_ptr->health -= damage_done;
 if ( mon_ptr->health <= 0) {
-  sprintf(killed,"%s %s.",mon_names[mon_ptr->n_num],deaths[random( 5)]);
+  sprintf(killed,"%s %s.",mon_names[mon_ptr->n_num],deaths[randnum( 5)]);
   prt_msg(killed);
   experience += BONUS*level/10;
   if ( weapon == MINE || weapon == PIT) experience -= BONUS*level/20;

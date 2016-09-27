@@ -1,9 +1,16 @@
-#include stdio
-#include descrip
-#include ctype
-#include math
 #include "aralu.h"
 
+
+void read_scroll();
+void do_pickup(char object, int number, char direction);
+void drop();
+void enchant();
+void wear_wield();
+void take_damage(int damage, char *killer);
+void exchange_weap();
+void choose_spell();
+void view();
+void fire_item(char item);
 
 short parse_keystroke( keyhit)
 char keyhit;
@@ -19,7 +26,8 @@ switch( keyhit) {
 		  ret = E_SAVED;
 	          break;
         case 'S': prt_msg("Choose another speed.");
-		  smg$erase_display(&dsp_status);
+		  /* smg$erase_display(&dsp_status); */
+		  wclear(dsp_status);
 		  prt_difficulty(dsp_status);
 		  diff_num = getkey();
 		  switch( diff_num) {
@@ -29,17 +37,19 @@ switch( keyhit) {
 		   case '4': DIFFICULTY = 0.40; break;
 		   default: DIFFICULTY = 0.1;
 		  }	
-		  smg$erase_display(&dsp_status);
+		  /* smg$erase_display(&dsp_status); */
+		  wclear(dsp_status);
 		  prt_status();
 		  break;
 	case UP   :
 	case LEFT : 
 	case DOWN : 
-	case RIGHT: move( keyhit); break;
+	case RIGHT: move_plr( keyhit); break;
 	case ' ': fire_item( ARROW); break;
 	case 'u': choose_spell(); break;
-	case 's': smg$erase_display(&dsp_status); 
-		  smg$paste_virtual_display(&dsp_status,&pb,&2,&43);
+	case 's': //smg$erase_display(&dsp_status); 
+		  /* smg$paste_virtual_display(&dsp_status,&pb,&2,&43); */
+		  wclear(dsp_status);
                   prt_status();  
  		  break;
 	case 't': get_time(); break;
@@ -74,8 +84,8 @@ switch( keyhit) {
 	case 26:  prt_msg("Quit/no save? ['y' to confirm]");
 		  if ( toupper( getkey()) == 'Y') ret = E_ENDGAME;	
 		  break;
-	case 12:  smg$repaint_screen( &pb); break;
-        case 2:   prt_msg("Zoom!"); sys$setpri(0,0,4,0); break;
+	/* case 12:  smg$repaint_screen( &pb); break; */
+        /* case 2:   prt_msg("Zoom!"); sys$setpri(0,0,4,0); break; */
 /*	case 18:  recall_messages(); break; */
  	case 'x': exchange_weap(); break;
 	case 'w': wear_wield(); break;
@@ -125,7 +135,7 @@ else if (GAINLEVEL) ret = E_GAINLEVEL;
 return( ret);
 }
 
-
+#if 0
 recall_messages()
 {
 int r_c;                                                                      
@@ -145,9 +155,10 @@ smg$paste_virtual_display(&dsp_main,&pb,&2,&2);
 smg$paste_virtual_display(&dsp_status,&pb,&2,&43);
 smg$end_pasteboard_update(&pb);
 }
+#endif
 
 
-move( direction)
+move_plr( direction)
 int direction;
 {
 int number, dx, dy, rnd;
@@ -155,7 +166,7 @@ char testchar;
 
 /* If player is confused, change the direction randomly */
 if ( flags[CONFUSE].valid) {
-  if ( (rnd = random(4)) < 1) direction = UP;
+  if ( (rnd = randnum(4)) < 1) direction = UP;
   else if ( rnd < 2) direction = DOWN;
   else if ( rnd < 3) direction = LEFT;
   else direction = RIGHT;
@@ -175,7 +186,7 @@ else check_object( testchar, number, direction);
 }
 
 
-read_scroll()				/* read a scroll */
+void read_scroll()				/* read a scroll */
 {
 int bp_num, item_num, PREWEIGHT, rnd_scr;
 char read[80];
@@ -194,7 +205,7 @@ if ( (bp_num = check_inven( SCROLL)) != FALSE) {
     prt_speed();
   }
   prt_wgt();
-  if ( (rnd_scr = random( 100)) < 85) {
+  if ( (rnd_scr = randnum( 100)) < 85) {
     if ( in_arena) {
       prt_msg("You cannot teleport out of the arena.");
       prt_msg("The scroll vanishes.");
@@ -205,8 +216,8 @@ if ( (bp_num = check_inven( SCROLL)) != FALSE) {
     map[ppos.y][ppos.x].number = 1;
     prt_char( map[ppos.y][ppos.x].mapchar, ppos.y, ppos.x);
     do {
-      ppos.y = random( MAXROWS); 
-      ppos.x = random( MAXCOLS);
+      ppos.y = randnum( MAXROWS); 
+      ppos.x = randnum( MAXCOLS);
     } while( map[ppos.y][ppos.x].mapchar != SPACE);
     map[ppos.y][ppos.x].mapchar = '@';
     map[ppos.y][ppos.x].number = 1;
@@ -225,7 +236,7 @@ else prt_msg("You have no scrolls to read.");
 }
 
 
-enchant()
+void enchant()
 {
 int echar, item_num, bp_num;
 
@@ -259,7 +270,7 @@ else if ( BACKPACK[echar].invenchar != SPACE) {	 /* you have it */
 
 
 
-view()					/* look in a given direction */
+void view()					/* look in a given direction */
 {
 int dx, dy, ax, ay;
 int item_num, i, j, mon_health, sight_dist;
@@ -368,16 +379,17 @@ else prt_msg("You have nothing to heal yourself with.");
 }
 
 
-choose_spell()
+void choose_spell()
 {
 int i, failure[SPELLNAMES+1], sp, c_wait, yrange, xrange;
 char spell[40];
-$DESCRIPTOR( spell_label,"Magic Spells");
-$DESCRIPTOR( invenlabel, "Inventory");
+/* $DESCRIPTOR( spell_label,"Magic Spells"); */
+/* $DESCRIPTOR( invenlabel, "Inventory"); */
 
 
-smg$erase_display(&dsp_inven);
-smg$label_border(&dsp_inven,&spell_label);
+/* smg$erase_display(&dsp_inven); */
+wclear(dsp_inven);
+/* smg$label_border(&dsp_inven,&spell_label); */
 for (i=1; i<= SPELLNAMES; i++) {
    failure[i] =  (75 + pow(i-level-1,3)) - (5*(INT-14) + 3*level) + i*2;
    sprintf(spell,"%c) %20s Failure: %d%%",i+MAGIC_NUMBER,spells[i-1],failure[i]);
@@ -387,15 +399,15 @@ while( !dead) {
  sp = 0;
  prt_msg("Which spell to use? [* for list and failure %]");
  sp = getkey();
- if ( sp == '*') smg$paste_virtual_display(&dsp_inven,&pb,&2,&43);
+ if ( sp == '*') wrefresh(dsp_inven); //smg$paste_virtual_display(&dsp_inven,&pb,&2,&43);
  else break;
 }
 if (dead) return;
 
 if ( check_inven( ORB) == FALSE) {
   prt_msg("You don't have the Magic Orb.");
-  smg$label_border(&dsp_inven,&invenlabel);
-  smg$paste_virtual_display(&dsp_status,&pb,&2,&43);
+  /* smg$label_border(&dsp_inven,&invenlabel); */
+  /* smg$paste_virtual_display(&dsp_status,&pb,&2,&43); */
   return;
 }
  
@@ -407,9 +419,9 @@ if ( (sp -= MAGIC_NUMBER) <= SPELLNAMES) {
   if (dead) return;
 }
 if ( sp < 5) {
- if ( random( 100) > failure[sp]) {
+ if ( randnum( 100) > failure[sp]) {
    fire_item( sp+MAGIC_NUMBER);
-   if ( random( 100) < 10) {
+   if ( randnum( 100) < 10) {
      prt_msg("The Orb's power is draining.");
      BACKPACK[check_inven( ORB)].condition--;
    }
@@ -417,14 +429,14 @@ if ( sp < 5) {
  else prt_msg("The spell fails.");
 }
 else if ( sp == 5) {
- if ( random( 100) > failure[sp]) {
+ if ( randnum( 100) > failure[sp]) {
    if ( !flags[MON_CONFUSE].valid) {
      flags[MON_CONFUSE].valid = TRUE;
      flags[MON_CONFUSE].moves += 61;
      prt_msg("The monsters appear to be wandering about in a daze.");
    }
    else prt_msg("The confusion spell has no effect.");
-   if ( random( 100) > 10) {
+   if ( randnum( 100) > 10) {
      prt_msg("The Orb's power is draining.");
      BACKPACK[check_inven( ORB)].condition--;
    }
@@ -432,7 +444,7 @@ else if ( sp == 5) {
  else prt_msg("The spell fails.");
 }
 else if ( sp == 6) {
- if ( random( 100) > failure[sp]) {
+ if ( randnum( 100) > failure[sp]) {
    if (in_arena) {
      prt_msg("You cannot teleport out of the arena.");
      return;
@@ -443,8 +455,8 @@ else if ( sp == 6) {
    yrange = BACKPACK[check_inven(ORB)].condition*5;
    xrange = BACKPACK[check_inven(ORB)].condition*10;
    do {
-     ppos.y += random( yrange) - yrange/2;
-     ppos.x += random( xrange) - xrange/2;
+     ppos.y += randnum( yrange) - yrange/2;
+     ppos.x += randnum( xrange) - xrange/2;
    } while( (map[ppos.y][ppos.x].mapchar != SPACE)  ||
    	    (ppos.y < 1  ||  ppos.y >= MAXROWS)  ||	/* outside screen */
  	    (ppos.x < 1  ||  ppos.x >= MAXCOLS));	/* outside screen */
@@ -455,7 +467,7 @@ else if ( sp == 6) {
    change_viewport( ppos.y, ppos.x);
    dely = delx = 0;
    prt_msg("Poof!");
-   if ( random( 100) > 10) {
+   if ( randnum( 100) > 10) {
      prt_msg("The Orb's power is draining.");
      BACKPACK[check_inven( ORB)].condition--;
    }
@@ -463,12 +475,12 @@ else if ( sp == 6) {
  else prt_msg("The spell fails.");
 }
 else prt_msg("No such spell exists.");
-smg$paste_virtual_display(&dsp_status,&pb,&2,&43);
-smg$label_border(&dsp_inven,&invenlabel);
+/* smg$paste_virtual_display(&dsp_status,&pb,&2,&43); */
+/* smg$label_border(&dsp_inven,&invenlabel); */
 }
 
 
-fire_item( item)			/* fires arrows only right now */
+void fire_item( item)			/* fires arrows only right now */
 char item;
 {
 int dx, dy, ax, ay;
@@ -593,8 +605,10 @@ int item_num;
 char item_to_ident;
 char items[80];
 
-smg$erase_display(&dsp_inven);
-smg$paste_virtual_display(&dsp_inven,&pb,&2,&43);
+/* smg$erase_display(&dsp_inven); */
+/* smg$paste_virtual_display(&dsp_inven,&pb,&2,&43); */
+wclear(dsp_inven);
+wrefresh(dsp_inven);
 do {
   if ( BACKPACK[i].invenchar != SPACE) {
    item_to_ident = BACKPACK[i].invenchar;
@@ -618,7 +632,7 @@ do {
 }
 
 
-exchange_weap()				/* quick-change alternate weapon */
+void exchange_weap()				/* quick-change alternate weapon */
 {
 int DUMMY, bp_num, item_num;
 char wchar;
@@ -659,7 +673,7 @@ else {					/* already have an alternate */
 }
   
   
-wear_wield()				/* wears armor or wields weapon */
+void wear_wield()				/* wears armor or wields weapon */
 {
 int bp_num, item_num;
 char wchar;
@@ -695,7 +709,7 @@ else prt_msg("You have no such object.");
 
 
 
-drop()					/* drop, what else? */
+void drop()					/* drop, what else? */
 {
 int PREWEIGHT, amount;
 int dropall = 0;
@@ -786,7 +800,7 @@ if ( (bp_num = check_inven( POTION)) != FALSE) {
     BACKPACK[bp_num].invenchar = SPACE;
     compress_inven();
   }
-  if ( (d_chance = random(100)) < 5) {
+  if ( (d_chance = randnum(100)) < 5) {
     if ( flags[SPEED].valid) {
       prt_msg("You feel yourself slow down a bit.");
       if ( speed < 1)  			/* already SLOW */
@@ -867,7 +881,7 @@ if ( (bp_num = check_inven( POTION)) != FALSE) {
     prt_msg("Your eyes sting - darkness surrounds you!");
     flags[BLIND].valid = TRUE;
     flags[BLIND].moves += 151;
-    smg$unpaste_virtual_display(&dsp_main,&pb);
+    /* smg$unpaste_virtual_display(&dsp_main,&pb); */
   }
   else {
     prt_msg("You feel slightly refreshed.");
@@ -901,15 +915,15 @@ switch( testobj) {
 		  underchar = PIT;
 	  	  map[ppos.y][ppos.x].number = 1;
 		  prt_msg("You fell into a pit!");
-	          if ( random( 23)+1 > DEX) 
+	          if ( randnum( 23)+1 > DEX) 
  		    take_damage( 10, "falling into a pit");
 		  else {
                     prt_msg("Your quick reflexes soften the fall.");
-		    take_damage( random( 10)+1, "falling into a pit");
+		    take_damage( randnum( 10)+1, "falling into a pit");
 	          }
                   break;
 	case MINE: 
-		  if ( random( 20)+1 > DEX) {
+		  if ( randnum( 20)+1 > DEX) {
   		    if (number < 2) prt_msg("The mine exploded!");
 		    else prt_msg("The mines exploded!");
 		    explode( ppos.y, ppos.x, MINE, number, NULL);
@@ -1005,7 +1019,7 @@ else {
 
 
 
-do_pickup( object, number, direction)	/* picks up an object you walk over */
+void do_pickup( object, number, direction)	/* picks up an object you walk over */
 int number;
 char object, direction;
 {
@@ -1055,7 +1069,7 @@ if ( object == KEY) {
   prt_msg("You found the key!");
 }
 else { 					/* must be CASH */
-  wealth += (cash_flow = random( 50));
+  wealth += (cash_flow = randnum( 50));
   sprintf(cash_pickup,"You pick up %d gold pieces.",cash_flow);
   prt_msg(cash_pickup);
   prt_wealth();
@@ -1069,7 +1083,7 @@ enter_arena()
 char rival[80];
 
 monsters_struct *m;
-rival_num = random( 2*level) + 3;
+rival_num = randnum( 2*level) + 3;
 m = &monsters[rival_num];
 sprintf( rival,"Your rival in a battle to the death is: %s.",mon_names[m->n_num]);
 prt_msg( rival);
@@ -1089,12 +1103,14 @@ display_store_inven()
 {
 int i;
 char item_to_buy[40];
-$DESCRIPTOR(store_label,"Store Inventory");
+/* $DESCRIPTOR(store_label,"Store Inventory"); */
 
-smg$change_virtual_display(&dsp_status,&21,&37);
-smg$erase_display(&dsp_status);
-smg$label_border(&dsp_status,&store_label); 	/* use the stat disp. for store */
-smg$paste_virtual_display(&dsp_status,&pb,&2,&43);
+/* smg$change_virtual_display(&dsp_status,&21,&37); */
+/* smg$erase_display(&dsp_status); */
+/* smg$label_border(&dsp_status,&store_label); 	/1* use the stat disp. for store *1/ */
+/* smg$paste_virtual_display(&dsp_status,&pb,&2,&43); */
+wclear(dsp_status);
+wrefresh(dsp_status);
 for (i=1; i< MAXOBJECTS-NUMITEMS; i++) {
    sprintf(item_to_buy,"%c) %17s %4d gp %4d lb.",i+MAGIC_NUMBER,object_names[i],
                                     ITEM_PROPS[i][COST],ITEM_PROPS[i][WEIGHT]);
@@ -1110,39 +1126,42 @@ int PREWEIGHT;
 char c;
 char gold_amount[80];
 char purchased[80];
-$DESCRIPTOR(statlabel,"Character Stats");
+/* $DESCRIPTOR(statlabel,"Character Stats"); */
 
 prt_msg("[s]ell/[p]urchase/[e]xit");
-smg$read_keystroke(&kboard,&c);
+/* smg$read_keystroke(&kboard,&c); */
+c = getch();
 if ( c != 'e' && c != 's' && c != 'p')
-  if ( get_purchase()) return;
+  if ( get_purchase()) return (FALSE);
 if ( c == 'e') { 
-  smg$erase_display(&dsp_status); 
-  smg$change_virtual_display(&dsp_status,&10,&37);
+  /* smg$erase_display(&dsp_status); */ 
+  /* smg$change_virtual_display(&dsp_status,&10,&37); */
+  wclear(dsp_status);
   prt_status();  
-  smg$label_border(&dsp_status,&statlabel);
-  smg$paste_virtual_display(&dsp_status,&pb,&2,&43);
+  /* smg$label_border(&dsp_status,&statlabel); */
+  /* smg$paste_virtual_display(&dsp_status,&pb,&2,&43); */
   return( TRUE);  /* means that you are leaving the store */
 }
 if ( c == 's') {
   sell_item();
   sprintf(gold_amount,"You have %d gold remaining.",wealth);
   prt_msg(gold_amount);
-  if ( get_purchase()) return;
+  if ( get_purchase()) return (FALSE);
 }
 if ( c == 'p') {
  sprintf(gold_amount,"You have %d gold remaining.",wealth);
  prt_msg(gold_amount);
  prt_msg("Purchase which item?");
- smg$read_keystroke(&kboard,&c);
+ /* smg$read_keystroke(&kboard,&c); */
+ c = getch();
  if ( (c -= MAGIC_NUMBER) < 1  ||  (c > 12)) { /* 12 items excluding HANDS */
    prt_msg("Value out of range.");
-   if ( get_purchase()) return;
+   if ( get_purchase()) return (FALSE);
  }
 }
 if ( (wealth - ITEM_PROPS[c][COST]) < 0) {
   prt_msg("You don't have the cash flow for this.");
-  if ( get_purchase()) return;
+  if ( get_purchase()) return (FALSE);
 }
 if ( (bp_num = check_inven( ITEM_PROPS[c][ITEMCHAR])) != FALSE  && 
       combinable( c)) {
@@ -1175,7 +1194,7 @@ else {
   else prt_msg("You have no room in your backpack for this.");
 }
 
-if ( get_purchase()) return; /* endless loop until ^Z is hit (TRUE) */
+if ( get_purchase()) return (FALSE); /* endless loop until ^Z is hit (TRUE) */
 }
 
 enter_store()
@@ -1197,7 +1216,8 @@ char sell_msg[80];
 while( 1) {
 schar = 0;
 prt_msg("Sell which item? [* for inventory]");
-smg$read_keystroke(&kboard,&schar);
+/* smg$read_keystroke(&kboard,&schar); */
+schar = getch();
 schar -= MAGIC_NUMBER;
 if ( schar+MAGIC_NUMBER == '*') { prt_inven(); flag = 1; }
 else break;
@@ -1218,7 +1238,8 @@ else if ( (dummychar = BACKPACK[schar].invenchar) != SPACE) {
 	    sprintf(sell_msg,"You have %d %ss.  Sell all?",
 		BACKPACK[schar].quantity, object_names[identify(dummychar)]);
 	    prt_msg(sell_msg);
-	    smg$read_keystroke(&kboard,&sellall);
+	    /* smg$read_keystroke(&kboard,&sellall); */
+	    sellall = getch();
 	    if ( sellall == 'y') { 
 	      quan = BACKPACK[schar].quantity;
  	      sprintf(sell_msg,"Sold %d %ss.",quan,BACKPACK[schar].name);
@@ -1260,7 +1281,7 @@ if (flag) display_store_inven();
 
 
 
-take_damage( damage, killer)		/* ouch */
+void take_damage( damage, killer)		/* ouch */
 int damage;
 char *killer;
 {
@@ -1280,7 +1301,7 @@ if ( WORN)
         + (5 - BACKPACK[WORN].condition));
 else health -= damage;
 extra = damage * 0.80;  /* 20% chance that your armor worsens */
-if ( random( damage) > extra)
+if ( randnum( damage) > extra)
   if ( WORN) {
     prt_msg("Your armor's condition is worsening.");
     BACKPACK[WORN].condition -= 1;

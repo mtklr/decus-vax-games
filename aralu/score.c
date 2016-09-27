@@ -1,4 +1,3 @@
-#include stdio
 #include "aralu.h"
 
 
@@ -41,7 +40,7 @@ readscore() {
    if( (scf = fopen( scorefile, "r")) == NULL)
       ret = E_OPENSCORE;
    else {
-         while(fscanf(scf,"%d",&rank)!=EOF  &&  rank < MAXSCOREENTRIES)
+         while(fscanf(scf,"%hd",&rank)!=EOF  &&  rank < MAXSCOREENTRIES)
 	   {
             fscanf( scf, "%10s  %8d  %8d  %8d\n", scoretable[rank].user, 
 	 &scoretable[rank].level,&scoretable[rank].kills,&scoretable[rank].exp);
@@ -134,7 +133,7 @@ writescore() {
              tmp,scoretable[tmp].user,scoretable[tmp].level,
              scoretable[tmp].kills,scoretable[tmp].exp);
         while(strlen(score_string) < 70) strcat(score_string," ");
-        score_string[70] = '\0';
+        score_string[69] = '\0';
         if (fprintf(scf,"%s\n",score_string) == NULL) 
           {fclose( scf); return(E_WRITESCORE);}
       }
@@ -177,7 +176,7 @@ char blank_line[70];
 if ( ( newfile = fopen(scorefile,"w")) != NULL) {
   for (i=0; i<70; i++) 
      blank_line[i] = ' '; /* Make the blank line to put into the score file */
-  blank_line[70] = '\0';
+  blank_line[69] = '\0';
   for (file_count=0; file_count < MAXSCOREENTRIES; file_count++)
     if( fprintf( newfile,"%s\n", blank_line) == NULL) ret = E_WRITESCORE;
   fclose( newfile);
