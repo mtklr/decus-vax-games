@@ -1,56 +1,20 @@
-cc = cc
-link = link
+# aralu makefile
 
-#cc = cc/debug/noopt
-#link = link/traceback/debug
+PROG = aralu
+SRC = $(wildcard ./*.c)
+OBJ = $(SRC:.c=.o)
 
-all : aralu.exe
+LDLIBS = -lncurses
 
-aralu.exe: aralu.obj play2.obj save.obj score.obj monsters.obj create.obj play.obj wizard.obj explode.obj windows.obj help.obj
-	write sys$output "Linking."
-	$(link) aralu,save,play,play2,score,windows,explode,create,monsters,wizard,help,o/opt
-        write sys$output "Done."
+CFLAGS +=
+LDFLAGS +=
 
-aralu.obj: aralu.c aralu.h 
-	write sys$output "Aralu.c"
-	$(cc) aralu
+all: $(PROG)
 
-create.obj: create.c aralu.h
-	write sys$output "Create.c"
-	$(cc) create
+$(PROG): $(OBJ)
 
-explode.obj: explode.c aralu.h
-	write sys$output "Explode.c"
-	$(cc) explode
+clean:
+	$(RM) $(PROG)
+	$(RM) *.o
 
-help.obj: help.c aralu.h
-	write sys$output "Help.c"
-	$(cc) help
-
-monsters.obj: monsters.c aralu.h
-	write sys$output "Monsters.c"
-	$(cc) monsters
-
-play.obj: play.c aralu.h
-	write sys$output "Play.c"
-	$(cc) play
-
-play2.obj: play2.c aralu.h
-	write sys$output "Play2.c"
-	$(cc) play2
-
-save.obj: save.c aralu.h
-	write sys$output "Save.c"
-	$(cc) save
-
-score.obj: score.c aralu.h
-	write sys$output "Score.c"
-	$(cc) score
-
-windows.obj: windows.c aralu.h
-	write sys$output "Windows.c"
-	$(cc) windows
-
-wizard.obj: wizard.c aralu.h 
-	write sys$output "Wizard.c"
-	$(cc) wizard
+.PHONY: all clean
