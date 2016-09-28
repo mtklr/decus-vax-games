@@ -14,7 +14,11 @@
  */
 
 #include <stdio.h>
-#include curses /* For display routines. */
+#include <curses.h> /* For display routines. */
+
+void peg(int who, int num);
+void remove_peg(int who, int where);
+void place_peg(int who, int where);
 
 #define swap(a,b)	{ int c; c = b; b = a; a = c; }
 #define suite(n)	(int) (n-1) / 13
@@ -1214,7 +1218,7 @@ create_board()
 
 /******************************************************************************/
 
-peg(who, num)
+void peg(who, num)
 /*
  *	This procedure will do the actual moving of the pegs w/i the program.
  */
@@ -1245,7 +1249,7 @@ int who, num;
 
 /******************************************************************************/
 
-remove_peg(who,where)
+void remove_peg(who,where)
 /*
  *	This procedure will remove a peg from the board.
  */
@@ -1310,7 +1314,7 @@ int	who, where;
 
 /******************************************************************************/
 
-place_peg(who,where)
+void place_peg(who,where)
 /*
  *	This procedure will place a peg on the board.
  */
