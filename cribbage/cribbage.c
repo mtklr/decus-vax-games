@@ -416,7 +416,7 @@ int what;
 
 	wprintw(i_o_win,"How many points? ");
 	wrefresh(i_o_win);
-	gets(line);
+	wgetstr(i_o_win, line);
 	wprintw(i_o_win,"%s\n",line);
 	if (strncmp(line, "qu",2)==0) leave();
 	sscanf(line,"%d", &input_value);
@@ -480,7 +480,7 @@ int howmany, *card1, *card2;
 input:
 	wprintw(i_o_win,"%s",prompt);
 	wrefresh(i_o_win);
-	gets(line);
+	wgetstr(i_o_win, line);
 	wprintw(i_o_win,"%s\n",line);
 	wrefresh(i_o_win);
 	if (strncmp(line, "qu",2)==0) leave();
