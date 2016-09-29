@@ -797,6 +797,7 @@ char buff[20];
   response_time = buff[0] ? atoi(buff) : DEF_TIME;
   ClrScreen(); PrintBoard(white,0,0,1);
   InitializeStats();
+  time0 = time(0);
   ElapsedTime(1);
   GetOpenings();
 }
