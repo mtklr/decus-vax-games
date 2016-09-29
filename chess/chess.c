@@ -131,7 +131,7 @@ void readline(x, y, prompt, p)
 /*    v = h = 0; */
     standout();
     move(y-1,x-1);
-    printf( "%s", prompt);
+    printw( "%s", prompt);
     standend();
     getyx(stdscr, y, x);
     for (q = p; (k = getch()) != EOF;) {
@@ -143,7 +143,7 @@ void readline(x, y, prompt, p)
 		x++;
 		break;
 	    case up:
-		if ( !allow) { p++; break;}
+		if ( !allow) { p++; x++; break;}
 		if ( v < 7) v++;	
  		standout();
  		if ( px[board[h+(8*v)]] != ' ') DrawPiece(h+(8*v));
@@ -154,7 +154,7 @@ void readline(x, y, prompt, p)
 		DrawPiece(h+(8*(v-1)));
 		break;
 	    case down:
-		if ( !allow) { p++; break;}
+		if ( !allow) { p++; x++; break;}
 		if ( v > 0) v--;
  		standout();
  		if ( px[board[h+(8*v)]] != ' ') DrawPiece(h+(8*v));
@@ -165,7 +165,7 @@ void readline(x, y, prompt, p)
 		DrawPiece(h+(8*(v+1)));
 		break;
 	    case left:
-		if ( !allow) { p++; break;}
+		if ( !allow) { p++; x++; break;}
 		if ( h > 0) h--;
  		standout();
  		if ( px[board[h+(8*v)]] != ' ') DrawPiece(h+(8*v));
@@ -176,7 +176,7 @@ void readline(x, y, prompt, p)
 		DrawPiece((h+1)+(8*v));
 		break;
  	    case right:
-		if ( !allow) { p++; break;}
+		if ( !allow) { p++; x++; break;}
 		if ( h < 7) h++;
  		standout();
  		if ( px[board[h+(8*v)]] != ' ') DrawPiece(h+(8*v));
@@ -187,7 +187,7 @@ void readline(x, y, prompt, p)
 		DrawPiece((h-1)+(8*v));
 	 	break;
 	    case 'c': 
-		if ( !allow) { p++; break;}
+		if ( !allow) { p++; x++; break;}
 		allow = false; 
 	 	strcpy(p,"\0\0\0");
 		gotoXY(1,1); 
