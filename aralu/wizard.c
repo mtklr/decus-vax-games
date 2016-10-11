@@ -2,7 +2,7 @@
 
 void where();
 
-void kill_mon()					/* kill a monster */
+void kill_mon() /* kill a monster */
 {
 int i, j, y, x, n, k;
 int limit;
@@ -36,7 +36,7 @@ while( n++ < MAXMONSTERS*level) {
 if ( !found) prt_msg("No such monster exists on this level.");
 }
 
-void where()					/* tells where the monsters are */
+void where() /* tells where the monsters are */
 {
 int i, j, dummy, k, limit;
 char you[80];
@@ -49,7 +49,7 @@ while( j++ < MAXMONSTERS*level) {
  for ( i=0; i< limit; i++) {
    sprintf(position,"(%d) %15s at (%d,%d)[spd:%d](hel:%d)[ded:%d](mag:%d)[hlsp:%d]",
           k,mon_names[monsters[k].n_num],monsters[k].posx,monsters[k].posy,
-	  monsters[k].speed,monsters[k].health,monsters[k].dead,monsters[k].magic,monsters[k].hlspd);
+          monsters[k].speed,monsters[k].health,monsters[k].dead,monsters[k].magic,monsters[k].hlspd);
    prt_msg(position);
    if ( k != 0  &&  k % 8 == 0) {
      prt_msg("Press any key for more ('q' to end listing).");
@@ -69,7 +69,7 @@ sprintf(you,"You are at (%d,%d).  Stopmonst: %d",ppos.x,ppos.y,stop_monst);
 prt_msg(you);
 }
 
-create_object()				/* create any object where you are */
+create_object() /* create any object where you are */
 {
 char obj;
 
@@ -81,7 +81,7 @@ underchar = obj;
 prt_msg("Created.");
 }
 
-void delete_object()				/* delete object on map */
+void delete_object() /* delete object on map */
 {
 int dx, dy;
 char dir;
@@ -90,11 +90,11 @@ prt_msg("Remove object which direction?");
 /* smg$read_keystroke(&kboard,&dir); */
 dir = getch();
 switch( dir) {
-	case UP: dy = -1; dx = 0; break;
-	case DOWN: dy = 1; dx = 0; break;
-	case LEFT: dx = -1; dy = 0; break;
-	case RIGHT: dx = 1; dy = 0; break;
-	default: prt_msg("Invalid direction."); return; break;
+        case UP: dy = -1; dx = 0; break;
+        case DOWN: dy = 1; dx = 0; break;
+        case LEFT: dx = -1; dy = 0; break;
+        case RIGHT: dx = 1; dy = 0; break;
+        default: prt_msg("Invalid direction."); return; break;
 }
 map[ppos.y+dy][ppos.x+dx].mapchar = SPACE;
 map[ppos.y+dy][ppos.x+dx].number = 1;
@@ -102,7 +102,7 @@ prt_char( SPACE, ppos.y+dy, ppos.x+dx);
 prt_msg("Deleted.");
 }
 
-set_stats()                       	/* make a nice character */
+set_stats() /* make a nice character */
 {
 
 STR = grab_num("STR? ");
@@ -117,7 +117,7 @@ experience = grab_num("experience? ");
 prt_status();
 }
 
-fly()					/* teleport */
+fly() /* teleport */
 {
 
 map[ppos.y][ppos.x].mapchar = SPACE;
@@ -138,14 +138,14 @@ change_viewport( ppos.y, ppos.x);
 dely = delx = 0;
 }
 
-goto_level()				/* go to 'n' level in dungeon */
+goto_level() /* go to 'n' level in dungeon */
 {
 
 level = grab_num( "Go to which level? " ) - 1;
 GAINLEVEL = TRUE;
 }
 
-cure_all()				/* cure all ailments from potions */
+cure_all() /* cure all ailments from potions */
 {
 int j;
 

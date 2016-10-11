@@ -29,20 +29,20 @@ monsters_struct *mon_ptr;
 mon_ptr = &monsters[i];
 
   switch( dir) {
-	case NORTH: dx = 0; dy = -1; break;
-	case SOUTH: dx = 0; dy = 1; break;
-	case WEST: dx = -1; dy = 0; break;
-	case EAST: dx = 1; dy = 0; break;
-	default: printf("Error finding direction.\n"); exit(1); /* Impossible */
+        case NORTH: dx = 0; dy = -1; break;
+        case SOUTH: dx = 0; dy = 1; break;
+        case WEST: dx = -1; dy = 0; break;
+        case EAST: dx = 1; dy = 0; break;
+        default: printf("Error finding direction.\n"); exit(1); /* Impossible */
   } /* End switch */
 
   if ( (randnum( 100) < mon_ptr->follow) ||  flags[MON_CONFUSE].valid) {
     if ( randnum(4) < 2) dx = -dx;
     else dy = -dy;
-  } 				/* if monsters are confused or their follow */
-				/* is poor, make them go the wrong way */
-				/* if monsters are hurting, they run away
-				   and hide -- flying monsters can't run */
+  }                             /* if monsters are confused or their follow */
+                                /* is poor, make them go the wrong way */
+                                /* if monsters are hurting, they run away
+                                   and hide -- flying monsters can't run */
   if ( mon_ptr->health < .25*3*(i+5) && !mon_ptr->fly) { dx = -dx; dy = -dy; }
 
   *newy = mon_ptr->posy + dy;
@@ -50,11 +50,11 @@ mon_ptr = &monsters[i];
   return( map[*newy][*newx].mapchar);
 }
 
-void move_monsters( i)		/* move the monster 'i' toward the player */
+void move_monsters( i) /* move the monster 'i' toward the player */
 int i;
 {
 /* For tdir[5], 0 = primary direction; 1 = alternate direction,
-   	        2 = monster's current direcion, 3 = -primary, 4 = -alternate */
+                2 = monster's current direcion, 3 = -primary, 4 = -alternate */
 int movedir, testdir[5], newy, newx, firex, firey, ax, ay, moveoff, hlspeed;
 int m_spell, fdr;
 int distance = 0;
@@ -88,7 +88,7 @@ if ( (mon_ptr->posy == ppos.y  ||  mon_ptr->posx == ppos.x) &&
     firechar = '*';
     m_spell = randnum( 2)+2;
     sprintf( fire_msg,"%s summons a %s!",
-	          		  mon_names[mon_ptr->n_num], spells[m_spell-1]);
+                                  mon_names[mon_ptr->n_num], spells[m_spell-1]);
     prt_msg( fire_msg);
     mon_ptr->health -= 3;
   }
@@ -110,7 +110,7 @@ if ( (mon_ptr->posy == ppos.y  ||  mon_ptr->posx == ppos.x) &&
   else if ( distance != ARROWDIST && map[ay][ax].mapchar != WALL)
       prt_msg("Error in monster firing.");
 }
-else {						/* can't fire anything */
+else { /* can't fire anything */
 
 /* first see if monster is close enough to the player to move */
 if ( abs(ppos.y - mon_ptr->posy) < mon_ptr->range/2 &&
@@ -138,21 +138,21 @@ if ( abs(ppos.y - mon_ptr->posy) < mon_ptr->range/2 &&
 
   movedir = testdir[0];
   testchar = get_move( movedir, i, &newx, &newy);
-  if ( testchar == '@') { 	/* First choice -- attack */
+  if ( testchar == '@') { /* First choice -- attack */
     monster_attack( i, SWORD);
     return;
   }
   else while( (!mon_ptr->fly && (testchar == WALL || testchar == WATER))
              || isamonster( testchar) || testchar == ARENA) {
-	 movedir = testdir[k++];
+         movedir = testdir[k++];
          testchar = get_move( movedir, i, &newx, &newy);
-	 if ( k > 4) break;
+         if ( k > 4) break;
         } /* End while */
 
 /* All choices for movement have been covered, reset monster direction */
   mon_ptr->dir = movedir;
 
-  if ( testchar == '@') {  	/* trapped monster in cove -- attack */
+  if ( testchar == '@') { /* trapped monster in cove -- attack */
     monster_attack( i, SWORD);
     return;
   }
@@ -165,12 +165,12 @@ if ( abs(ppos.y - mon_ptr->posy) < mon_ptr->range/2 &&
    if ( testchar == PIT)
      do_attack( i, 77, NULL, NULL);
   }
- if ( mon_ptr->dead) {				/* monster was killed */
+ if ( mon_ptr->dead) { /* monster was killed */
   if ( monkilled == MAXMONSTERS*level) {
     map[newy][newx].mapchar = KEY;
     map[newy][newx].number = 1;
     sprintf(dropped,"%s drops the key as it writhes in agony and dies.",
-		     				mon_names[mon_ptr->n_num]);
+                                                mon_names[mon_ptr->n_num]);
     prt_msg(dropped);
     prt_char( KEY, newy, newx);
   }
@@ -199,7 +199,7 @@ if ( abs(ppos.y - mon_ptr->posy) < mon_ptr->range/2 &&
    prt_char(map[mon_ptr->posy][mon_ptr->posx].mapchar,
                                                   mon_ptr->posy,mon_ptr->posx);
  } /* End IF (dead) */
-else { 						/* monster was not killed */
+else { /* monster was not killed */
    map[mon_ptr->posy][mon_ptr->posx].mapchar = mon_ptr->underchar;
    map[mon_ptr->posy][mon_ptr->posx].number = 1;
    prt_char(map[mon_ptr->posy][mon_ptr->posx].mapchar,
@@ -245,8 +245,8 @@ int count = 0;
 short ret = 0;
 char dummy[80];
 
-monsters_struct *m;	/* new monster type read in */
-monsters_struct *nm;	/* next monster number of that type */
+monsters_struct *m;  /* new monster type read in */
+monsters_struct *nm; /* next monster number of that type */
 
 if ( (mfile = fopen( monfile,"r")) != NULL) {
   do {
@@ -262,9 +262,9 @@ if ( (mfile = fopen( monfile,"r")) != NULL) {
      mon_num++;
      m = &monsters[mon_num];
      fscanf(mfile,"%d %d %d %c %d %d %d %d %d %d %d %d %d %d %d %d",
- 	     &m->max_mon,&m->n_num,&m->a_num,&m->mon_char,&m->dam,&m->health,
- 	     &m->follow,&m->speed,&m->firec,&m->range,&m->reschance,&m->f_num,
-	     &m->dead,&m->fly,&m->magic,&m->hlspd);
+             &m->max_mon,&m->n_num,&m->a_num,&m->mon_char,&m->dam,&m->health,
+             &m->follow,&m->speed,&m->firec,&m->range,&m->reschance,&m->f_num,
+             &m->dead,&m->fly,&m->magic,&m->hlspd);
      do {
        x = randnum(MAXCOLS);
        y = randnum(MAXROWS);
@@ -277,7 +277,7 @@ if ( (mfile = fopen( monfile,"r")) != NULL) {
      max_m_ct = m->max_mon;
 
 /* Create the maximum number of monsters per 'type' -- eg. 4 ants, 3 clams */
-     while( max_m_ct-- > 1) {		/* if only one, skip next procedure */
+     while( max_m_ct-- > 1) { /* if only one, skip next procedure */
         mon_num++;
         nm = &monsters[mon_num];       /* next monster number */
         nm->number = mon_num;
@@ -307,14 +307,14 @@ if ( (mfile = fopen( monfile,"r")) != NULL) {
         nm->underchar = SPACE;
         nm->dir = NORTH;
      } /* End while */
-   } while( m->n_num < DIFFMON-1);	/* use n_num as a counter for DIFFMON */
+   } while( m->n_num < DIFFMON-1); /* use n_num as a counter for DIFFMON */
 fclose( mfile);
 }
 else ret = E_OPENMON;
 return( ret);
 }
 
-prt_monsters()					/* for restored games */
+prt_monsters() /* for restored games */
 {
 int i, j, k;
 int limit;
@@ -332,7 +332,7 @@ while( i++ < MAXMONSTERS*level) {
  } /* End while */
 }
 
-monster_attack( mon_num, obj)		/* this is for monster attacks */
+monster_attack( mon_num, obj) /* this is for monster attacks */
 int mon_num;
 char obj;
 {
@@ -342,10 +342,10 @@ char mon_attack[80];
 
 if ( obj == ARROW)
  sprintf(mon_attack,"%s %s.",mon_names[monsters[mon_num].n_num],
- 			            monfire[monsters[mon_num].f_num]);
+                                    monfire[monsters[mon_num].f_num]);
 else
  sprintf(mon_attack,"%s %s.",mon_names[monsters[mon_num].n_num],
-				    attacks[monsters[mon_num].a_num]);
+                                    attacks[monsters[mon_num].a_num]);
 damage_done = monsters[mon_num].dam + randnum( monsters[mon_num].dam);
 if ( operator) {
   sprintf(op_msg,"MSock: %d",damage_done);
@@ -388,24 +388,24 @@ else weapon = BACKPACK[bp_num].invenchar;
 if ( bp_num != 0) {
   if ( weapon == ARROW) {
     sprintf(player_attack,"The bolt finds its mark and hits %s.",
-    						mon_names[mon_ptr->n_num]);
+                                                mon_names[mon_ptr->n_num]);
     add_damage = BUSE / (level*2);
     damage_done = randnum( add_damage)+1 + ITEM_PROPS[identify( ARROW)][DAMAGE];
   }
   else if ( weapon == ORB) {
     if ( spell == 'a') {
     sprintf(player_attack,"The lightning bolt strikes %s!",
- 						mon_names[mon_ptr->n_num]);
+                                                mon_names[mon_ptr->n_num]);
     add_damage = (INT - 13)/3;
     }
     else if ( spell == 'b') {
     sprintf(player_attack,"The fireball envelops %s!",
- 						mon_names[mon_ptr->n_num]);
+                                                mon_names[mon_ptr->n_num]);
     add_damage = (INT - 13)/2;
     }
     else if ( spell == 'c') {
     sprintf(player_attack,"The acid ball envelops %s!",
- 						mon_names[mon_ptr->n_num]);
+                                                mon_names[mon_ptr->n_num]);
     add_damage = (INT - 13)*2;
     }
     else {
@@ -414,18 +414,18 @@ if ( bp_num != 0) {
     }
     damage_done = randnum( add_damage) + ITEM_PROPS[identify( ORB)][DAMAGE];
     switch( BACKPACK[check_inven( ORB)].condition) {
-	case 1: prt_msg("The Orb's power is very slight.");
-	        sprintf(player_attack,"The effect of the spell is greatly reduced.");
-		damage_done *= 0.25; break;
-	case 2: prt_msg("The spell is cast at one half normal power.");
-	        sprintf(player_attack,"The effect of the spell is reduced.");
-		damage_done *= 0.5; break;
-	case 3: prt_msg("The Orb is weakened in power.");
-	        sprintf(player_attack,"The effect of the spell is reduced.");
-		damage_done *= 0.75; break;
-	case 4: prt_msg("The power of the Orb is slightly low.");
-	        sprintf(player_attack,"The effect of the spell is reduced slightly.");
-		damage_done *= 0.9;
+        case 1: prt_msg("The Orb's power is very slight.");
+                sprintf(player_attack,"The effect of the spell is greatly reduced.");
+                damage_done *= 0.25; break;
+        case 2: prt_msg("The spell is cast at one half normal power.");
+                sprintf(player_attack,"The effect of the spell is reduced.");
+                damage_done *= 0.5; break;
+        case 3: prt_msg("The Orb is weakened in power.");
+                sprintf(player_attack,"The effect of the spell is reduced.");
+                damage_done *= 0.75; break;
+        case 4: prt_msg("The power of the Orb is slightly low.");
+                sprintf(player_attack,"The effect of the spell is reduced slightly.");
+                damage_done *= 0.9;
     } /* End switch */
   }
   else if ( weapon == MINE) {
@@ -434,7 +434,7 @@ if ( bp_num != 0) {
   }
   else if ( weapon == PIT) {
     sprintf(player_attack,"You hear %s wail in pain as it falls into a pit.",
-	    mon_names[mon_ptr->n_num]);
+            mon_names[mon_ptr->n_num]);
     damage_done = randnum( 10) + 1;
   }
   else {
@@ -444,19 +444,19 @@ if ( bp_num != 0) {
     else damage_done *= (0.20 * BACKPACK[bp_num].condition);
     if ( damage_done <= 1)
       sprintf(player_attack,"Your %s deflects harmlessly off %s.",
-	             BACKPACK[bp_num].name,mon_names[mon_ptr->n_num]);
+                     BACKPACK[bp_num].name,mon_names[mon_ptr->n_num]);
     else if ( damage_done < 5)
       sprintf(player_attack,"Your %s strikes %s.",
-	             BACKPACK[bp_num].name,mon_names[mon_ptr->n_num]);
+                     BACKPACK[bp_num].name,mon_names[mon_ptr->n_num]);
     else if ( damage_done < 9)
       sprintf(player_attack,"You pummel %s with your %s.",
-	             mon_names[mon_ptr->n_num],BACKPACK[bp_num].name);
+                     mon_names[mon_ptr->n_num],BACKPACK[bp_num].name);
     else if ( damage_done < 12)
       sprintf(player_attack,"You sever %s's disgusting body with your %s.",
-	             mon_names[mon_ptr->n_num],BACKPACK[bp_num].name);
+                     mon_names[mon_ptr->n_num],BACKPACK[bp_num].name);
     else
       sprintf(player_attack,"You utterly demolish %s with your %s!",
-	             mon_names[mon_ptr->n_num],BACKPACK[bp_num].name);
+                     mon_names[mon_ptr->n_num],BACKPACK[bp_num].name);
 
     if ( (miss_chance = DEX - 10) < 0) miss_chance = 0;
     mymiss = randnum( ITEM_PROPS[identify( weapon)][WEIGHT]/10)+1;
@@ -470,19 +470,19 @@ if ( bp_num != 0) {
     }
     else if ( randnum( 100) < 8 && BACKPACK[bp_num].condition < 2) {
            sprintf(player_attack,"Your %s shatters into a thousand pieces.",
-	 	     BACKPACK[bp_num].name);
-	   break_weapon( bp_num);
+                     BACKPACK[bp_num].name);
+           break_weapon( bp_num);
     }
     else if ( randnum( 100) < 5) {
       sprintf(player_attack,"Your %s finds its way to %s's heart.",
-	             BACKPACK[bp_num].name,mon_names[mon_ptr->n_num]);
-      damage_done = 1000;	/* automatic kill */
+                     BACKPACK[bp_num].name,mon_names[mon_ptr->n_num]);
+      damage_done = 1000;       /* automatic kill */
     }
   }
 }
-else {						/* bare handed attack */
+else { /* bare handed attack */
   sprintf(player_attack,"You graze %s with your fists.",
-				     mon_names[mon_ptr->n_num]);
+                                     mon_names[mon_ptr->n_num]);
     add_damage = (STR - 14)/2;
     damage_done = randnum( add_damage)+1 + ITEM_PROPS[HANDS][DAMAGE];
 }
@@ -517,7 +517,7 @@ if ( mon_ptr->health <= 0) {
     map[mon_ptr->posy][mon_ptr->posx].mapchar = KEY;
     map[mon_ptr->posy][mon_ptr->posx].number = 1;
     sprintf(dropped,"%s drops the key as it writhes in agony and dies.",
-		     				mon_names[mon_ptr->n_num]);
+                                                mon_names[mon_ptr->n_num]);
     prt_msg(dropped);
   }
   else {
@@ -527,7 +527,7 @@ if ( mon_ptr->health <= 0) {
     }
     else {
       sprintf(dropped,"%s's gold was lost when he died.",
-						     mon_names[mon_ptr->n_num]);
+                                                     mon_names[mon_ptr->n_num]);
       prt_msg(dropped);
       map[mon_ptr->posy][mon_ptr->posx].mapchar = mon_ptr->underchar;
       map[mon_ptr->posy][mon_ptr->posx].number = 1;
@@ -541,6 +541,6 @@ if ( mon_ptr->health <= 0) {
     prt_char( map[a_posy][a_posx].mapchar, a_posy, a_posx);
   }
   prt_char(map[mon_ptr->posy][mon_ptr->posx].mapchar,mon_ptr->posy,
-						      		 mon_ptr->posx);
+                                                                 mon_ptr->posx);
 } /* End IF */
 }

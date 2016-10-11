@@ -4,12 +4,12 @@ int obstacle( testchar)
 char testchar;
 {
 switch( testchar) {
-	case SPACE:
-	case BRIDGE:
-	case BRIDGE2:
-		return( FALSE);
-		break;
-	default: return( TRUE);
+        case SPACE:
+        case BRIDGE:
+        case BRIDGE2:
+                return( FALSE);
+                break;
+        default: return( TRUE);
 }
 }
 
@@ -46,12 +46,12 @@ time_structure = localtime(&time_val);
   else i = 0;
 
 sprintf(time_msg,"Time:   %2d:%02d %s",time_structure->tm_hour,
-						time_structure->tm_min,hour[i]);
+                                                time_structure->tm_min,hour[i]);
 prt_in_disp(dsp_status,time_msg,10,20);
 }
 
 /* Note:  since grab_num is only used with the wizard commands, there is no
-  	  need to run through the do_acts() procedure during number read */
+          need to run through the do_acts() procedure during number read */
 short grab_num( prompt)
 char *prompt;
 {
@@ -142,18 +142,18 @@ flags[BLIND].valid = FALSE;
 flags[BLIND].moves = 0;
 }
 
-int get_name( obj_to_ident)		/* gets name of object only */
+int get_name( obj_to_ident) /* gets name of object only */
 char obj_to_ident;
 {
 int i = 0;
 
 do {
   if ( ITEM_PROPS[i][ITEMCHAR] == obj_to_ident) { return( i); break; }
-}while( MAXOBJECTS> i++);    	/* note: this includes all objects */
-return( MAGIC_NUMBER);     	/* no such object - error in screen file */
+}while( MAXOBJECTS> i++);   /* note: this includes all objects */
+return( MAGIC_NUMBER);      /* no such object - error in screen file */
 }
 
-prt_status()				/* Print out the stats */
+prt_status() /* Print out the stats */
 {
 prt_username( username);
 prt_level();
@@ -173,11 +173,11 @@ prt_wgt();
 }
 
 /* Note:  It's impossible right now to get to "Forget it" speed, since the
- 	  flag for SPEED is just on/off.  If it were made such that a specific
-   	  number of times the slow/fast potion was drank, they could be
-	  accounted for in the check_speed() routine.  Right now, though, I
- 	  just have the slow/fast flag set for on/off with a number of moves
-	  dependent on the number of potions drank.
+          flag for SPEED is just on/off.  If it were made such that a specific
+          number of times the slow/fast potion was drank, they could be
+          accounted for in the check_speed() routine.  Right now, though, I
+          just have the slow/fast flag set for on/off with a number of moves
+          dependent on the number of potions drank.
 */
 prt_speed()
 {
@@ -312,7 +312,7 @@ prt_in_disp(dsp_status,wgt_msg,10,1);
 
 /* End stats section */
 
-int check_inven( otc)			/* returns position in inventory */
+int check_inven( otc) /* returns position in inventory */
 char otc;
 {
 int i;
@@ -323,7 +323,7 @@ for (i=1; i< MAXINVEN; i++)
 return( FALSE);
 }
 
-int identify( obj_to_ident)	/* Identifies item properties by finding # */
+int identify( obj_to_ident) /* Identifies item properties by finding # */
 char obj_to_ident;
 {
 int i = 0;

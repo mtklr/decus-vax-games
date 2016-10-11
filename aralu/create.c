@@ -20,14 +20,14 @@ int add;
   prt_in_disp(dsp_create,"Add 1 point to which attribute?  ",10,1);
   /* smg$read_keystroke(&cboard,&add); */
   switch( add=getch()) {
-  	case 'a': make_choice( "a) STR",++STR,3,dsp_create); break;
-  	case 'b': make_choice( "b) INT",++INT,4,dsp_create); break;
+        case 'a': make_choice( "a) STR",++STR,3,dsp_create); break;
+        case 'b': make_choice( "b) INT",++INT,4,dsp_create); break;
         case 'c': make_choice( "c) DEX",++DEX,5,dsp_create); break;
-	case 'd': make_choice( "d) CON",++CON,6,dsp_create); break;
-	default : prt_in_disp(dsp_create,"Value out of range.                 ",10,1);
-		  sleep( 1);
-		  changes++;
-/* 		  changes = add_points( changes, dsp_create, cboard); */
+        case 'd': make_choice( "d) CON",++CON,6,dsp_create); break;
+        default : prt_in_disp(dsp_create,"Value out of range.                 ",10,1);
+                  sleep( 1);
+                  changes++;
+/*                changes = add_points( changes, dsp_create, cboard); */
   }
 return( --changes);
 }
@@ -52,7 +52,7 @@ short ret = 0;
 char left[20];
 
 STR = INT = DEX = CON = 11;
-changes = 16;			/* how many changes player gets to make */
+changes = 16; /* how many changes player gets to make */
 
 /* put choices up on the screen and read keystrokes to change stats */
 /* smg$create_pasteboard(&cpb); */
@@ -63,7 +63,7 @@ changes = 16;			/* how many changes player gets to make */
 WINDOW *dsp_create = newwin(10, 32, 6, 25);
 prt_difficulty(dsp_create);
 /* smg$read_keystroke(&cboard,&diff_num); */
-switch( diff_num=getch()) {	/* Note: these values are VERY touchy */
+switch( diff_num=getch()) { /* Note: these values are VERY touchy */
    case '1': DIFFICULTY = 0.2; break;
    case '2': DIFFICULTY = 0.05; break;
    case '3': DIFFICULTY = 0.01; break;

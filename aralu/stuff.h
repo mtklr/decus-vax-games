@@ -112,7 +112,7 @@ char *errors[] = {
     "game saved",
     "level gained",
     "error writing to savefile",
-    "data corruption - illegal syntax",		/* let them figure it out */
+    "data corruption - illegal syntax", /* let them figure it out */
     "error reading from savefile",
     "no savefile present",
     "error writing to scorefile",

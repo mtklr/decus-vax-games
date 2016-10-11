@@ -14,8 +14,8 @@ short ret = 0;
 
    if( (ret = readscore()) == 0)
       if( (ret = makescore()) == 0)
-	 if( (ret = writescore()) == 0)
-	    showscore();
+         if( (ret = writescore()) == 0)
+            showscore();
    return( (ret == 0) ? E_ENDGAME : ret);
 }
 
@@ -37,9 +37,9 @@ readscore() {
       ret = E_OPENSCORE;
    else {
          while(fscanf(scf,"%hd",&rank)!=EOF  &&  rank < MAXSCOREENTRIES)
-	   {
+           {
             fscanf( scf, "%10s  %8d  %8d  %8d\n", scoretable[rank].user,
-	 &scoretable[rank].level,&scoretable[rank].kills,&scoretable[rank].exp);
+         &scoretable[rank].level,&scoretable[rank].kills,&scoretable[rank].exp);
             scoreentries++;
            }
       }
@@ -51,29 +51,29 @@ makescore() {
 
    short ret = 0, pos, i, build = 1, insert;
 
-   if( (pos = finduser()) > -1) {	/* user already in score file */
+   if( (pos = finduser()) > -1) { /* user already in score file */
       insert =    (experience + wealth > scoretable[pos].exp)
-	       || ( (level == scoretable[pos].level) &&
+               || ( (level == scoretable[pos].level) &&
                     (kills > scoretable[pos].kills)
-		  )
-	       || ( (level == scoretable[pos].level) &&
-		    (kills == scoretable[pos].kills) &&
-		    (experience + wealth > scoretable[pos].exp)
-		  );
-      if( insert) { 			/* delete existing entry */
-	 for( i = pos; i < scoreentries-1; i++)
-	    cp_entry( i, i+1);
-	 scoreentries--;
+                  )
+               || ( (level == scoretable[pos].level) &&
+                    (kills == scoretable[pos].kills) &&
+                    (experience + wealth > scoretable[pos].exp)
+                  );
+      if( insert) {                     /* delete existing entry */
+         for( i = pos; i < scoreentries-1; i++)
+            cp_entry( i, i+1);
+         scoreentries--;
       }
       else build = 0;
    }
    else if( scoreentries == MAXSCOREENTRIES+1)
       ret = E_READSCORE;
    if( (ret == 0) && build) {
-      pos = findpos();			/* find the new score position */
-      if( pos > -1) {			/* score table not empty */
-	 for( i = scoreentries; i > pos; i--)
-	    cp_entry( i, i-1);
+      pos = findpos();  /* find the new score position */
+      if( pos > -1) {   /* score table not empty */
+         for( i = scoreentries; i > pos; i--)
+            cp_entry( i, i-1);
       }
       else pos = scoreentries;
 
@@ -101,13 +101,13 @@ findpos() {
 
    for( i = 0; (i < scoreentries) && (! found); i++)
       found =    (experience + wealth > scoretable[i].exp)
-	      || ( (level == scoretable[i].level) &&
+              || ( (level == scoretable[i].level) &&
                    (kills > scoretable[i].kills)
-		 )
-	      || ( (level == scoretable[i].level) &&
-		   (kills == scoretable[i].kills) &&
-		   (experience + wealth > scoretable[i].exp)
-		 );
+                 )
+              || ( (level == scoretable[i].level) &&
+                   (kills == scoretable[i].kills) &&
+                   (experience + wealth > scoretable[i].exp)
+                 );
    return( (found) ? i-1 : -1);
 }
 
@@ -142,7 +142,7 @@ showscore() {
    fprintf( stdout, "==================================================\n");
    for ( i = 0; i < scoreentries; i++)
      printf("   %2d  %10s  %8d  %8d  %8d\n",i+1,scoretable[i].user,
-	     scoretable[i].level,scoretable[i].kills,scoretable[i].exp);
+             scoretable[i].level,scoretable[i].kills,scoretable[i].exp);
 }
 
 cp_entry( i1, i2)

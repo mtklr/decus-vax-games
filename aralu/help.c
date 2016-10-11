@@ -11,15 +11,15 @@ char *helptext[] = {
 "current level and then find the key to the exits to the next level.",
 " ",
 "  Commands in the game are given by single keystrokes and are as follows:",
-"    u     - use magic orb                  r     - read scroll		",
+"    u     - use magic orb                  r     - read scroll         ",
 "    b     - check backpack                 t     - show time           ",
 "    c     - center window                  w     - wear/wield item     ",
 "    d     - drop item                      Q     - quit and save game  ",
 "    v     - look any direction            ^Z     - abort game/no save  ",
 " i,j,k,l  - move up,down,left,right       ^L     - redraw screen       ",
-"   ^B     - reset priority                 SPACE  - fire arrow		",
-"    q     - quaff potion                   s     - show status		",
-"    x     - exchange primary weapon        h     - heal wounds		",
+"   ^B     - reset priority                 SPACE  - fire arrow         ",
+"    q     - quaff potion                   s     - show status         ",
+"    x     - exchange primary weapon        h     - heal wounds         ",
 "    e     - exit level or enter store      S     - change speed of game",
 NULL /* End help listing */
 };
@@ -58,9 +58,9 @@ char *opreturn_d = "Press any key to continue list";
 i = 0;
 /* smg$paste_virtual_display(&dsp_help,&pb,&2,&2); */
    while( helptext[i] != NULL) {
-	/* help_d.dsc$w_length = strlen( helptext[i]); */
-	/* help_d.dsc$a_pointer = helptext[i++]; */
- 	/* smg$put_line(&dsp_help,&help_d,0,0,0,0); */
+        /* help_d.dsc$w_length = strlen( helptext[i]); */
+        /* help_d.dsc$a_pointer = helptext[i++]; */
+        /* smg$put_line(&dsp_help,&help_d,0,0,0,0); */
         wprintw(dsp_help, "%s\n", helptext[i]);
         i++;
    }
@@ -75,9 +75,9 @@ getch();
 wclear(dsp_help);
 i = 0;
    while( ophelp[i] != NULL) {
-	/* ophelp_d.dsc$w_length = strlen( ophelp[i]); */
-	/* ophelp_d.dsc$a_pointer = ophelp[i++]; */
- 	/* smg$put_line(&dsp_help,&ophelp_d,0,0,0,0); */
+        /* ophelp_d.dsc$w_length = strlen( ophelp[i]); */
+        /* ophelp_d.dsc$a_pointer = ophelp[i++]; */
+        /* smg$put_line(&dsp_help,&ophelp_d,0,0,0,0); */
         wprintw(dsp_help, "%s\n", ophelp[i]);
         i++;
    }

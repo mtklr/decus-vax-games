@@ -50,7 +50,7 @@ while( i< quan) {
      map[y][x].mapchar = obj;
      if ( ITEM_PROPS[identify( obj)][COMBINE]) map[y][x].number = 1;
      else map[y][x].number = randnum( 5) + 1;
-     /* lib$wait(&0.008);		/1* to give the random a better effect *1/ */
+     /* lib$wait(&0.008); /1* to give the random a better effect *1/ */
      napms(8); /* to give the random a better effect */
      prt_char( map[y][x].mapchar, y, x);
      i++;
@@ -77,7 +77,7 @@ else if ( obj_num==2) { create( SCROLL, 4); create( HAXE, 1); }
 else if ( obj_num==3) { create( AXE, 1); create( ARMOR, 1); }
 else if ( obj_num==4) { create( BOW, 1); create( ARROW, 10); }
 else if ( obj_num==5) { create( ARMOR, 1); create( LSWORD, 1); }
-else create( SPACE, 1);		/* should never happen */
+else create( SPACE, 1); /* should never happen */
 }
 
 sub_holdmap()
@@ -116,11 +116,11 @@ if ( (readfile = fopen( screenfile,"r")) != NULL) {
         map[i][j].mapchar = maparray[i][j];
         map[i][j].number = 9999;
         if ( map[i][j].mapchar == '@') { ppos.y = i;  ppos.x = j;
-  	  map[i][j].mapchar = SPACE; maparray[i][j] = SPACE;}
-	else if ( map[i][j].mapchar == BONES) { a_posy = i; a_posx = j; }
+          map[i][j].mapchar = SPACE; maparray[i][j] = SPACE;}
+        else if ( map[i][j].mapchar == BONES) { a_posy = i; a_posx = j; }
     }
 
- underchar = SPACE; 	         	/* starting out new screen */
+ underchar = SPACE; /* starting out new screen */
 /* can't print out the monsters with the rest of the map, since the character
    you see on the screen is not the same as the encoded character of the
    monster, so we have to do it in write_map() */
@@ -170,7 +170,7 @@ if ( (key=getchar()) != EOF) {
    send = TRUE;
    timeout_count--;
 }
-if ( !in_arena) {	/* can't heal while waiting in arena */
+if ( !in_arena) { /* can't heal while waiting in arena */
   if ( CON == 20) denom = 1;
   else {
     if ( (denom = 20-CON) < 0) denom = 1 + 1/(CON-20);
@@ -223,7 +223,7 @@ while( j++ < MAXMONSTERS*level) {
     if ( !monsters[k].dead) {
       if ( (monspeed = monsters[k].speed) < 1) monspeed = 1;
       if ( moves % monspeed == 0)
-        if ( !stop_monst)		/* God flag for stopping monsters */
+        if ( !stop_monst) /* God flag for stopping monsters */
           move_monsters( k);
     }
     else if ( randnum( 100) < monsters[k].reschance) resurrect( k);
@@ -280,39 +280,39 @@ short ret, restored;
 char op_username[12];
 char sk[10];
 
-				/* initialize BACKPACK struct for spaces */
+/* initialize BACKPACK struct for spaces */
 for (i=1; i< MAXINVEN; i++)
    BACKPACK[i].invenchar = SPACE;
-				/* initialize FLAGS to nothing */
+/* initialize FLAGS to nothing */
 for (i=0; i< NUMFLAGS; i++)
    flags[i].valid = flags[i].moves = 0;
 
 GAINLEVEL = KEYPOSESS = operator = dead = stop_monst =
-			in_store = in_arena = can_exit = ret = restored = FALSE;
+in_store = in_arena = can_exit = ret = restored = FALSE;
 level = 1;
-randomize(); 			/* to get the ball rolling for random numbers */
+randomize(); /* to get the ball rolling for random numbers */
 
 strcpy( username, getenv("USER"));
 if ( argc > 1) {
   if ( argv[1][0] != '-') ret = E_USAGE;
   else switch( toupper( argv[1][1])) {
-     	 case 'C':
-    		if ( strcmp( username, SUPERUSER) != 0) errmess(  E_NOTSUPER);
-	    	printf("Are you sure you want to create another highscore file?\n");
-    		scanf( "%s", sk);
-    		if ( toupper( sk[0]) == 'Y') {
-      		  if ( (ret = create_scorefile()) == 0) ret = E_CREATED;
-    		}
-    		else ret = E_ENDGAME;
-		break;
-	 case 'S': if ( (ret = outputscore()) == 0) ret = E_ENDGAME; break;
-	 case 'M':
-		if ( strcmp( username, SUPERUSER) != 0) errmess(  E_NOTSUPER);
-		printf("Enter username:\n");
-		scanf( "%s", op_username);
-		op_username[9] = 0;
-		strcpy( username, op_username);
-		break;
+         case 'C':
+                if ( strcmp( username, SUPERUSER) != 0) errmess(  E_NOTSUPER);
+                printf("Are you sure you want to create another highscore file?\n");
+                scanf( "%s", sk);
+                if ( toupper( sk[0]) == 'Y') {
+                  if ( (ret = create_scorefile()) == 0) ret = E_CREATED;
+                }
+                else ret = E_ENDGAME;
+                break;
+         case 'S': if ( (ret = outputscore()) == 0) ret = E_ENDGAME; break;
+         case 'M':
+                if ( strcmp( username, SUPERUSER) != 0) errmess(  E_NOTSUPER);
+                printf("Enter username:\n");
+                scanf( "%s", op_username);
+                op_username[9] = 0;
+                strcpy( username, op_username);
+                break;
          default: ret = E_USAGE;
   } /* End switch */
 if ( ret) errmess( ret);
@@ -342,7 +342,7 @@ prt_status();
 get_time();
 put_windows();
 
-remove( savefile); 		/* delete savefile so people can't cheat */
+remove( savefile); /* delete savefile so people can't cheat */
 while(!dead) {
 if ( (ret = gameloop()) == E_GAINLEVEL) {
   prt_msg("Congratulations!  You made it through this level");
@@ -351,12 +351,12 @@ if ( (ret = gameloop()) == E_GAINLEVEL) {
   MAXHEALTH = ((CON+level)*8);
   if ( (ret = readscreen()) != 0) errmess( ret);
   /* smg$begin_pasteboard_update(&pb); */
-  /* smg$erase_display(&dsp_main); 	/1* clear original map *1/ */
+  /* smg$erase_display(&dsp_main); /1* clear original map *1/ */
   wclear(dsp_main);
-  change_viewport( ppos.y, ppos.x);	/* restarts the viewport */
+  change_viewport( ppos.y, ppos.x); /* restarts the viewport */
   map[ppos.y][ppos.x].mapchar = '@';
   maparray[ppos.y][ppos.x] = '@';
-  write_map();				/* print out new map */
+  write_map(); /* print out new map */
   create_objects();
   /* smg$end_pasteboard_update(&pb); */
 /*  if ( !flags[SPEED].valid && CURWEIGHT < MAXWEIGHT) speed = 1; */

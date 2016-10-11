@@ -26,19 +26,19 @@ for( i = y-dexdist; i <= y+uexdist; i++)
      if ( obstacle( map[i][j].mapchar)) {
        if ( isamonster( map[i][j].mapchar)) {
          monnum = map[i][j].number;
-	 if ( ping_monster( j, i, monnum)) return;
+         if ( ping_monster( j, i, monnum)) return;
          if ( object == 'b' || object == 'c' )
-	   do_attack( monnum, 99, object, dir);
+           do_attack( monnum, 99, object, dir);
          else  /* Multiple mines */
-	   while( number-- >0 && !monsters[monnum].dead)
- 	     do_attack( monnum, 88, MINE, dir);
+           while( number-- >0 && !monsters[monnum].dead)
+             do_attack( monnum, 88, MINE, dir);
        }
        else if ( map[i][j].mapchar == '@') {
          if ( object == 'b'  ||  object == 'c')
            strcpy( item_killer, spells[object-MAGIC_NUMBER]);
          else strcpy( item_killer, object_names[get_name( object)]);
          damage = number*(5*(2+1) - 2*abs(y-i) - 2*abs(x-j));
-	 prt_msg("You are enveloped in the ball!");
+         prt_msg("You are enveloped in the ball!");
          take_damage( damage, item_killer);
        }
        prt_char( map[i][j].mapchar, i, j);

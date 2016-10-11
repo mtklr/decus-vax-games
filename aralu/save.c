@@ -47,25 +47,25 @@ k = 0;
  for (i=0; i< MAXROWS; i++)
     for (j=0; j< MAXCOLS; j++)
         if ( map[i][j].mapchar != WALL && map[i][j].mapchar != SPACE &&
-	     !isamonster( map[i][j].mapchar) && map[i][j].mapchar != WATER &&
-   	     map[i][j].mapchar != BRIDGE && map[i][j].mapchar != BRIDGE2) {
+             !isamonster( map[i][j].mapchar) && map[i][j].mapchar != WATER &&
+             map[i][j].mapchar != BRIDGE && map[i][j].mapchar != BRIDGE2) {
           holdmap[k].holdchar = map[i][j].mapchar;
-	  holdmap[k].num = map[i][j].number;
+          holdmap[k].num = map[i][j].number;
           holdmap[k].x = j;
-	  holdmap[k].y = i;
-    	  k++;
-	}
+          holdmap[k].y = i;
+          k++;
+        }
  holdmap[k].num = -5;
 
   if ( fwrite( &player, sizeof(player), 1, outfile) != NULL) {
     if ( fwrite( &ppos, sizeof(ppos), 1, outfile) != NULL)
       if ( fwrite( &monsters, sizeof(monsters), 1, outfile) != NULL)
-	if ( fwrite( &BACKPACK, sizeof(BACKPACK), 1, outfile) != NULL)
-/*  	  if ( fwrite( &(maparray[0][0]), sizeof(maparray), 1, outfile) != NULL)
-	    if ( fwrite( &map, sizeof(map), 1, outfile) != NULL)
+        if ( fwrite( &BACKPACK, sizeof(BACKPACK), 1, outfile) != NULL)
+/*        if ( fwrite( &(maparray[0][0]), sizeof(maparray), 1, outfile) != NULL)
+            if ( fwrite( &map, sizeof(map), 1, outfile) != NULL)
 */
-	    if ( fwrite( &holdmap, sizeof(holdmap), 1, outfile) != NULL)
-	      if ( fwrite( &flags, sizeof(flags), 1, outfile) != NULL)
+            if ( fwrite( &holdmap, sizeof(holdmap), 1, outfile) != NULL)
+              if ( fwrite( &flags, sizeof(flags), 1, outfile) != NULL)
               ret = E_SAVED;
   }
   else ret = E_WRITESAVE;
@@ -94,16 +94,16 @@ if ( (infile = fopen( savefile,"r")) != NULL) {
   if ( fread( &player, sizeof(player), 1, infile) != NULL) {
     if ( fread( &ppos, sizeof(ppos), 1, infile) != NULL)
       if ( fread( &monsters, sizeof(monsters), 1, infile) != NULL)
-	if ( fread( &BACKPACK, sizeof(BACKPACK), 1, infile) != NULL)
-/*	  if ( fread( &(maparray[0][0]), sizeof(maparray), 1, infile) != NULL)
+        if ( fread( &BACKPACK, sizeof(BACKPACK), 1, infile) != NULL)
+/*        if ( fread( &(maparray[0][0]), sizeof(maparray), 1, infile) != NULL)
             if ( fread( &map, sizeof(map), 1, infile) != NULL)
 */
-	    if ( fread( &holdmap, sizeof(holdmap), 1, infile) != NULL)
-	      if ( fread( &flags, sizeof(flags), 1, infile) != NULL)
-	 if ( fread( &sfstat, sizeof(sfstat), 1, infile) != NULL) {
-	     if ( (strcmp( username, SUPERUSER) != 0) &&
-		( (strcmp( username, player.username) != 0) ||
-		  (sfstat.st_dev != oldsfstat.st_dev) ||
+            if ( fread( &holdmap, sizeof(holdmap), 1, infile) != NULL)
+              if ( fread( &flags, sizeof(flags), 1, infile) != NULL)
+         if ( fread( &sfstat, sizeof(sfstat), 1, infile) != NULL) {
+             if ( (strcmp( username, SUPERUSER) != 0) &&
+                ( (strcmp( username, player.username) != 0) ||
+                  (sfstat.st_dev != oldsfstat.st_dev) ||
                   (sfstat.st_mode != oldsfstat.st_mode) ||
                   (sfstat.st_uid != oldsfstat.st_uid) ||
                   (sfstat.st_gid != oldsfstat.st_gid) ||
@@ -114,8 +114,8 @@ if ( (infile = fopen( savefile,"r")) != NULL) {
          else {
 /* in case the operator is restoring someone else's game */
           if ( strcmp( username, SUPERUSER) == 0  &&
-	       strcmp( username, player.username) != 0) operator = TRUE;
-	  else operator =  player.operator;
+               strcmp( username, player.username) != 0) operator = TRUE;
+          else operator =  player.operator;
           strcpy( username, player.username);
           underchar = player.underchar;
           level =     player.level;
@@ -123,23 +123,23 @@ if ( (infile = fopen( savefile,"r")) != NULL) {
           speed =     player.speed;
           experience= player.experience;
           wealth =    player.wealth;
-    	  monkilled = player.monkilled;
+          monkilled = player.monkilled;
           kills =     player.kills;
-	  STR =       player.STR;
-	  INT =       player.INT;
-     	  DEX =       player.DEX;
-   	  CON =       player.CON;
-	  BUSE =      player.BUSE;
-	  delx =      player.delx;
+          STR =       player.STR;
+          INT =       player.INT;
+          DEX =       player.DEX;
+          CON =       player.CON;
+          BUSE =      player.BUSE;
+          delx =      player.delx;
           dely =      player.dely;
           MAXHEALTH = player.MAXHEALTH;
-	  MAXWEIGHT = player.MAXWEIGHT;
-  	  CURWEIGHT = player.CURWEIGHT;
-	  WIELD =     player.WIELD;
+          MAXWEIGHT = player.MAXWEIGHT;
+          CURWEIGHT = player.CURWEIGHT;
+          WIELD =     player.WIELD;
           WORN =      player.WORN;
           ALTWEAP =   player.ALTWEAP;
           KEYPOSESS = player.KEYPOSESS;
-	  DIFFICULTY = player.DIFFICULTY;
+          DIFFICULTY = player.DIFFICULTY;
 /*
  for (i=0; i< MAXROWS; i++)
     for (j=0; j< MAXCOLS; j++)

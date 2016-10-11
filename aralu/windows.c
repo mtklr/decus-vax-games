@@ -52,7 +52,7 @@ char *message;
 {
 /* $DESCRIPTOR( mess_d, message); */
 /* mess_d.dsc$w_length = strlen(message); */
-/* if ( (y==0) && (x==0))		/1* default to the next line, col *1/ */
+/* if ( (y==0) && (x==0)) /1* default to the next line, col *1/ */
 /*   smg$put_line(&display,&mess_d,0,0,0,&SMG$M_WRAP_WORD); */
 /* else */
 /*   smg$put_chars(&display,&mess_d,&y,&x); */
