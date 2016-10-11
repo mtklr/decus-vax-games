@@ -1,6 +1,5 @@
 #include "aralu.h"
 
-
 static short scoreentries;
 static short rank;
 static struct {
@@ -8,7 +7,6 @@ static struct {
    short level, kills, exp;
 } scoretable[MAXSCOREENTRIES+1];
 static FILE *scf;
-
 
 short score()
 {
@@ -21,7 +19,6 @@ short ret = 0;
    return( (ret == 0) ? E_ENDGAME : ret);
 }
 
-
 short outputscore()
 {
 short ret;
@@ -30,7 +27,6 @@ short ret;
       showscore();
    return( (ret == 0) ? E_ENDGAME : ret);
 }
-
 
 readscore() {
 
@@ -42,7 +38,7 @@ readscore() {
    else {
          while(fscanf(scf,"%hd",&rank)!=EOF  &&  rank < MAXSCOREENTRIES)
 	   {
-            fscanf( scf, "%10s  %8d  %8d  %8d\n", scoretable[rank].user, 
+            fscanf( scf, "%10s  %8d  %8d  %8d\n", scoretable[rank].user,
 	 &scoretable[rank].level,&scoretable[rank].kills,&scoretable[rank].exp);
             scoreentries++;
            }
@@ -50,7 +46,6 @@ readscore() {
   fclose( scf);
   return( ret);
 }
-
 
 makescore() {
 
@@ -73,7 +68,7 @@ makescore() {
       else build = 0;
    }
    else if( scoreentries == MAXSCOREENTRIES+1)
-      ret = E_READSCORE; 
+      ret = E_READSCORE;
    if( (ret == 0) && build) {
       pos = findpos();			/* find the new score position */
       if( pos > -1) {			/* score table not empty */
@@ -91,7 +86,6 @@ makescore() {
    return( ret);
 }
 
-
 finduser() {
 
    short i, found = 0;
@@ -101,9 +95,8 @@ finduser() {
    return( (found) ? i-1 : -1);
 }
 
-
 findpos() {
- 
+
    short i, found = 0;
 
    for( i = 0; (i < scoreentries) && (! found); i++)
@@ -117,7 +110,6 @@ findpos() {
 		 );
    return( (found) ? i-1 : -1);
 }
-
 
 writescore() {
 
@@ -134,7 +126,7 @@ writescore() {
              scoretable[tmp].kills,scoretable[tmp].exp);
         while(strlen(score_string) < 70) strcat(score_string," ");
         score_string[69] = '\0';
-        if (fprintf(scf,"%s\n",score_string) == NULL) 
+        if (fprintf(scf,"%s\n",score_string) == NULL)
           {fclose( scf); return(E_WRITESCORE);}
       }
     }
@@ -153,7 +145,6 @@ showscore() {
 	     scoretable[i].level,scoretable[i].kills,scoretable[i].exp);
 }
 
-
 cp_entry( i1, i2)
 register short i1, i2;
 {
@@ -162,8 +153,6 @@ register short i1, i2;
    scoretable[i1].kills = scoretable[i2].kills;
    scoretable[i1].exp = scoretable[i2].exp;
 }
-
-
 
 short create_scorefile()
 {
@@ -174,7 +163,7 @@ short file_count;
 char blank_line[70];
 
 if ( ( newfile = fopen(scorefile,"w")) != NULL) {
-  for (i=0; i<70; i++) 
+  for (i=0; i<70; i++)
      blank_line[i] = ' '; /* Make the blank line to put into the score file */
   blank_line[69] = '\0';
   for (file_count=0; file_count < MAXSCOREENTRIES; file_count++)

@@ -1,21 +1,21 @@
 /* set object properties */
 /* { itemchar, damage, weight, wearable, combine, magic, cost } */
-int ITEM_PROPS[MAXOBJECTS][MAXQUALIF] = {  
-   { HANDS, 1,  0, 0, 0, 0, 0 },      
+int ITEM_PROPS[MAXOBJECTS][MAXQUALIF] = {
+   { HANDS, 1,  0, 0, 0, 0, 0 },
    {  HAXE, 4,  70, 1, 0, 0, 100 },
    {   AXE, 8,  110, 1, 0, 0, 300 },
-   { ARROW, 2,  8, 0, 1, 0, 10 },   
+   { ARROW, 2,  8, 0, 1, 0, 10 },
    { SWORD, 3,  50, 1, 0, 0, 50 },
-   { LSWORD, 6,  70, 1, 0, 0, 200 }, 
+   { LSWORD, 6,  70, 1, 0, 0, 200 },
    {   BOW, 2,  50, 1, 0, 0, 200 },
    { ARMOR, 10, 200, 1, 0, 0, 300 },
    { SCROLL, 0, 5, 0, 1, 1, 60 },
    { HEALTH, -20, 5, 0, 1, 0, 100 },
-   { POTION, 0, 10, 0, 1, 0, 100 }, 
+   { POTION, 0, 10, 0, 1, 0, 100 },
    {  ORB, 15, 10, 0, 0, 1, 1000 },
    { MINE, 15, 50, 0, 1, 0, 15 },
 /* the following objects are only defined for viewing purposes */
-   {  KEY, 0, 0, 0, 0, 0, 0 },     
+   {  KEY, 0, 0, 0, 0, 0, 0 },
    { CASH, 0, 0, 0, 0, 0, 0 },
    { DOOR, 0, 0, 0, 0, 0, 0 },
    { STORE, 0, 0, 0, 0, 0, 0 },
@@ -27,7 +27,6 @@ int ITEM_PROPS[MAXOBJECTS][MAXQUALIF] = {
    { PIT, 0, 0, 0, 0, 0, 0 }
 };
 
-
 char *spells[SPELLNAMES] = {
    "lightning bolt",
    "fireball",
@@ -37,14 +36,12 @@ char *spells[SPELLNAMES] = {
    "teleport self"
 };
 
-
 char *deaths[] = {
     "shrivels up into a greasy black pile of ash and dies",
     "pays the debt which cancels all others",
     "kicks the bucket","meets his maker","is knocking at the pearly gates",
     "dies"
 };
-
 
 char *object_names[] = {
     "hands",
@@ -72,7 +69,6 @@ char *object_names[] = {
     "deep dark pit"
 };
 
-
 char *mon_names[] = {
     "the giant ant",
     "the berserker","the clam","the dragon","the earth slime","the flagorian",
@@ -98,7 +94,6 @@ char *monfire[] = {
     "covers you in ooze","hits you with a firebolt","throws a dagger at you",
     "pukes on you","vaporizes your helpless body"
 };
-
 
 char *errors[] = {
     NULL,

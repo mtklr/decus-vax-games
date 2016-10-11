@@ -1,6 +1,5 @@
 #include "aralu.h"
 
-
 void read_scroll();
 void do_pickup(char object, int number, char direction);
 void drop();
@@ -36,21 +35,21 @@ switch( keyhit) {
 		   case '3': DIFFICULTY = 0.01; break;
 		   case '4': DIFFICULTY = 0.40; break;
 		   default: DIFFICULTY = 0.1;
-		  }	
+		  }
 		  /* smg$erase_display(&dsp_status); */
 		  wclear(dsp_status);
 		  prt_status();
 		  break;
 	case UP   :
-	case LEFT : 
-	case DOWN : 
+	case LEFT :
+	case DOWN :
 	case RIGHT: move_plr( keyhit); break;
 	case ' ': fire_item( ARROW); break;
 	case 'u': choose_spell(); break;
-	case 's': //smg$erase_display(&dsp_status); 
+	case 's': //smg$erase_display(&dsp_status);
 		  /* smg$paste_virtual_display(&dsp_status,&pb,&2,&43); */
 		  wclear(dsp_status);
-                  prt_status();  
+                  prt_status();
  		  break;
 	case 't': get_time(); break;
 	case 'b': prt_inven(); break;
@@ -82,7 +81,7 @@ switch( keyhit) {
 		 else prt_msg("Press '?' for help.");
 	 	 break;
 	case 26:  prt_msg("Quit/no save? ['y' to confirm]");
-		  if ( toupper( getkey()) == 'Y') ret = E_ENDGAME;	
+		  if ( toupper( getkey()) == 'Y') ret = E_ENDGAME;
 		  break;
 	/* case 12:  smg$repaint_screen( &pb); break; */
         /* case 2:   prt_msg("Zoom!"); sys$setpri(0,0,4,0); break; */
@@ -123,7 +122,7 @@ switch( keyhit) {
 		 else fly();
 		 break;
 	case 7:  if (!operator) prt_msg("Press '?' for help.");
-		 else goto_level(); 
+		 else goto_level();
 		 break;
 	case 8:  if (!operator) prt_msg("Press '?' for help.");
 		 else { health = MAXHEALTH; prt_health(); }
@@ -138,7 +137,7 @@ return( ret);
 #if 0
 recall_messages()
 {
-int r_c;                                                                      
+int r_c;
 $DESCRIPTOR( return_d,"Press any key to return to game.");
 
 prt_msg("");		/* line advance */
@@ -156,7 +155,6 @@ smg$paste_virtual_display(&dsp_status,&pb,&2,&43);
 smg$end_pasteboard_update(&pb);
 }
 #endif
-
 
 move_plr( direction)
 int direction;
@@ -185,7 +183,6 @@ else if (isamonster( testchar)) do_attack( number, WIELD, SWORD, direction);
 else check_object( testchar, number, direction);
 }
 
-
 void read_scroll()				/* read a scroll */
 {
 int bp_num, item_num, PREWEIGHT, rnd_scr;
@@ -198,7 +195,7 @@ if ( (bp_num = check_inven( SCROLL)) != FALSE) {
     compress_inven();
   }
   PREWEIGHT = CURWEIGHT;
-  CURWEIGHT -= ITEM_PROPS[item_num][WEIGHT]; 
+  CURWEIGHT -= ITEM_PROPS[item_num][WEIGHT];
   if ( (PREWEIGHT >= MAXWEIGHT) && (CURWEIGHT < MAXWEIGHT)) {
     change_speed( 2.0);
     prt_msg("The burden of the pack is lifted.");
@@ -216,7 +213,7 @@ if ( (bp_num = check_inven( SCROLL)) != FALSE) {
     map[ppos.y][ppos.x].number = 1;
     prt_char( map[ppos.y][ppos.x].mapchar, ppos.y, ppos.x);
     do {
-      ppos.y = randnum( MAXROWS); 
+      ppos.y = randnum( MAXROWS);
       ppos.x = randnum( MAXCOLS);
     } while( map[ppos.y][ppos.x].mapchar != SPACE);
     map[ppos.y][ppos.x].mapchar = '@';
@@ -235,7 +232,6 @@ if ( (bp_num = check_inven( SCROLL)) != FALSE) {
 else prt_msg("You have no scrolls to read.");
 }
 
-
 void enchant()
 {
 int echar, item_num, bp_num;
@@ -244,10 +240,10 @@ prt_msg("Enchant which item? [* for list]");
 echar = getkey();
 echar -= MAGIC_NUMBER;
 if ( echar+MAGIC_NUMBER == '*') { prt_inven(); enchant(); }
-else if ( echar < 1  ||  echar > MAXINVEN-1) { 
-       prt_msg("You cannot enchant that!"); 
+else if ( echar < 1  ||  echar > MAXINVEN-1) {
+       prt_msg("You cannot enchant that!");
        prt_msg("The scroll vanishes into dust.");
-       return; 
+       return;
 }
 else if ( BACKPACK[echar].invenchar != SPACE) {	 /* you have it */
        item_num = identify( BACKPACK[echar].invenchar);
@@ -256,7 +252,7 @@ else if ( BACKPACK[echar].invenchar != SPACE) {	 /* you have it */
     	   prt_msg("Your armor glows brightly for a moment.");
          else if ( ITEM_PROPS[item_num][ITEMCHAR] == ORB)
 	   prt_msg("The Orb pulsates with a bright green glow.");
-         else 
+         else
 	   prt_msg("Your weapon glows brightly for a moment.");
 
 	 BACKPACK[echar].condition++;
@@ -267,8 +263,6 @@ else if ( BACKPACK[echar].invenchar != SPACE) {	 /* you have it */
        }
 }
 }
-
-
 
 void view()					/* look in a given direction */
 {
@@ -307,15 +301,15 @@ switch( dir) {
          prt_msg("You see a stone wall.");
          break;
        }
-       else if ( map[ay][ax].mapchar != SPACE) { 
+       else if ( map[ay][ax].mapchar != SPACE) {
          if ( (item_num = identify( map[ay][ax].mapchar)) == MAGIC_NUMBER)
            sprintf(viewchar,"You see a %s.",
                                   object_names[get_name( map[ay][ax].mapchar)]);
          else if ( combinable( item_num)) {
-	   if ( map[ay][ax].number <= 1)  
+	   if ( map[ay][ax].number <= 1)
              sprintf(viewchar,"You see a %s.",
                                   object_names[get_name( map[ay][ax].mapchar)]);
-           else 
+           else
              sprintf(viewchar,"You see %d %ss.",map[ay][ax].number,
                                   object_names[get_name( map[ay][ax].mapchar)]);
          }
@@ -335,7 +329,7 @@ switch( dir) {
 	  else if ( map[ay][ax].number < 6)
 	    sprintf(viewchar,"You see a %s in perfect condition.",
                                 object_names[get_name( map[ay][ax].mapchar)]);
-	  else 
+	  else
 	    sprintf(viewchar,"You see an enchanted %s!",
                                 object_names[get_name( map[ay][ax].mapchar)]);
          }
@@ -344,8 +338,6 @@ switch( dir) {
        ax = ax + dx; ay = ay + dy;
     } /* End while */
 }
-
-
 
 do_heal()				/* heal up */
 {
@@ -367,7 +359,7 @@ if ( (bp_num = check_inven( HEALTH)) != FALSE) {
     prt_speed();
   }
   if ( health < 5) prt_msg("You are still in bad shape.");
-  else if ( health < 20) 
+  else if ( health < 20)
   prt_msg("Your major wounds heal, but you are still hurting.");
   else if ( health < 50) prt_msg("You're in average condition.");
   else prt_msg("You're ready for battle.");
@@ -378,14 +370,12 @@ if ( (bp_num = check_inven( HEALTH)) != FALSE) {
 else prt_msg("You have nothing to heal yourself with.");
 }
 
-
 void choose_spell()
 {
 int i, failure[SPELLNAMES+1], sp, c_wait, yrange, xrange;
 char spell[40];
 /* $DESCRIPTOR( spell_label,"Magic Spells"); */
 /* $DESCRIPTOR( invenlabel, "Inventory"); */
-
 
 /* smg$erase_display(&dsp_inven); */
 wclear(dsp_inven);
@@ -410,7 +400,7 @@ if ( check_inven( ORB) == FALSE) {
   /* smg$paste_virtual_display(&dsp_status,&pb,&2,&43); */
   return;
 }
- 
+
 c_wait = 5 * (sp - MAGIC_NUMBER);	   	/* # of moves casting time */
 if ( (sp -= MAGIC_NUMBER) <= SPELLNAMES) {
   prt_msg("You summon your energies and attempt to cast the spell.");
@@ -479,7 +469,6 @@ else prt_msg("No such spell exists.");
 /* smg$label_border(&dsp_inven,&invenlabel); */
 }
 
-
 void fire_item( item)			/* fires arrows only right now */
 char item;
 {
@@ -493,9 +482,9 @@ switch( item) {
   case 'a':
   case 'b':
   case 'c':
-  case 'd': spell = item; 
+  case 'd': spell = item;
             item = ORB;
-} 
+}
 
 if ( (bp_num = check_inven( BOW)) == FALSE  &&  item == ARROW) {
   prt_msg("You don't have the bow.");
@@ -506,9 +495,9 @@ else if ( BACKPACK[WIELD].invenchar != BOW && item == ARROW) {
   return;
 }
 else if ( (bp_num = check_inven( item)) == FALSE) {
-  if ( item == ARROW) 
+  if ( item == ARROW)
     prt_msg("You don't have any arrows to fire.");
-  else 
+  else
     prt_msg("You don't have the Magic Orb.");
   return;
 }
@@ -531,7 +520,7 @@ if (dead) return;
 
 if ( item == ARROW) {
   PREWEIGHT = CURWEIGHT;
-  CURWEIGHT -= ITEM_PROPS[identify( ARROW)][WEIGHT];  
+  CURWEIGHT -= ITEM_PROPS[identify( ARROW)][WEIGHT];
   if ( (PREWEIGHT >= MAXWEIGHT) && (CURWEIGHT < MAXWEIGHT)) {
     change_speed( 2.0);
     prt_msg("The burden of the pack is lifted.");
@@ -551,7 +540,7 @@ if ( (--BACKPACK[bp_num].quantity) == 0) {
 
     while( ++distance < ARROWDIST) {
       if ( map[ay][ax].mapchar == WALL) {
-       if ( item == ORB) 
+       if ( item == ORB)
          if ( spell == 'b' || spell == 'c') explode( ay, ax, spell, 1, dr);
        break;
       }
@@ -569,7 +558,7 @@ if ( (--BACKPACK[bp_num].quantity) == 0) {
       if ( item == ORB  &&  (spell == 'b' || spell == 'c'))
 	prt_char('*', ay, ax);
       else {
-   	if (dr==UP || dr==DOWN) prt_char('|', ay, ax); 
+   	if (dr==UP || dr==DOWN) prt_char('|', ay, ax);
         else prt_char('-', ay, ax);
       }
       prt_char( map[ay][ax].mapchar, ay, ax);
@@ -577,9 +566,6 @@ if ( (--BACKPACK[bp_num].quantity) == 0) {
     } /* End while */
 
 }
-
-
-
 
 compress_inven()		       /* takes out "used" or dropped objects */
 {
@@ -597,7 +583,6 @@ for ( i=1; i< MAXINVEN-1; i++)
    }
 }
 
-
 prt_inven()
 {
 int i = 1;
@@ -613,7 +598,7 @@ do {
   if ( BACKPACK[i].invenchar != SPACE) {
    item_to_ident = BACKPACK[i].invenchar;
    item_num = identify( item_to_ident);
-   if ( i == WORN) 
+   if ( i == WORN)
      sprintf(items,"%c) %16s [%d][worn] %3d lb.",i+MAGIC_NUMBER,BACKPACK[i].name,
                   BACKPACK[i].condition,
                   ITEM_PROPS[item_num][WEIGHT]*BACKPACK[i].quantity);
@@ -621,7 +606,7 @@ do {
      sprintf(items,"%c) %13s [%d][wielded] %3d lb.",i+MAGIC_NUMBER,BACKPACK[i].name,
                   BACKPACK[i].condition,
                   ITEM_PROPS[item_num][WEIGHT]*BACKPACK[i].quantity);
-   else 
+   else
      sprintf(items,"%c) %17s [%d] (%d) %4d lb.",i+MAGIC_NUMBER,BACKPACK[i].name,
                   BACKPACK[i].condition,BACKPACK[i].quantity,
 		  ITEM_PROPS[item_num][WEIGHT]*BACKPACK[i].quantity);
@@ -630,7 +615,6 @@ do {
 } while( MAXINVEN >i++);
 
 }
-
 
 void exchange_weap()				/* quick-change alternate weapon */
 {
@@ -646,13 +630,13 @@ else if ( ALTWEAP == 0) {
 /*   smg$read_keystroke(&kboard,&wchar); */
   wchar -= MAGIC_NUMBER;
   if ( wchar+MAGIC_NUMBER == '*') { prt_inven(); exchange_weap(); }
-  else if ( wchar < 1  ||  wchar > MAXINVEN-1) { 
-         prt_msg("Value out of range."); 
-         return; 
+  else if ( wchar < 1  ||  wchar > MAXINVEN-1) {
+         prt_msg("Value out of range.");
+         return;
   }
   else if ( BACKPACK[wchar].invenchar != SPACE) {	 /* you have it */
          item_num = identify( BACKPACK[wchar].invenchar);
-         if ( ITEM_PROPS[item_num][WEARABLE] == TRUE  &&  
+         if ( ITEM_PROPS[item_num][WEARABLE] == TRUE  &&
               ITEM_PROPS[item_num][ITEMCHAR] != ARMOR) {
            ALTWEAP = wchar;
     	 sprintf(wielding,"Alternate now %s.",BACKPACK[wchar].name);
@@ -665,14 +649,13 @@ else if ( ALTWEAP == 0) {
 else {					/* already have an alternate */
   DUMMY = WIELD;  			/* need 3 variables to switch two */
   WIELD = ALTWEAP;
-  bp_num = WIELD;  
+  bp_num = WIELD;
   sprintf(wielding,"Now wielding %s.",BACKPACK[bp_num].name);
   prt_msg(wielding);
   ALTWEAP = DUMMY;
-}  
 }
-  
-  
+}
+
 void wear_wield()				/* wears armor or wields weapon */
 {
 int bp_num, item_num;
@@ -684,9 +667,9 @@ wchar = getkey();
 /* smg$read_keystroke(&kboard,&wchar); */
 wchar -= MAGIC_NUMBER;
 if ( wchar+MAGIC_NUMBER == '*') { prt_inven(); wear_wield(); }
-else if ( wchar < 1  ||  wchar > MAXINVEN-1) { 
-       prt_msg("Value out of range."); 
-       return; 
+else if ( wchar < 1  ||  wchar > MAXINVEN-1) {
+       prt_msg("Value out of range.");
+       return;
 }
 else if ( BACKPACK[wchar].invenchar != SPACE) {	 /* you have it */
        item_num = identify( BACKPACK[wchar].invenchar);
@@ -707,15 +690,12 @@ else if ( BACKPACK[wchar].invenchar != SPACE) {	 /* you have it */
 else prt_msg("You have no such object.");
 }
 
-
-
 void drop()					/* drop, what else? */
 {
 int PREWEIGHT, amount;
 int dropall = 0;
 char dchar;
 char drop_msg[80];
-
 
 if ( underchar != SPACE) {
   prt_msg("There is no room to drop anything here.");
@@ -726,9 +706,9 @@ dchar = getkey();
 /* smg$read_keystroke(&kboard,&dchar); */
 dchar -= MAGIC_NUMBER;
 if ( dchar+MAGIC_NUMBER == '*') { prt_inven(); drop(); }
-else if ( dchar < 1  ||  dchar > MAXINVEN-1) { 
-       prt_msg("Value out of range."); 
-       return; 
+else if ( dchar < 1  ||  dchar > MAXINVEN-1) {
+       prt_msg("Value out of range.");
+       return;
 }
 else if ( BACKPACK[dchar].invenchar != SPACE) { 	/* you have it */
         underchar = BACKPACK[dchar].invenchar;
@@ -749,7 +729,7 @@ else if ( BACKPACK[dchar].invenchar != SPACE) { 	/* you have it */
             strcpy(drop_msg,"\0\0\0");
 	    dropall = getkey();
 /* 	    smg$read_keystroke(&kboard,&dropall); */
-	    if ( dropall == 'y') { 
+	    if ( dropall == 'y') {
 	      map[ppos.y][ppos.x].number = BACKPACK[dchar].quantity;
 	      amount = BACKPACK[dchar].quantity;
  	      sprintf(drop_msg,"Dropped %d %ss.",amount,BACKPACK[dchar].name);
@@ -760,15 +740,15 @@ else if ( BACKPACK[dchar].invenchar != SPACE) { 	/* you have it */
 	      BACKPACK[dchar].quantity--;
    	      sprintf(drop_msg,"Dropped %s.",BACKPACK[dchar].name);
  	      amount = 1;
-	      map[ppos.y][ppos.x].number = 1;          
+	      map[ppos.y][ppos.x].number = 1;
 	    }
 	  }
 	  else {
-	    BACKPACK[dchar].quantity = 0;	
+	    BACKPACK[dchar].quantity = 0;
             BACKPACK[dchar].invenchar = SPACE;
    	    sprintf(drop_msg,"Dropped %s.",BACKPACK[dchar].name);
  	    amount = 1;
-            map[ppos.y][ppos.x].number = 1;          
+            map[ppos.y][ppos.x].number = 1;
           }
         }
 
@@ -785,7 +765,6 @@ else if ( BACKPACK[dchar].invenchar != SPACE) { 	/* you have it */
 }
 else prt_msg("You have no such object.");
 }
-
 
 drink_potion()				/* pretty self-explanitory */
 {
@@ -804,9 +783,9 @@ if ( (bp_num = check_inven( POTION)) != FALSE) {
     if ( flags[SPEED].valid) {
       prt_msg("You feel yourself slow down a bit.");
       if ( speed < 1)  			/* already SLOW */
-        flags[SPEED].moves += 301;	
-      else  
-	flags[SPEED].moves = 301 - flags[SPEED].moves; 
+        flags[SPEED].moves += 301;
+      else
+	flags[SPEED].moves = 301 - flags[SPEED].moves;
     }
     else {
       prt_msg("You feel yourself slow down.");
@@ -820,9 +799,9 @@ if ( (bp_num = check_inven( POTION)) != FALSE) {
     if ( flags[SPEED].valid) {
       prt_msg("You feel yourself speed up a bit.");
       if ( speed > 1)  			/* already FAST */
-	flags[SPEED].moves += 301;	
-      else  
-	flags[SPEED].moves = 301 - flags[SPEED].moves; 
+	flags[SPEED].moves += 301;
+      else
+	flags[SPEED].moves = 301 - flags[SPEED].moves;
     }
     else {
       prt_msg("You feel yourself speed up.");
@@ -832,7 +811,7 @@ if ( (bp_num = check_inven( POTION)) != FALSE) {
       flags[SPEED].moves = 301;
     }
   }
-  else if ( d_chance < 18) { 
+  else if ( d_chance < 18) {
     prt_msg("You feel your health returning.");
     health += 20;
     prt_health();
@@ -855,12 +834,12 @@ if ( (bp_num = check_inven( POTION)) != FALSE) {
     CON += 1;
     MAXHEALTH = ((CON+level)*8);
     prt_con();
-  }  
+  }
   else if ( d_chance < 40) {
     prt_msg("E = mc^2");
     INT += 1;
     prt_int();
-  }  
+  }
   else if ( d_chance < 48) {
     prt_msg("You feel light as a feather.");
     DEX += 1;
@@ -871,12 +850,12 @@ if ( (bp_num = check_inven( POTION)) != FALSE) {
     prt_msg("Everything seems funny all of a sudden.");
     flags[CONFUSE].valid = TRUE;
     flags[CONFUSE].moves += 301;
-  }  
+  }
   else if ( d_chance < 64) {
     prt_msg("You feel immortal!");
     flags[IMMUNITY].valid = TRUE;
     flags[IMMUNITY].moves += 301;
-  }  
+  }
   else if ( d_chance < 72) {
     prt_msg("Your eyes sting - darkness surrounds you!");
     flags[BLIND].valid = TRUE;
@@ -900,7 +879,6 @@ if ( (bp_num = check_inven( POTION)) != FALSE) {
 else prt_msg("You have nothing to drink.");
 }
 
-
 check_object( testobj, number, direction)	/* checks and parses object */
 int number;
 char testobj, direction;
@@ -909,20 +887,20 @@ int rnd_num;
 char dum_msg[10];
 
 switch( testobj) {
- 
-        case PIT: 
+
+        case PIT:
 		  do_move( direction);
 		  underchar = PIT;
 	  	  map[ppos.y][ppos.x].number = 1;
 		  prt_msg("You fell into a pit!");
-	          if ( randnum( 23)+1 > DEX) 
+	          if ( randnum( 23)+1 > DEX)
  		    take_damage( 10, "falling into a pit");
 		  else {
                     prt_msg("Your quick reflexes soften the fall.");
 		    take_damage( randnum( 10)+1, "falling into a pit");
 	          }
                   break;
-	case MINE: 
+	case MINE:
 		  if ( randnum( 20)+1 > DEX) {
   		    if (number < 2) prt_msg("The mine exploded!");
 		    else prt_msg("The mines exploded!");
@@ -977,7 +955,6 @@ switch( testobj) {
 } /* End of switch */
 }
 
-
 int add_inven( object, item_num, number) /* find nearest open slot & add */
 int item_num, number;
 char object;
@@ -1017,8 +994,6 @@ else {
 }
 }
 
-
-
 void do_pickup( object, number, direction)	/* picks up an object you walk over */
 int number;
 char object, direction;
@@ -1028,7 +1003,7 @@ int cash_flow;
 char cash_pickup[80];
 char posess[80];
 
-if ( (item_num = identify( object)) != MAGIC_NUMBER) { 	
+if ( (item_num = identify( object)) != MAGIC_NUMBER) {
   if ( (bp_num = check_inven( object)) != FALSE && combinable( item_num)) {
        PREWEIGHT = CURWEIGHT;
        CURWEIGHT += ITEM_PROPS[item_num][WEIGHT] * number;
@@ -1037,7 +1012,7 @@ if ( (item_num = identify( object)) != MAGIC_NUMBER) {
 	  change_speed( 0.5);
           prt_speed();
        }
-       BACKPACK[bp_num].quantity += number;		
+       BACKPACK[bp_num].quantity += number;
        sprintf(posess,"You have %d %ss.",BACKPACK[bp_num].quantity,
        		              	    object_names[item_num]);
        prt_msg(posess);
@@ -1045,10 +1020,10 @@ if ( (item_num = identify( object)) != MAGIC_NUMBER) {
        prt_wgt();
        return;
   }
-  else if ( add_inven( object, item_num, number)) { 
+  else if ( add_inven( object, item_num, number)) {
        prt_speed();
        prt_wgt();
-       do_move( direction); 
+       do_move( direction);
        return;
   }
   else {
@@ -1063,7 +1038,7 @@ if ( (item_num = identify( object)) != MAGIC_NUMBER) {
 }
 /* End cases, now this has to be "item not found" case */
 /* object must be CASH or KEY (or error) */
-if ( object == KEY) {		
+if ( object == KEY) {
   KEYPOSESS = TRUE;
   prt_key_status();
   prt_msg("You found the key!");
@@ -1076,7 +1051,6 @@ else { 					/* must be CASH */
 }
 do_move( direction);
 }
-
 
 enter_arena()
 {
@@ -1098,7 +1072,6 @@ in_arena = TRUE;
 can_exit = FALSE;
 }
 
-
 display_store_inven()
 {
 int i;
@@ -1118,7 +1091,6 @@ for (i=1; i< MAXOBJECTS-NUMITEMS; i++) {
 }
 }
 
-
 short get_purchase()
 {
 int bp_num, quality;
@@ -1133,11 +1105,11 @@ prt_msg("[s]ell/[p]urchase/[e]xit");
 c = getch();
 if ( c != 'e' && c != 's' && c != 'p')
   if ( get_purchase()) return (FALSE);
-if ( c == 'e') { 
-  /* smg$erase_display(&dsp_status); */ 
+if ( c == 'e') {
+  /* smg$erase_display(&dsp_status); */
   /* smg$change_virtual_display(&dsp_status,&10,&37); */
   wclear(dsp_status);
-  prt_status();  
+  prt_status();
   /* smg$label_border(&dsp_status,&statlabel); */
   /* smg$paste_virtual_display(&dsp_status,&pb,&2,&43); */
   return( TRUE);  /* means that you are leaving the store */
@@ -1163,7 +1135,7 @@ if ( (wealth - ITEM_PROPS[c][COST]) < 0) {
   prt_msg("You don't have the cash flow for this.");
   if ( get_purchase()) return (FALSE);
 }
-if ( (bp_num = check_inven( ITEM_PROPS[c][ITEMCHAR])) != FALSE  && 
+if ( (bp_num = check_inven( ITEM_PROPS[c][ITEMCHAR])) != FALSE  &&
       combinable( c)) {
   wealth -= ITEM_PROPS[c][COST];
   PREWEIGHT = CURWEIGHT;
@@ -1203,7 +1175,6 @@ display_store_inven();
 get_purchase();
 }
 
-
 sell_item()
 {
 int PREWEIGHT, delwealth, quan;
@@ -1222,7 +1193,7 @@ schar -= MAGIC_NUMBER;
 if ( schar+MAGIC_NUMBER == '*') { prt_inven(); flag = 1; }
 else break;
 }
-if ( schar < 1  ||  schar > MAXINVEN-1) prt_msg("Value out of range."); 
+if ( schar < 1  ||  schar > MAXINVEN-1) prt_msg("Value out of range.");
 else if ( (dummychar = BACKPACK[schar].invenchar) != SPACE) {
 	if ( WORN == schar) WORN = 0;
         else if ( WIELD == schar) WIELD = 0;
@@ -1230,7 +1201,7 @@ else if ( (dummychar = BACKPACK[schar].invenchar) != SPACE) {
         if ( !combinable( identify( dummychar))) {
 	  BACKPACK[schar].quantity = 0;
           BACKPACK[schar].invenchar = SPACE;
-   	  sprintf(sell_msg,"Sold %s.",BACKPACK[schar].name); 
+   	  sprintf(sell_msg,"Sold %s.",BACKPACK[schar].name);
 	  quan = 1;
 	}
         else {
@@ -1240,7 +1211,7 @@ else if ( (dummychar = BACKPACK[schar].invenchar) != SPACE) {
 	    prt_msg(sell_msg);
 	    /* smg$read_keystroke(&kboard,&sellall); */
 	    sellall = getch();
-	    if ( sellall == 'y') { 
+	    if ( sellall == 'y') {
 	      quan = BACKPACK[schar].quantity;
  	      sprintf(sell_msg,"Sold %d %ss.",quan,BACKPACK[schar].name);
      	      BACKPACK[schar].quantity = 0;
@@ -1253,7 +1224,7 @@ else if ( (dummychar = BACKPACK[schar].invenchar) != SPACE) {
 	    }
 	  }
 	  else {
-	    BACKPACK[schar].quantity = 0;	
+	    BACKPACK[schar].quantity = 0;
             BACKPACK[schar].invenchar = SPACE;
    	    sprintf(sell_msg,"Sold %s.",BACKPACK[schar].name);
  	    quan = 1;
@@ -1269,7 +1240,7 @@ else if ( (dummychar = BACKPACK[schar].invenchar) != SPACE) {
         if ( !combinable( identify( dummychar)))
           wealth += (delwealth = ITEM_PROPS[identify( dummychar)][COST] -
 		    (5 - BACKPACK[schar].condition) * 10);
-        else 
+        else
           wealth += (delwealth = ITEM_PROPS[identify( dummychar)][COST]*quan);
 
 	prt_msg(sell_msg);
@@ -1278,8 +1249,6 @@ else if ( (dummychar = BACKPACK[schar].invenchar) != SPACE) {
 else prt_msg("You have no such object.");
 if (flag) display_store_inven();
 }
-
-
 
 void take_damage( damage, killer)		/* ouch */
 int damage;
@@ -1295,9 +1264,9 @@ if ( flags[IMMUNITY].valid) {
   prt_msg(mess);
   return;
 }
-if ( WORN) 
-  health -= 
-       (damage - damage/ITEM_PROPS[identify( BACKPACK[WORN].invenchar)][DAMAGE] 
+if ( WORN)
+  health -=
+       (damage - damage/ITEM_PROPS[identify( BACKPACK[WORN].invenchar)][DAMAGE]
         + (5 - BACKPACK[WORN].condition));
 else health -= damage;
 extra = damage * 0.80;  /* 20% chance that your armor worsens */
@@ -1311,19 +1280,17 @@ if ( health < 0) {
   sprintf(owk," *** You have died  -  killed by %s ***",killer);
   prt_msg(owk);
   dead = TRUE;
- } 
+ }
 }
 
-
-
-do_move( direction)		   
+do_move( direction)
 char direction;
 {
 int dx, dy;
 
 switch( direction) {
 	case UP:
-	      dely--;              
+	      dely--;
 	      dx = 0; dy = 1; break;
 	case DOWN:
 	      dely++;

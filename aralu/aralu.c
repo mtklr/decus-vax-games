@@ -36,7 +36,6 @@ smg$execute_command(&dsp_command,&command_d,&SMG$M_DATA_FOLLOWS);
 }
 */
 
-
 create( obj, quan)
 short quan;
 char obj;
@@ -44,17 +43,17 @@ char obj;
 short i = 0;
 short y, x;
 
-while( i< quan) { 				
+while( i< quan) {
   y = randnum(MAXROWS);
   x = randnum(MAXCOLS);
-  if ( ISCLEAR( map[y][x].mapchar)) { 
-     map[y][x].mapchar = obj; 
+  if ( ISCLEAR( map[y][x].mapchar)) {
+     map[y][x].mapchar = obj;
      if ( ITEM_PROPS[identify( obj)][COMBINE]) map[y][x].number = 1;
      else map[y][x].number = randnum( 5) + 1;
      /* lib$wait(&0.008);		/1* to give the random a better effect *1/ */
      napms(8); /* to give the random a better effect */
      prt_char( map[y][x].mapchar, y, x);
-     i++; 
+     i++;
   }
 }
 }
@@ -88,15 +87,14 @@ int i = 0;
 while( holdmap[i].num != -5) {
   map[holdmap[i].y][holdmap[i].x].number = holdmap[i].num;
   map[holdmap[i].y][holdmap[i].x].mapchar = holdmap[i].holdchar;
-  if ( holdmap[i].holdchar == '@') { 
-    ppos.y = holdmap[i].y; 
-    ppos.x = holdmap[i].x; 
+  if ( holdmap[i].holdchar == '@') {
+    ppos.y = holdmap[i].y;
+    ppos.x = holdmap[i].x;
     holdmap[i].holdchar = '@';
   }
   i++;
 }
 }
-
 
 short readscreen()
 {
@@ -113,11 +111,11 @@ if ( (readfile = fopen( screenfile,"r")) != NULL) {
      maparray[i][MAXCOLS] = '\0';
   }
 
- for (i=0; i< MAXROWS; i++)  
+ for (i=0; i< MAXROWS; i++)
     for (j=0; j< MAXCOLS; j++) {
         map[i][j].mapchar = maparray[i][j];
         map[i][j].number = 9999;
-        if ( map[i][j].mapchar == '@') { ppos.y = i;  ppos.x = j; 
+        if ( map[i][j].mapchar == '@') { ppos.y = i;  ppos.x = j;
   	  map[i][j].mapchar = SPACE; maparray[i][j] = SPACE;}
 	else if ( map[i][j].mapchar == BONES) { a_posy = i; a_posx = j; }
     }
@@ -135,7 +133,6 @@ fclose( readfile);
 return( ret);
 }
 
-
 prt_sub_holdmap()
 {
 int i = 0;
@@ -146,29 +143,25 @@ while( holdmap[i].num != -5) {
  } /* End while */
 }
 
-
 write_map()
 {
 int count;
 /* $DESCRIPTOR( map_desc, maparray); */
 
 /* map_desc.dsc$w_length = MAXCOLS; */
-  for (count=1;count<=MAXROWS;count++) { 
+  for (count=1;count<=MAXROWS;count++) {
       /* map_desc.dsc$a_pointer = &maparray[count-1][0]; */
-      /* smg$put_line(&dsp_main,&map_desc,0,0,0,0); */ 
+      /* smg$put_line(&dsp_main,&map_desc,0,0,0,0); */
       wprintw(dsp_main, "%s", &maparray[count - 1][0]);
   }
 
 prt_monsters();
 }
 
-
-
 short getkey()
 {
 int key, send;
 double denom;
-
 
 while( !dead) {
 send = FALSE;
@@ -177,18 +170,18 @@ if ( (key=getchar()) != EOF) {
    send = TRUE;
    timeout_count--;
 }
-if ( !in_arena) {	/* can't heal while waiting in arena */  
+if ( !in_arena) {	/* can't heal while waiting in arena */
   if ( CON == 20) denom = 1;
   else {
     if ( (denom = 20-CON) < 0) denom = 1 + 1/(CON-20);
     else denom++;
   }
-  if ( (++timeout_count*DIFFICULTY)/denom >=1) { 
+  if ( (++timeout_count*DIFFICULTY)/denom >=1) {
     if ( health < MAXHEALTH) {
-      health += 1; 
-      prt_health(); 
+      health += 1;
+      prt_health();
     }
-    timeout_count = 0; 
+    timeout_count = 0;
   }
 } /* End ARENA If */
 
@@ -197,7 +190,6 @@ do_acts();
 if ( send && !dead) return( key);
 } /* End while */
 }
-
 
 do_acts()
 {
@@ -210,13 +202,13 @@ moves++;
 if ( (moves % 500) == 0) get_time();
 for ( j = 0; j < NUMFLAGS; j++)
   if ( flags[j].valid) {
-    if ( flags[j].moves > 0) {    
+    if ( flags[j].moves > 0) {
       flags[j].moves--;
       if ( operator) prt_moves( j);
     }
     else {
       if ( j == SPEED) check_speed();
-      else if ( j == CONFUSE) check_confusion();     
+      else if ( j == CONFUSE) check_confusion();
       else if ( j == IMMUNITY) check_immunity();
       else if ( j == MON_CONFUSE) check_mon_confuse();
       else if ( j == BLIND) check_blind();
@@ -230,7 +222,7 @@ while( j++ < MAXMONSTERS*level) {
  for ( i=0; i< limit; i++) {
     if ( !monsters[k].dead) {
       if ( (monspeed = monsters[k].speed) < 1) monspeed = 1;
-      if ( moves % monspeed == 0) 
+      if ( moves % monspeed == 0)
         if ( !stop_monst)		/* God flag for stopping monsters */
           move_monsters( k);
     }
@@ -239,7 +231,6 @@ while( j++ < MAXMONSTERS*level) {
   } /* End FOR(i) loop */
 } /* End while */
 }
-
 
 short gameloop()
 {
@@ -268,7 +259,6 @@ if (ret == E_SAVED) ret = savegame();
 return( ret);
 }
 
-
 errmess( number)
 int number;
 {
@@ -280,7 +270,6 @@ enable_control();
 printf("Thank you for trying aralu.");
 exit( 0);
 }
-
 
 main( argc, argv)
 int argc;
@@ -297,8 +286,8 @@ for (i=1; i< MAXINVEN; i++)
 				/* initialize FLAGS to nothing */
 for (i=0; i< NUMFLAGS; i++)
    flags[i].valid = flags[i].moves = 0;
-   
-GAINLEVEL = KEYPOSESS = operator = dead = stop_monst = 
+
+GAINLEVEL = KEYPOSESS = operator = dead = stop_monst =
 			in_store = in_arena = can_exit = ret = restored = FALSE;
 level = 1;
 randomize(); 			/* to get the ball rolling for random numbers */
@@ -308,7 +297,7 @@ if ( argc > 1) {
   if ( argv[1][0] != '-') ret = E_USAGE;
   else switch( toupper( argv[1][1])) {
      	 case 'C':
-    		if ( strcmp( username, SUPERUSER) != 0) errmess(  E_NOTSUPER); 
+    		if ( strcmp( username, SUPERUSER) != 0) errmess(  E_NOTSUPER);
 	    	printf("Are you sure you want to create another highscore file?\n");
     		scanf( "%s", sk);
     		if ( toupper( sk[0]) == 'Y') {
@@ -317,8 +306,8 @@ if ( argc > 1) {
     		else ret = E_ENDGAME;
 		break;
 	 case 'S': if ( (ret = outputscore()) == 0) ret = E_ENDGAME; break;
-	 case 'M': 
-		if ( strcmp( username, SUPERUSER) != 0) errmess(  E_NOTSUPER); 
+	 case 'M':
+		if ( strcmp( username, SUPERUSER) != 0) errmess(  E_NOTSUPER);
 		printf("Enter username:\n");
 		scanf( "%s", op_username);
 		op_username[9] = 0;
@@ -380,12 +369,12 @@ if ( (ret = gameloop()) == E_GAINLEVEL) {
 else break;
 }
 
-delete_windows(); 
+delete_windows();
 if ( dead && !operator) ret = score();
 
 if ( ret) errmess( ret);
-else { 
-  delete_windows(); 
+else {
+  delete_windows();
   cursor_on();
   enable_control();
   endwin();

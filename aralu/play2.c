@@ -1,6 +1,5 @@
 #include "aralu.h"
 
-
 int obstacle( testchar)
 char testchar;
 {
@@ -13,7 +12,6 @@ switch( testchar) {
 	default: return( TRUE);
 }
 }
-		
 
 short isamonster( testchar)
 char testchar;
@@ -23,14 +21,11 @@ if ( (testchar >= 'A' && testchar <= 'Z') ||
 else return( FALSE);
 }
 
-
-short combinable( number) 
+short combinable( number)
 int number;
 {
 return( ITEM_PROPS[number][COMBINE]);
 }
-
-
 
 get_time()
 {
@@ -43,7 +38,7 @@ struct tm *time_structure;
 time(&time_val);
 time_structure = localtime(&time_val);
 
- if(time_structure->tm_hour > 12) 
+ if(time_structure->tm_hour > 12)
    {
      time_structure->tm_hour = (time_structure->tm_hour) - 12;
      i = 1;
@@ -54,8 +49,6 @@ sprintf(time_msg,"Time:   %2d:%02d %s",time_structure->tm_hour,
 						time_structure->tm_min,hour[i]);
 prt_in_disp(dsp_status,time_msg,10,20);
 }
-
-
 
 /* Note:  since grab_num is only used with the wizard commands, there is no
   	  need to run through the do_acts() procedure during number read */
@@ -76,9 +69,7 @@ mvwgetstr(dsp_command, 10, 1, num);
 return( atoi( num));
 }
 
-
-
-change_speed( number) 
+change_speed( number)
 double number;
 {
 int i, j, k;
@@ -91,14 +82,12 @@ k = 0;
 while( j++ < MAXMONSTERS*level) {
   limit = monsters[k].max_mon;
   for( i=0; i< limit; i++) {
-    if ( number < 1) monsters[k].speed -= 1; 
+    if ( number < 1) monsters[k].speed -= 1;
     else monsters[k].speed += 1;
     k++;
   } /* End FOR loop */
 } /* End while */
 }
-
-	
 
 check_speed()
 {
@@ -120,8 +109,8 @@ else if ( speed == 1 && CURWEIGHT >= MAXWEIGHT) {
   prt_msg("You feel yourself slow down.");
   change_speed( 0.5);
   prt_speed();
- } 
-flags[SPEED].valid = FALSE; 
+ }
+flags[SPEED].valid = FALSE;
 flags[SPEED].moves = 0;
 }
 
@@ -153,8 +142,6 @@ flags[BLIND].valid = FALSE;
 flags[BLIND].moves = 0;
 }
 
-
-
 int get_name( obj_to_ident)		/* gets name of object only */
 char obj_to_ident;
 {
@@ -165,8 +152,6 @@ do {
 }while( MAXOBJECTS> i++);    	/* note: this includes all objects */
 return( MAGIC_NUMBER);     	/* no such object - error in screen file */
 }
-
-
 
 prt_status()				/* Print out the stats */
 {
@@ -187,13 +172,12 @@ prt_buse();
 prt_wgt();
 }
 
-
 /* Note:  It's impossible right now to get to "Forget it" speed, since the
  	  flag for SPEED is just on/off.  If it were made such that a specific
    	  number of times the slow/fast potion was drank, they could be
 	  accounted for in the check_speed() routine.  Right now, though, I
  	  just have the slow/fast flag set for on/off with a number of moves
-	  dependent on the number of potions drank. 	
+	  dependent on the number of potions drank.
 */
 prt_speed()
 {
@@ -203,14 +187,13 @@ char cur_speed[10];
 if ( speed==1) strcpy( cur_speed,"   Normal");
 else if ( speed<1) {
    if ( speed == .5) strcpy( cur_speed,"     Slow");
-   else if ( speed == .25) strcpy( cur_speed,"Very Slow"); 
+   else if ( speed == .25) strcpy( cur_speed,"Very Slow");
    else if ( speed <= .125) strcpy( cur_speed,"Forget it");
 }
 else if ( speed>1) strcpy( cur_speed,"     Fast");
 sprintf(speed_msg,"Speed: %s", cur_speed);
 prt_in_disp(dsp_status,speed_msg,3,20);
 }
-
 
 prt_exp()
 {
@@ -220,7 +203,6 @@ sprintf(exp_msg,"Exp: %11d",experience);
 prt_in_disp( dsp_status, exp_msg, 2, 20);
 }
 
-
 prt_wealth()
 {
 char wealth_msg[80];
@@ -228,7 +210,6 @@ char wealth_msg[80];
 sprintf(wealth_msg,"Cash flow: %6d",wealth);
 prt_in_disp(dsp_status,wealth_msg,3,1);
 }
-
 
 prt_username( username)
 char *username;
@@ -255,7 +236,6 @@ sprintf(health_msg,"Health: %9d",health);
 prt_in_disp(dsp_status,health_msg,2,1);
 }
 
-
 prt_kills()
 {
 char kill_msg[80];
@@ -269,7 +249,7 @@ prt_key_status()
 
 if ( KEYPOSESS)
   prt_in_disp(dsp_status,"Key status:  Yes",4,20);
-else 
+else
   prt_in_disp(dsp_status,"Key status:   No",4,20);
 }
 
@@ -285,11 +265,10 @@ prt_in_disp(dsp_status,n_moves,5,20);
 prt_str()
 {
 char str_msg[80];
-           
+
 sprintf(str_msg,"Str: %5d",STR);
 prt_in_disp(dsp_status,str_msg,5,1);
 }
-
 
 prt_int()
 {
@@ -299,7 +278,6 @@ sprintf(int_msg,"Int: %5d",INT);
 prt_in_disp(dsp_status,int_msg,6,1);
 }
 
-
 prt_dex()
 {
 char dex_msg[80];
@@ -308,7 +286,6 @@ sprintf(dex_msg,"Dex: %5d",DEX);
 prt_in_disp(dsp_status,dex_msg,7,1);
 }
 
-
 prt_con()
 {
 char con_msg[80];
@@ -316,7 +293,6 @@ char con_msg[80];
 sprintf(con_msg,"Con: %5d",CON);
 prt_in_disp(dsp_status,con_msg,8,1);
 }
-
 
 prt_buse()
 {
@@ -336,9 +312,6 @@ prt_in_disp(dsp_status,wgt_msg,10,1);
 
 /* End stats section */
 
-
-
-
 int check_inven( otc)			/* returns position in inventory */
 char otc;
 {
@@ -350,7 +323,6 @@ for (i=1; i< MAXINVEN; i++)
 return( FALSE);
 }
 
-
 int identify( obj_to_ident)	/* Identifies item properties by finding # */
 char obj_to_ident;
 {
@@ -359,9 +331,8 @@ int i = 0;
 do {
   if ( ITEM_PROPS[i][ITEMCHAR] == obj_to_ident) { return( i); break; }
 }while( (MAXOBJECTS-NUMITEMS)> ++i);
-return( MAGIC_NUMBER);  		
+return( MAGIC_NUMBER);
 }
-
 
 break_weapon( bp_num)
 int bp_num;
@@ -388,8 +359,8 @@ monsters_struct *mon_ptr;
 mon_ptr = &monsters[mon_num];
 
 if ( map[y][x].number == 9999) return FALSE;
-if ( mon_ptr->dead ||         		  
-     ( mon_ptr->posy != y  ||  mon_ptr->posx != x)) {	
+if ( mon_ptr->dead ||
+     ( mon_ptr->posy != y  ||  mon_ptr->posx != x)) {
   map[y][x].mapchar = SPACE;
   map[y][x].number = 1;
   prt_char(map[y][x].mapchar,y,x);

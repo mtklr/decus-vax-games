@@ -1,6 +1,5 @@
 #include "aralu.h"
 
-
 char *helptext[] = {
 "                              A  R  A  L  U  ",
 "                            - - - - - - - - -",
@@ -44,8 +43,6 @@ char *ophelp[] = {
 "               he knows the Op commands, but how little he uses them.",
 NULL /* End of OP help listing */
 };
-
-
 
 help()
 {

@@ -22,7 +22,6 @@ create_windows()
     dsp_viewport = derwin(dsp_main, 10, 40, 2, 2);
 }
 
-
 put_windows()
 {
 /* $DESCRIPTOR( statlabel, "Character Stats"); */
@@ -40,13 +39,11 @@ put_windows()
     wrefresh(dsp_command);
 }
 
-
 delete_windows()
 {
 /* smg$delete_virtual_keyboard(&kboard); */
 /* smg$delete_pasteboard(&pb); */
 }
-
 
 prt_in_disp( display, message, y, x)
 WINDOW *display;
@@ -57,7 +54,7 @@ char *message;
 /* mess_d.dsc$w_length = strlen(message); */
 /* if ( (y==0) && (x==0))		/1* default to the next line, col *1/ */
 /*   smg$put_line(&display,&mess_d,0,0,0,&SMG$M_WRAP_WORD); */
-/* else */ 
+/* else */
 /*   smg$put_chars(&display,&mess_d,&y,&x); */
     mvwprintw(display, y, x, "%s", message);
     wrefresh(display);
@@ -90,10 +87,9 @@ else if ( ch == '*')
   /* smg$put_chars(&dsp_main,&p_char,&row,&col,0,&SMG$M_BOLD); */
     mvwaddch(dsp_main, row, col, ch | A_BOLD);
 /* else smg$put_chars(&dsp_main,&p_char,&row,&col); */
-else 
+else
     mvwaddch(dsp_main, row, col, ch);
 }
-
 
 change_viewport( rowoff, coloff)
 int rowoff, coloff;
@@ -105,7 +101,7 @@ if ( rowoff)
   }
   else rowoff = 1;
 
-if ( coloff) 
+if ( coloff)
   if ( coloff - SCRATIOH > 0) {
     if ( coloff + SCRATIOH+3 >= MAXCOLS) coloff = MAXCOLS-39;
     else coloff -= SCRATIOH;

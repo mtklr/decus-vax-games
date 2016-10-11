@@ -16,7 +16,7 @@ int randnum(max_num)
 {
   /* int seed; */
   /* seed=(random_seed + ++random_incl*624); */
-  if (max_num) 
+  if (max_num)
     return(abs((int)random() % max_num));
   else
     return(max_num/2); /* Division by zero */

@@ -14,7 +14,7 @@ if ( (outfile = fopen( savefile,"w")) != NULL) {
   /* create struct so people can't edit savefile */
   strcpy( player.username,username);
   player.underchar = underchar;
-  player.level = level; 
+  player.level = level;
   player.health = health;
   player.speed = speed;
   player.operator = operator;
@@ -27,7 +27,7 @@ if ( (outfile = fopen( savefile,"w")) != NULL) {
   player.DEX = DEX;
   player.CON = CON;
   player.BUSE = BUSE;
-  player.delx = delx;		
+  player.delx = delx;
   player.dely = dely;
   player.MAXHEALTH = MAXHEALTH;
   player.MAXWEIGHT = MAXWEIGHT;
@@ -38,13 +38,13 @@ if ( (outfile = fopen( savefile,"w")) != NULL) {
   player.KEYPOSESS = KEYPOSESS;
   player.DIFFICULTY = DIFFICULTY;
 /*
- for (i=0; i< MAXROWS; i++)  
+ for (i=0; i< MAXROWS; i++)
     for (j=0; j< MAXCOLS; j++)
         maparray[i][j] = map[i][j].mapchar;
 */
 enable_control();
 k = 0;
- for (i=0; i< MAXROWS; i++)  
+ for (i=0; i< MAXROWS; i++)
     for (j=0; j< MAXCOLS; j++)
         if ( map[i][j].mapchar != WALL && map[i][j].mapchar != SPACE &&
 	     !isamonster( map[i][j].mapchar) && map[i][j].mapchar != WATER &&
@@ -61,7 +61,7 @@ k = 0;
     if ( fwrite( &ppos, sizeof(ppos), 1, outfile) != NULL)
       if ( fwrite( &monsters, sizeof(monsters), 1, outfile) != NULL)
 	if ( fwrite( &BACKPACK, sizeof(BACKPACK), 1, outfile) != NULL)
-/*  	  if ( fwrite( &(maparray[0][0]), sizeof(maparray), 1, outfile) != NULL) 
+/*  	  if ( fwrite( &(maparray[0][0]), sizeof(maparray), 1, outfile) != NULL)
 	    if ( fwrite( &map, sizeof(map), 1, outfile) != NULL)
 */
 	    if ( fwrite( &holdmap, sizeof(holdmap), 1, outfile) != NULL)
@@ -81,7 +81,6 @@ else {
 return ( ret);
 }
 
-
 short restore()
 {
 FILE *infile;
@@ -93,16 +92,16 @@ else {
 printf("\33[24;1HRestoring game...\n");
 if ( (infile = fopen( savefile,"r")) != NULL) {
   if ( fread( &player, sizeof(player), 1, infile) != NULL) {
-    if ( fread( &ppos, sizeof(ppos), 1, infile) != NULL) 
+    if ( fread( &ppos, sizeof(ppos), 1, infile) != NULL)
       if ( fread( &monsters, sizeof(monsters), 1, infile) != NULL)
 	if ( fread( &BACKPACK, sizeof(BACKPACK), 1, infile) != NULL)
-/*	  if ( fread( &(maparray[0][0]), sizeof(maparray), 1, infile) != NULL) 
+/*	  if ( fread( &(maparray[0][0]), sizeof(maparray), 1, infile) != NULL)
             if ( fread( &map, sizeof(map), 1, infile) != NULL)
 */
 	    if ( fread( &holdmap, sizeof(holdmap), 1, infile) != NULL)
 	      if ( fread( &flags, sizeof(flags), 1, infile) != NULL)
 	 if ( fread( &sfstat, sizeof(sfstat), 1, infile) != NULL) {
-	     if ( (strcmp( username, SUPERUSER) != 0) && 
+	     if ( (strcmp( username, SUPERUSER) != 0) &&
 		( (strcmp( username, player.username) != 0) ||
 		  (sfstat.st_dev != oldsfstat.st_dev) ||
                   (sfstat.st_mode != oldsfstat.st_mode) ||
@@ -114,7 +113,7 @@ if ( (infile = fopen( savefile,"r")) != NULL) {
             ret = E_DATACORRUPT;
          else {
 /* in case the operator is restoring someone else's game */
-          if ( strcmp( username, SUPERUSER) == 0  && 
+          if ( strcmp( username, SUPERUSER) == 0  &&
 	       strcmp( username, player.username) != 0) operator = TRUE;
 	  else operator =  player.operator;
           strcpy( username, player.username);
@@ -142,7 +141,7 @@ if ( (infile = fopen( savefile,"r")) != NULL) {
           KEYPOSESS = player.KEYPOSESS;
 	  DIFFICULTY = player.DIFFICULTY;
 /*
- for (i=0; i< MAXROWS; i++)  
+ for (i=0; i< MAXROWS; i++)
     for (j=0; j< MAXCOLS; j++)
         maparray[i][j] = map[i][j].mapchar;
 */

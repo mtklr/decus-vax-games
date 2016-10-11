@@ -11,8 +11,6 @@ sprintf(choices,"%s: %5d",attribute,value);
 prt_in_disp(display,choices,row,1);
 }
 
-
-
 short add_points( changes, dsp_create, cboard)
 int changes, cboard;
 WINDOW *dsp_create;
@@ -30,7 +28,7 @@ int add;
 		  sleep( 1);
 		  changes++;
 /* 		  changes = add_points( changes, dsp_create, cboard); */
-  } 
+  }
 return( --changes);
 }
 
@@ -45,7 +43,6 @@ prt_in_disp(board,"3) Look out (very fast)",5,1);
 prt_in_disp(board,"4) 1200 baud rate",6,1);
 prt_in_disp(board,"5) Normal (default)",7,1);
 }
-
 
 short create_character()
 {

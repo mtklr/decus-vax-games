@@ -30,7 +30,7 @@
 #define FALSE		0
 
 /* Define for movement */
-#define UP 		'i' 
+#define UP 		'i'
 #define DOWN 		'k'
 #define LEFT		'j'
 #define RIGHT		'l'
@@ -52,7 +52,7 @@
 /* All items below are displayed in the store inventory */
 #define HANDS		 0 	/* Beginning player has no weapon */
 #define HAXE            '\\'
-#define AXE		'|' 
+#define AXE		'|'
 #define ARROW  		'%'
 #define SWORD		'/'
 #define LSWORD          '_'
@@ -90,7 +90,7 @@
 #define MAXQUALIF	7	/* itemchar,damage,weight, etc... (total) */
 
 #define MAXROWS		60      /* file must be 132 columns by 60 rows */
-#define MAXCOLS		132 
+#define MAXCOLS		132
 
 /* Defines for the inventory (backpack) */
 #define MAXINVEN	11	/* inventory size = 10 */
@@ -119,7 +119,7 @@
 #define E_PRINTWIND     6
 #define E_ENDGAME	7
 #define E_USAGE		8
-#define E_CREATED	9                                       
+#define E_CREATED	9
 #define E_OPENSAVE	10
 #define E_OPENSCORE 	11
 #define E_NOTSUPER	12
@@ -179,7 +179,6 @@ int experience, wealth, kills, level, health;
 int STR, INT, CON, DEX, BUSE, CURWEIGHT, MAXWEIGHT, MAXHEALTH, WIELD, WORN;
 int ALTWEAP;
 
-
 typedef struct player_a {
     char username[10];
     char underchar;   	/* what are you standing on? */
@@ -206,7 +205,6 @@ typedef struct player_a {
 } player_struct;
 player_struct player;
 
-    
 typedef struct backpack_a {
     char name[20];
     char invenchar;
@@ -214,7 +212,6 @@ typedef struct backpack_a {
     int condition;
 } backpack_struct;
 backpack_struct BACKPACK[MAXINVEN];
-
 
 typedef struct monsters_a {
     char mon_char;
@@ -240,7 +237,6 @@ typedef struct monsters_a {
     int posx;
 } monsters_struct;
 monsters_struct monsters[100];
-
 
 typedef struct position_a {
     int x, y;		/* my position on the screen */

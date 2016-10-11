@@ -1,6 +1,5 @@
 #include "aralu.h"
 
-
 void where();
 
 void kill_mon()					/* kill a monster */
@@ -22,7 +21,7 @@ n = 0;
 while( n++ < MAXMONSTERS*level) {
   limit = monsters[k].max_mon;
   for ( i=0; i< limit; i++) {
-     if ( monsters[k].mon_char == j) { 
+     if ( monsters[k].mon_char == j) {
        monsters[k].dead = TRUE;
        y = monsters[k].posy;
        x = monsters[k].posx;
@@ -36,7 +35,6 @@ while( n++ < MAXMONSTERS*level) {
 } /* End while */
 if ( !found) prt_msg("No such monster exists on this level.");
 }
-
 
 void where()					/* tells where the monsters are */
 {
@@ -71,7 +69,6 @@ sprintf(you,"You are at (%d,%d).  Stopmonst: %d",ppos.x,ppos.y,stop_monst);
 prt_msg(you);
 }
 
-
 create_object()				/* create any object where you are */
 {
 char obj;
@@ -83,7 +80,6 @@ map[ppos.y][ppos.x].number = 5;   /* perfect condition OR 5 quantity */
 underchar = obj;
 prt_msg("Created.");
 }
-
 
 void delete_object()				/* delete object on map */
 {
@@ -105,7 +101,6 @@ map[ppos.y+dy][ppos.x+dx].number = 1;
 prt_char( SPACE, ppos.y+dy, ppos.x+dx);
 prt_msg("Deleted.");
 }
-
 
 set_stats()                       	/* make a nice character */
 {
@@ -131,7 +126,7 @@ prt_char( map[ppos.y][ppos.x].mapchar, ppos.y, ppos.x);
 while( 1) {
   ppos.x = grab_num("X-position? \0");
   ppos.y = grab_num("Y-position? \0");
-  if ( !ISCLEAR( map[ppos.y][ppos.x].mapchar)) 
+  if ( !ISCLEAR( map[ppos.y][ppos.x].mapchar))
     prt_in_disp(dsp_command,"Something there. Try again.",9,1);
   else break;
 }
@@ -143,14 +138,12 @@ change_viewport( ppos.y, ppos.x);
 dely = delx = 0;
 }
 
-
 goto_level()				/* go to 'n' level in dungeon */
 {
 
 level = grab_num( "Go to which level? " ) - 1;
 GAINLEVEL = TRUE;
 }
-
 
 cure_all()				/* cure all ailments from potions */
 {

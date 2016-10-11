@@ -2,7 +2,7 @@
 
 void do_attack(int mon_num, int bp_num, char spell, int dir);
 
-int eat( object) 
+int eat( object)
 char object;
 {
 switch( object) {
@@ -19,7 +19,6 @@ switch( object) {
 }
 return( TRUE);
 }
-   
 
 char get_move( dir, i, newx, newy)
 int dir, i, *newx, *newy;
@@ -37,21 +36,19 @@ mon_ptr = &monsters[i];
 	default: printf("Error finding direction.\n"); exit(1); /* Impossible */
   } /* End switch */
 
-  if ( (randnum( 100) < mon_ptr->follow) ||  flags[MON_CONFUSE].valid) { 
-    if ( randnum(4) < 2) dx = -dx; 
-    else dy = -dy; 
+  if ( (randnum( 100) < mon_ptr->follow) ||  flags[MON_CONFUSE].valid) {
+    if ( randnum(4) < 2) dx = -dx;
+    else dy = -dy;
   } 				/* if monsters are confused or their follow */
 				/* is poor, make them go the wrong way */
-				/* if monsters are hurting, they run away 
+				/* if monsters are hurting, they run away
 				   and hide -- flying monsters can't run */
-  if ( mon_ptr->health < .25*3*(i+5) && !mon_ptr->fly) { dx = -dx; dy = -dy; } 
+  if ( mon_ptr->health < .25*3*(i+5) && !mon_ptr->fly) { dx = -dx; dy = -dy; }
 
   *newy = mon_ptr->posy + dy;
   *newx = mon_ptr->posx + dx;
   return( map[*newy][*newx].mapchar);
 }
-
-
 
 void move_monsters( i)		/* move the monster 'i' toward the player */
 int i;
@@ -74,13 +71,13 @@ mon_ptr = &monsters[i];
    the fire percentage is high enough */
 if ( (mon_ptr->posy == ppos.y  ||  mon_ptr->posx == ppos.x) &&
       randnum( 100) < mon_ptr->firec) {
-  if ( mon_ptr->posy == ppos.y) { 
-    if ( ppos.x < mon_ptr->posx) 
+  if ( mon_ptr->posy == ppos.y) {
+    if ( ppos.x < mon_ptr->posx)
       { firey = 0; firex = -1; firechar = '-'; fdr = LEFT;}
     else { firey = 0; firex = 1; firechar = '-'; fdr = RIGHT;}
   }
-  else if ( mon_ptr->posx == ppos.x) { 
-    if ( ppos.y < mon_ptr->posy) 
+  else if ( mon_ptr->posx == ppos.x) {
+    if ( ppos.y < mon_ptr->posy)
       { firex = 0; firey = -1; firechar = '|'; fdr = UP;}
     else { firex = 0; firey = 1; firechar = '|'; fdr = DOWN;}
   }
@@ -104,13 +101,13 @@ if ( (mon_ptr->posy == ppos.y  ||  mon_ptr->posx == ppos.x) &&
   } /* End while */
   if ( map[ay][ax].mapchar == '@') {
     if ( firechar != '*') monster_attack( i, ARROW);
-    else explode( ay, ax, m_spell+MAGIC_NUMBER, 1, fdr); 
+    else explode( ay, ax, m_spell+MAGIC_NUMBER, 1, fdr);
   }
   else if ( isamonster( map[ay][ax].mapchar)) {
     if ( firechar != '*') do_attack( map[ay][ax].number, 999, NULL, fdr);
     else explode( ay, ax, m_spell+MAGIC_NUMBER, 1, fdr);
   }
-  else if ( distance != ARROWDIST && map[ay][ax].mapchar != WALL) 
+  else if ( distance != ARROWDIST && map[ay][ax].mapchar != WALL)
       prt_msg("Error in monster firing.");
 }
 else {						/* can't fire anything */
@@ -135,32 +132,32 @@ if ( abs(ppos.y - mon_ptr->posy) < mon_ptr->range/2 &&
 /* contiue moving the monster in the same direction (not back and forth) */
     if ( (testdir[2] = mon_ptr->dir) == -testdir[0]) testdir[0] = testdir[1];
     if ( testdir[2] == -testdir[1]) testdir[1] = -testdir[1];
-  }  
+  }
   testdir[3] = -testdir[0];
   testdir[4] = -testdir[1];
 
   movedir = testdir[0];
   testchar = get_move( movedir, i, &newx, &newy);
   if ( testchar == '@') { 	/* First choice -- attack */
-    monster_attack( i, SWORD); 
-    return; 
+    monster_attack( i, SWORD);
+    return;
   }
   else while( (!mon_ptr->fly && (testchar == WALL || testchar == WATER))
              || isamonster( testchar) || testchar == ARENA) {
 	 movedir = testdir[k++];
          testchar = get_move( movedir, i, &newx, &newy);
-	 if ( k > 4) break; 	
+	 if ( k > 4) break;
         } /* End while */
 
 /* All choices for movement have been covered, reset monster direction */
   mon_ptr->dir = movedir;
-    
+
   if ( testchar == '@') {  	/* trapped monster in cove -- attack */
-    monster_attack( i, SWORD); 
-    return; 
+    monster_attack( i, SWORD);
+    return;
   }
 /* Can't run over walls if trapped */
-  else if ( testchar == WALL && !mon_ptr->fly) return; 
+  else if ( testchar == WALL && !mon_ptr->fly) return;
 
   if ( !mon_ptr->fly) {
    if ( testchar == MINE)
@@ -169,7 +166,7 @@ if ( abs(ppos.y - mon_ptr->posy) < mon_ptr->range/2 &&
      do_attack( i, 77, NULL, NULL);
   }
  if ( mon_ptr->dead) {				/* monster was killed */
-  if ( monkilled == MAXMONSTERS*level) {	
+  if ( monkilled == MAXMONSTERS*level) {
     map[newy][newx].mapchar = KEY;
     map[newy][newx].number = 1;
     sprintf(dropped,"%s drops the key as it writhes in agony and dies.",
@@ -195,18 +192,18 @@ if ( abs(ppos.y - mon_ptr->posy) < mon_ptr->range/2 &&
     map[newy][newx].mapchar = HAXE;
     map[newy][newx].number = 1;
     map[a_posy][a_posx].mapchar = BONES;
-    prt_char( map[a_posy][a_posx].mapchar, a_posy, a_posx); 
+    prt_char( map[a_posy][a_posx].mapchar, a_posy, a_posx);
   }
    map[mon_ptr->posy][mon_ptr->posx].mapchar = mon_ptr->underchar;
    map[mon_ptr->posy][mon_ptr->posx].number = 1;
    prt_char(map[mon_ptr->posy][mon_ptr->posx].mapchar,
-                                                  mon_ptr->posy,mon_ptr->posx); 
+                                                  mon_ptr->posy,mon_ptr->posx);
  } /* End IF (dead) */
 else { 						/* monster was not killed */
    map[mon_ptr->posy][mon_ptr->posx].mapchar = mon_ptr->underchar;
    map[mon_ptr->posy][mon_ptr->posx].number = 1;
    prt_char(map[mon_ptr->posy][mon_ptr->posx].mapchar,
-                                                  mon_ptr->posy,mon_ptr->posx); 
+                                                  mon_ptr->posy,mon_ptr->posx);
    map[newy][newx].mapchar = mon_ptr->mon_char;
    map[newy][newx].number = i;
    prt_char(map[newy][newx].mapchar,newy,newx);
@@ -219,13 +216,12 @@ else { 						/* monster was not killed */
  } /* End movedist IF */
  else { /* if monster is hurting and it's time to heal, add one to the health */
    if ( (hlspeed = mon_ptr->hlspd*mon_ptr->speed) < 1) hlspeed = 1;
-   if ( moves % hlspeed == 0  &&  mon_ptr->health < .8*3*(i+5)) 
+   if ( moves % hlspeed == 0  &&  mon_ptr->health < .8*3*(i+5))
      mon_ptr->health++;
  } /* End movedist ELSE */
 
 } /* End firing ELSE */
 }
-
 
 resurrect( num)
 int num;
@@ -235,12 +231,11 @@ monsters[num].dead = FALSE;
 monsters[num].underchar = SPACE;
 monsters[num].health = 3*(monsters[num].n_num+5);
 /* give him a new position */
-do {			  
-  monsters[num].posy = randnum( MAXROWS); 
+do {
+  monsters[num].posy = randnum( MAXROWS);
   monsters[num].posx = randnum( MAXCOLS);
  }while( !ISCLEAR( map[monsters[num].posy][monsters[num].posx].mapchar));
 }
-
 
 short read_monsters()
 {
@@ -254,10 +249,10 @@ monsters_struct *m;	/* new monster type read in */
 monsters_struct *nm;	/* next monster number of that type */
 
 if ( (mfile = fopen( monfile,"r")) != NULL) {
-  do { 
+  do {
       if (count++ > 10) {
-       printf("\nNo ending comment in monsters datafile."); 
-       exit(0); 
+       printf("\nNo ending comment in monsters datafile.");
+       exit(0);
       }
       fgets(dummy,80,mfile);
     } while( strstr(dummy,"**/") == 0);
@@ -274,7 +269,7 @@ if ( (mfile = fopen( monfile,"r")) != NULL) {
        x = randnum(MAXCOLS);
        y = randnum(MAXROWS);
      } while( !ISCLEAR( map[y][x].mapchar));
-     m->posy = y; 
+     m->posy = y;
      m->posx = x;
      m->underchar = SPACE;
      m->dir = NORTH;
@@ -306,8 +301,8 @@ if ( (mfile = fopen( monfile,"r")) != NULL) {
           x = randnum(MAXCOLS);
           y = randnum(MAXROWS);
         } while( !ISCLEAR( map[y][x].mapchar));
-        nm->posy = y; 
-        nm->posy = y; 
+        nm->posy = y;
+        nm->posy = y;
         nm->posx = x;
         nm->underchar = SPACE;
         nm->dir = NORTH;
@@ -318,7 +313,6 @@ fclose( mfile);
 else ret = E_OPENMON;
 return( ret);
 }
-
 
 prt_monsters()					/* for restored games */
 {
@@ -338,8 +332,6 @@ while( i++ < MAXMONSTERS*level) {
  } /* End while */
 }
 
-
-
 monster_attack( mon_num, obj)		/* this is for monster attacks */
 int mon_num;
 char obj;
@@ -348,21 +340,20 @@ int damage_done;
 char op_msg[80];
 char mon_attack[80];
 
-if ( obj == ARROW) 
+if ( obj == ARROW)
  sprintf(mon_attack,"%s %s.",mon_names[monsters[mon_num].n_num],
  			            monfire[monsters[mon_num].f_num]);
 else
  sprintf(mon_attack,"%s %s.",mon_names[monsters[mon_num].n_num],
 				    attacks[monsters[mon_num].a_num]);
 damage_done = monsters[mon_num].dam + randnum( monsters[mon_num].dam);
-if ( operator) { 
+if ( operator) {
   sprintf(op_msg,"MSock: %d",damage_done);
   prt_msg(op_msg);
 }
 prt_msg(mon_attack);
 take_damage( damage_done, mon_names[monsters[mon_num].n_num]);
 }
-
 
 void do_attack( mon_num, bp_num, spell, dir)
 int mon_num, bp_num, dir;
@@ -400,7 +391,7 @@ if ( bp_num != 0) {
     						mon_names[mon_ptr->n_num]);
     add_damage = BUSE / (level*2);
     damage_done = randnum( add_damage)+1 + ITEM_PROPS[identify( ARROW)][DAMAGE];
-  } 
+  }
   else if ( weapon == ORB) {
     if ( spell == 'a') {
     sprintf(player_attack,"The lightning bolt strikes %s!",
@@ -421,7 +412,7 @@ if ( bp_num != 0) {
     sprintf(player_attack,"%s explodes into dust!",mon_names[mon_ptr->n_num]);
     add_damage = 1000;
     }
-    damage_done = randnum( add_damage) + ITEM_PROPS[identify( ORB)][DAMAGE];  
+    damage_done = randnum( add_damage) + ITEM_PROPS[identify( ORB)][DAMAGE];
     switch( BACKPACK[check_inven( ORB)].condition) {
 	case 1: prt_msg("The Orb's power is very slight.");
 	        sprintf(player_attack,"The effect of the spell is greatly reduced.");
@@ -495,7 +486,7 @@ else {						/* bare handed attack */
     add_damage = (STR - 14)/2;
     damage_done = randnum( add_damage)+1 + ITEM_PROPS[HANDS][DAMAGE];
 }
-if ( operator) { 
+if ( operator) {
   sprintf(op_msg,"PSock: %d",damage_done);
   prt_msg(op_msg);
 }
@@ -522,7 +513,7 @@ if ( mon_ptr->health <= 0) {
   monkilled++;
   mon_ptr->dead = TRUE;
   if ( weapon == MINE || weapon == PIT) return;
-  if ( monkilled == MAXMONSTERS*level) {	
+  if ( monkilled == MAXMONSTERS*level) {
     map[mon_ptr->posy][mon_ptr->posx].mapchar = KEY;
     map[mon_ptr->posy][mon_ptr->posx].number = 1;
     sprintf(dropped,"%s drops the key as it writhes in agony and dies.",
@@ -547,7 +538,7 @@ if ( mon_ptr->health <= 0) {
     map[mon_ptr->posy][mon_ptr->posx].mapchar = HAXE;
     map[mon_ptr->posy][mon_ptr->posx].number = 1;
     map[a_posy][a_posx].mapchar = BONES;
-    prt_char( map[a_posy][a_posx].mapchar, a_posy, a_posx); 
+    prt_char( map[a_posy][a_posx].mapchar, a_posy, a_posx);
   }
   prt_char(map[mon_ptr->posy][mon_ptr->posx].mapchar,mon_ptr->posy,
 						      		 mon_ptr->posx);
