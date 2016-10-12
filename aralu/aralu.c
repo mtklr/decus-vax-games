@@ -15,8 +15,7 @@ while( i< quan) {
      map[y][x].mapchar = obj;
      if ( ITEM_PROPS[identify( obj)][COMBINE]) map[y][x].number = 1;
      else map[y][x].number = randnum( 5) + 1;
-     /* lib$wait(&0.008); /1* to give the random a better effect *1/ */
-     napms(8); /* to give the random a better effect */
+     napms(8); /* to give the random a better effect (?) */
      prt_char( map[y][x].mapchar, y, x);
      i++;
   }
@@ -111,12 +110,7 @@ while( holdmap[i].num != -5) {
 write_map()
 {
 int count;
-/* $DESCRIPTOR( map_desc, maparray); */
-
-/* map_desc.dsc$w_length = MAXCOLS; */
   for (count=1;count<=MAXROWS;count++) {
-      /* map_desc.dsc$a_pointer = &maparray[count-1][0]; */
-      /* smg$put_line(&dsp_main,&map_desc,0,0,0,0); */
       wprintw(dsp_main, "%s", &maparray[count - 1][0]);
   }
 
@@ -315,8 +309,6 @@ if ( (ret = gameloop()) == E_GAINLEVEL) {
   level++;
   MAXHEALTH = ((CON+level)*8);
   if ( (ret = readscreen()) != 0) errmess( ret);
-  /* smg$begin_pasteboard_update(&pb); */
-  /* smg$erase_display(&dsp_main); /1* clear original map *1/ */
   wclear(dsp_main);
   change_viewport( ppos.y, ppos.x); /* restarts the viewport */
   map[ppos.y][ppos.x].mapchar = '@';
