@@ -220,11 +220,12 @@ errmess( number)
 int number;
 {
 delete_windows();
-if ( number != E_ENDGAME)
-  printf("Aralu: %s\n",errors[number]);
 curs_set(1);
 nocbreak();
-printf("Thank you for trying aralu.");
+endwin();
+if ( number != E_ENDGAME)
+  printf("Aralu: %s\n",errors[number]);
+printf("Thank you for trying aralu.\n");
 exit( 0);
 }
 
@@ -337,7 +338,7 @@ else {
   curs_set(1);
   nocbreak();
   endwin();
-  printf("Thank you for trying aralu.");
+  printf("Thank you for trying aralu.\n");
   exit( 0);
 }
 }
