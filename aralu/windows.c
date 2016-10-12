@@ -15,11 +15,11 @@ create_windows()
 /* smg$create_viewport(&dsp_main,&1,&1,&10,&40); */
 /* smg$set_keypad_mode(&kboard,&SMG$M_KEYPAD_APPLICATION); */
     dsp_status = newwin(10, 37, 2, 43);
-    dsp_inven = newwin(10, 37, 0, 0);
+    dsp_inven = newwin(10, 37, 2, 43);
     dsp_command = newwin(10, 78, 13, 2);
     dsp_help = newwin(21, 78, 0, 0);
     dsp_main = newwin(MAXROWS, MAXCOLS, 0, 0);
-    dsp_viewport = derwin(dsp_main, 10, 40, 2, 2);
+    dsp_viewport = derwin(dsp_main, 10, 40, 1, 1);
 }
 
 put_windows()
@@ -50,12 +50,6 @@ WINDOW *display;
 int y, x;
 char *message;
 {
-/* $DESCRIPTOR( mess_d, message); */
-/* mess_d.dsc$w_length = strlen(message); */
-/* if ( (y==0) && (x==0)) /1* default to the next line, col *1/ */
-/*   smg$put_line(&display,&mess_d,0,0,0,&SMG$M_WRAP_WORD); */
-/* else */
-/*   smg$put_chars(&display,&mess_d,&y,&x); */
     mvwprintw(display, y, x, "%s", message);
     wrefresh(display);
 }
@@ -63,10 +57,8 @@ char *message;
 prt_msg( message)
 char *message;
 {
-/* $DESCRIPTOR( mess_d, message); */
-/* mess_d.dsc$w_length = strlen(message); */
-/* smg$put_line(&dsp_command,&mess_d,0,0,0,&SMG$M_WRAP_WORD); */
     wprintw(dsp_command, "%s", message);
+    wrefresh(dsp_command);
 }
 
 prt_char( ch, row, col)
