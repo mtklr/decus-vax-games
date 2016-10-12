@@ -124,10 +124,11 @@ double denom;
 
 while( !dead) {
 send = FALSE;
-/* if ( smg$read_keystroke(&kboard,&key,0,&timeout) != 556) { */
-if ( (key=getchar()) != EOF) {
+wrefresh(dsp_viewport); /* keeps things moving around */
+if ( (key=getch()) != EOF) {
    send = TRUE;
    timeout_count--;
+   flushinp(); /* clear input buffer, reduce delay (?) */
 }
 if ( !in_arena) { /* can't heal while waiting in arena */
   if ( CON == 20) denom = 1;
@@ -155,8 +156,7 @@ do_acts()
 int monspeed, i, j, k;
 int limit;
 
-/* lib$wait(&DIFFICULTY); */
-napms(DIFFICULTY);
+napms(DIFFICULTY * 200); /* timing */
 moves++;
 if ( (moves % 500) == 0) get_time();
 for ( j = 0; j < NUMFLAGS; j++)
@@ -205,13 +205,11 @@ while( !dead) {
 if ( dead) {
   prt_msg("Press RETURN to continue.");
   do {
-    /* smg$read_keystroke(&kboard,&d); */
   }while( (d=getch()) != 13);
   prt_msg("Your backpack contained:");
   prt_inven();
   prt_msg("Press RETURN to continue.");
   do {
-    /* smg$read_keystroke(&kboard,&d); */
   }while( (d=getch()) != 13);
 }
 if (ret == E_SAVED) ret = savegame();
@@ -277,6 +275,10 @@ if ( argc > 1) {
 if ( ret) errmess( ret);
 }
 
+initscr();
+noecho();
+refresh();
+
 if ( (ret = restore()) == 0) restored = TRUE;
 else if ( ret != E_NOSAVEFILE) errmess( ret);
 else if ( (ret = create_character()) != 0) errmess( ret);
@@ -285,10 +287,10 @@ if ( (ret = readscreen()) != 0) errmess( ret);
 if (restored) sub_holdmap();
 
 /* game has been restored or re-started */
-initscr();
 cbreak();
 curs_set(0);
 typeahead(-1);
+nonl();
 create_windows();
 change_viewport( ppos.y, ppos.x);
 map[ppos.y][ppos.x].mapchar = '@';
@@ -302,6 +304,7 @@ get_time();
 put_windows();
 
 remove( savefile); /* delete savefile so people can't cheat */
+timeout(500); /* things keep moving without player input */
 while(!dead) {
 if ( (ret = gameloop()) == E_GAINLEVEL) {
   prt_msg("Congratulations!  You made it through this level");
@@ -315,7 +318,6 @@ if ( (ret = gameloop()) == E_GAINLEVEL) {
   maparray[ppos.y][ppos.x] = '@';
   write_map(); /* print out new map */
   create_objects();
-  /* smg$end_pasteboard_update(&pb); */
 /*  if ( !flags[SPEED].valid && CURWEIGHT < MAXWEIGHT) speed = 1; */
   KEYPOSESS = GAINLEVEL = FALSE;
   monkilled = dely = delx = 0;
