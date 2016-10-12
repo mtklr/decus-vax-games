@@ -42,7 +42,7 @@ if ( (outfile = fopen( savefile,"w")) != NULL) {
     for (j=0; j< MAXCOLS; j++)
         maparray[i][j] = map[i][j].mapchar;
 */
-enable_control();
+nocbreak();
 k = 0;
  for (i=0; i< MAXROWS; i++)
     for (j=0; j< MAXCOLS; j++)

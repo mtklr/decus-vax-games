@@ -1,41 +1,6 @@
 #include "aralu.h"
 #include "stuff.h"
 
-cursor_on()
-{
-/* printf("\33[?25h"); */
-    curs_set(1);
-}
-
-cursor_off()
-{
-/* printf("\33[?25l"); */
-    curs_set(0);
-}
-
-enable_control()
-{
-/* int mask = 0x02000000; */
-/* lib$enable_ctrl(&mask); */
-    nocbreak();
-}
-
-disable_control()
-{
-/* int mask = 0x02000000; */
-/* lib$disable_ctrl(&mask); */
-    cbreak();
-}
-
-/*
-clear_buffer()
-{
-$DESCRIPTOR(command_d,"set terminal/notypeahead");
-
-smg$execute_command(&dsp_command,&command_d,&SMG$M_DATA_FOLLOWS);
-}
-*/
-
 create( obj, quan)
 short quan;
 char obj;
@@ -265,8 +230,8 @@ int number;
 delete_windows();
 if ( number != E_ENDGAME)
   printf("Aralu: %s\n",errors[number]);
-cursor_on();
-enable_control();
+curs_set(1);
+nocbreak();
 printf("Thank you for trying aralu.");
 exit( 0);
 }
@@ -327,9 +292,9 @@ if (restored) sub_holdmap();
 
 /* game has been restored or re-started */
 initscr();
-disable_control();
-cursor_off();
-/*clear_buffer();*/
+cbreak();
+curs_set(0);
+typeahead(-1);
 create_windows();
 change_viewport( ppos.y, ppos.x);
 map[ppos.y][ppos.x].mapchar = '@';
@@ -375,8 +340,8 @@ if ( dead && !operator) ret = score();
 if ( ret) errmess( ret);
 else {
   delete_windows();
-  cursor_on();
-  enable_control();
+  curs_set(1);
+  nocbreak();
   endwin();
   printf("Thank you for trying aralu.");
   exit( 0);
