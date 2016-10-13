@@ -54,7 +54,6 @@ while( j++ < MAXMONSTERS*level) {
    if ( k != 0  &&  k % 8 == 0) {
      prt_msg("Press any key for more ('q' to end listing).");
      dummy = 0;
-     /* smg$read_keystroke(&kboard,&dummy); */
      dummy = getch();
      if ( dummy == 'q') {
        sprintf(you,"You are at (%d,%d).  Stopmonst: %d",ppos.x,ppos.y,stop_monst);
@@ -74,7 +73,6 @@ create_object() /* create any object where you are */
 char obj;
 
 prt_msg("Create which object character?");
-/* smg$read_keystroke(&kboard,&obj); */
 obj = getch();
 map[ppos.y][ppos.x].number = 5;   /* perfect condition OR 5 quantity */
 underchar = obj;
@@ -87,7 +85,6 @@ int dx, dy;
 char dir;
 
 prt_msg("Remove object which direction?");
-/* smg$read_keystroke(&kboard,&dir); */
 dir = getch();
 switch( dir) {
         case UP: dy = -1; dx = 0; break;

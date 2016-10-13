@@ -25,7 +25,6 @@ switch( keyhit) {
                   ret = E_SAVED;
                   break;
         case 'S': prt_msg("Choose another speed.");
-                  /* smg$erase_display(&dsp_status); */
                   wclear(dsp_status);
                   prt_difficulty(dsp_status);
                   diff_num = getkey();
@@ -36,7 +35,6 @@ switch( keyhit) {
                    case '4': DIFFICULTY = 0.40; break;
                    default: DIFFICULTY = 0.1;
                   }
-                  /* smg$erase_display(&dsp_status); */
                   wclear(dsp_status);
                   prt_status();
                   break;
@@ -46,9 +44,7 @@ switch( keyhit) {
         case RIGHT: move_plr( keyhit); break;
         case ' ': fire_item( ARROW); break;
         case 'u': choose_spell(); break;
-        case 's': //smg$erase_display(&dsp_status);
-                  /* smg$paste_virtual_display(&dsp_status,&pb,&2,&43); */
-                  wclear(dsp_status);
+        case 's': wclear(dsp_status);
                   prt_status();
                   break;
         case 't': get_time(); break;
@@ -83,7 +79,7 @@ switch( keyhit) {
         case 26:  prt_msg("Quit/no save? ['y' to confirm]");
                   if ( toupper( getkey()) == 'Y') ret = E_ENDGAME;
                   break;
-        /* case 12:  smg$repaint_screen( &pb); break; */
+        case 12:  refresh(); break;
         /* case 2:   prt_msg("Zoom!"); sys$setpri(0,0,4,0); break; */
 /*      case 18:  recall_messages(); break; */
         case 'x': exchange_weap(); break;
@@ -275,7 +271,6 @@ char dir;
 
 prt_msg("View which direction?");
 dir = getkey();
-/* smg$read_keystroke( &kboard,&dir); */
 switch( dir) {
         case UP: dx = 0; dy = -1; sight_dist = MAXVIEWDIST/2; break;
         case RIGHT: dx = 1; dy = 0; sight_dist = MAXVIEWDIST; break;
@@ -389,7 +384,7 @@ while( !dead) {
  sp = 0;
  prt_msg("Which spell to use? [* for list and failure %]");
  sp = getkey();
- if ( sp == '*') wrefresh(dsp_inven); //smg$paste_virtual_display(&dsp_inven,&pb,&2,&43);
+ if ( sp == '*') wrefresh(dsp_inven);
  else break;
 }
 if (dead) return;
@@ -506,7 +501,6 @@ prt_msg("Direction? [^Z abort]");
 do {
  dr = 0;
  dr = getkey();
-/*  smg$read_keystroke( &kboard,&dr); */
  switch( dr) {
         case UP: dx = 0; dy = -1; break;
         case RIGHT: dx = 1; dy = 0; break;
@@ -627,7 +621,6 @@ if ( WIELD == 0 && ALTWEAP == 0) /* get an initial weapon */
 else if ( ALTWEAP == 0) {
   prt_msg("Make which weapon alternate? [* for list]");
   wchar = getkey();
-/*   smg$read_keystroke(&kboard,&wchar); */
   wchar -= MAGIC_NUMBER;
   if ( wchar+MAGIC_NUMBER == '*') { prt_inven(); exchange_weap(); }
   else if ( wchar < 1  ||  wchar > MAXINVEN-1) {
@@ -664,7 +657,6 @@ char wielding[80];
 
 prt_msg("Wear/wield which item? [* for list]");
 wchar = getkey();
-/* smg$read_keystroke(&kboard,&wchar); */
 wchar -= MAGIC_NUMBER;
 if ( wchar+MAGIC_NUMBER == '*') { prt_inven(); wear_wield(); }
 else if ( wchar < 1  ||  wchar > MAXINVEN-1) {
@@ -703,7 +695,6 @@ if ( underchar != SPACE) {
 }
 prt_msg("Drop which item? [* for list]");
 dchar = getkey();
-/* smg$read_keystroke(&kboard,&dchar); */
 dchar -= MAGIC_NUMBER;
 if ( dchar+MAGIC_NUMBER == '*') { prt_inven(); drop(); }
 else if ( dchar < 1  ||  dchar > MAXINVEN-1) {
@@ -728,7 +719,6 @@ else if ( BACKPACK[dchar].invenchar != SPACE) { /* you have it */
             prt_msg(drop_msg);
             strcpy(drop_msg,"\0\0\0");
             dropall = getkey();
-/*          smg$read_keystroke(&kboard,&dropall); */
             if ( dropall == 'y') {
               map[ppos.y][ppos.x].number = BACKPACK[dchar].quantity;
               amount = BACKPACK[dchar].quantity;
@@ -1101,7 +1091,6 @@ char purchased[80];
 /* $DESCRIPTOR(statlabel,"Character Stats"); */
 
 prt_msg("[s]ell/[p]urchase/[e]xit");
-/* smg$read_keystroke(&kboard,&c); */
 c = getch();
 if ( c != 'e' && c != 's' && c != 'p')
   if ( get_purchase()) return (FALSE);
@@ -1124,7 +1113,6 @@ if ( c == 'p') {
  sprintf(gold_amount,"You have %d gold remaining.",wealth);
  prt_msg(gold_amount);
  prt_msg("Purchase which item?");
- /* smg$read_keystroke(&kboard,&c); */
  c = getch();
  if ( (c -= MAGIC_NUMBER) < 1  ||  (c > 12)) { /* 12 items excluding HANDS */
    prt_msg("Value out of range.");
@@ -1187,7 +1175,6 @@ char sell_msg[80];
 while( 1) {
 schar = 0;
 prt_msg("Sell which item? [* for inventory]");
-/* smg$read_keystroke(&kboard,&schar); */
 schar = getch();
 schar -= MAGIC_NUMBER;
 if ( schar+MAGIC_NUMBER == '*') { prt_inven(); flag = 1; }
@@ -1209,7 +1196,6 @@ else if ( (dummychar = BACKPACK[schar].invenchar) != SPACE) {
             sprintf(sell_msg,"You have %d %ss.  Sell all?",
                 BACKPACK[schar].quantity, object_names[identify(dummychar)]);
             prt_msg(sell_msg);
-            /* smg$read_keystroke(&kboard,&sellall); */
             sellall = getch();
             if ( sellall == 'y') {
               quan = BACKPACK[schar].quantity;
