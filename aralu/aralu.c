@@ -305,7 +305,7 @@ get_time();
 put_windows();
 
 remove( savefile); /* delete savefile so people can't cheat */
-timeout(500); /* things keep moving without player input */
+wtimeout(dsp_viewport, 500); /* things keep moving without player input */
 while(!dead) {
 if ( (ret = gameloop()) == E_GAINLEVEL) {
   prt_msg("Congratulations!  You made it through this level");
