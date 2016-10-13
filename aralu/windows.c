@@ -70,7 +70,7 @@ char *message;
 prt_msg( message)
 char *message;
 {
-    wprintw(dsp_command, "%s", message);
+    wprintw(dsp_command, "%s\n", message);
     wrefresh(dsp_command);
 }
 
