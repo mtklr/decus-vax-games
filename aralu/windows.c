@@ -65,20 +65,10 @@ prt_char( ch, row, col)
 char ch;
 int row, col;
 {
-char ch_c[1];
-/* $DESCRIPTOR( p_char, ch_c); */
-ch_c[0] = ch;
-row++;
-col++;
-
-/* p_char.dsc$w_length = 1; */
 if ( ch == KEY)
-  /* smg$put_chars(&dsp_main,&p_char,&row,&col,0,&(SMG$M_BOLD+SMG$M_BLINK)); */
     mvwaddch(dsp_main, row, col, ch | A_BOLD | A_BLINK);
 else if ( ch == '*')
-  /* smg$put_chars(&dsp_main,&p_char,&row,&col,0,&SMG$M_BOLD); */
     mvwaddch(dsp_main, row, col, ch | A_BOLD);
-/* else smg$put_chars(&dsp_main,&p_char,&row,&col); */
 else
     mvwaddch(dsp_main, row, col, ch);
 }
@@ -91,22 +81,19 @@ if ( rowoff)
     if ( rowoff + SCRATIOV >= MAXROWS) rowoff = MAXROWS-9;
     else rowoff -= SCRATIOV;
   }
-  else rowoff = 1;
+  else rowoff = 0;
 
 if ( coloff)
   if ( coloff - SCRATIOH > 0) {
     if ( coloff + SCRATIOH+3 >= MAXCOLS) coloff = MAXCOLS-39;
     else coloff -= SCRATIOH;
   }
-  else coloff = 1;
+  else coloff = 0;
 
 if ( rowoff && !coloff)
- /* smg$change_viewport(&dsp_main,&rowoff,0,&10,&40); */
     mvderwin(dsp_viewport, rowoff, 0);
 else if ( !rowoff && coloff)
- /* smg$change_viewport(&dsp_main,0,&coloff,&10,&40); */
     mvderwin(dsp_viewport, 0, coloff);
 else
- /* smg$change_viewport(&dsp_main,&rowoff,&coloff,&10,&40); */
     mvderwin(dsp_viewport, rowoff, coloff);
 }

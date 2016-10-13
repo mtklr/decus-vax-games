@@ -1304,12 +1304,9 @@ switch( direction) {
 } /* End switch */
 ppos.x -= dx;
 ppos.y -= dy;
-if ( abs(dely) >= SCRATIOV) {
- change_viewport(ppos.y, 0);
+if ( abs(dely) >= SCRATIOV || abs(delx) >= SCRATIOH) {
+ change_viewport(ppos.y, ppos.x);
  dely = 0;
-}
-if ( abs(delx) >= SCRATIOH) {
- change_viewport(0, ppos.x);
  delx = 0;
 }
 map[ppos.y][ppos.x].mapchar = '@';
