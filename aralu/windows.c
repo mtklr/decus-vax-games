@@ -20,6 +20,8 @@ create_windows()
     dsp_help = newwin(21, 78, 0, 0);
     dsp_main = newwin(MAXROWS, MAXCOLS, 0, 0);
     dsp_viewport = derwin(dsp_main, 10, 40, 1, 1);
+
+    scrollok(dsp_command, TRUE);
 }
 
 put_windows()
@@ -41,8 +43,19 @@ put_windows()
 
 delete_windows()
 {
-/* smg$delete_virtual_keyboard(&kboard); */
-/* smg$delete_pasteboard(&pb); */
+    delwin(dsp_status);
+    delwin(dsp_inven);
+    delwin(dsp_command);
+    delwin(dsp_help);
+    delwin(dsp_main);
+    delwin(dsp_viewport);
+}
+
+redraw_windows()
+{
+    redrawwin(dsp_status);
+    redrawwin(dsp_viewport);
+    redrawwin(dsp_command);
 }
 
 prt_in_disp( display, message, y, x)
