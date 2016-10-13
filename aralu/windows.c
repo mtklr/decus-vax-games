@@ -63,7 +63,9 @@ WINDOW *display;
 int y, x;
 char *message;
 {
-    mvwprintw(display, y, x, "%s", message);
+    if (y < 1) y = 1; /* FIXME coordinates start at 1 not 0 on the old system */
+    if (x < 1) x = 1;
+    mvwprintw(display, y - 1, x - 1, "%s", message);
     wrefresh(display);
 }
 
