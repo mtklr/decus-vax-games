@@ -60,7 +60,7 @@ makescore() {
                     (kills == scoretable[pos].kills) &&
                     (experience + wealth > scoretable[pos].exp)
                   );
-      if( insert) {                     /* delete existing entry */
+      if( insert) { /* delete existing entry */
          for( i = pos; i < scoreentries-1; i++)
             cp_entry( i, i+1);
          scoreentries--;
@@ -81,7 +81,7 @@ makescore() {
       scoretable[pos].level = level;
       scoretable[pos].kills = kills;
       scoretable[pos].exp = experience + wealth;
-/*       scoreentries++; */
+/*    scoreentries++; */
    }
    return( ret);
 }
@@ -124,7 +124,7 @@ writescore() {
         sprintf(score_string,"   %2d  %10s  %8d  %8d  %8d",
              tmp,scoretable[tmp].user,scoretable[tmp].level,
              scoretable[tmp].kills,scoretable[tmp].exp);
-        while(strlen(score_string) < 70) strcat(score_string," ");
+        while(strlen(score_string) < 69) strcat(score_string," ");
         score_string[69] = '\0';
         if (fprintf(scf,"%s\n",score_string) == NULL)
           {fclose( scf); return(E_WRITESCORE);}
@@ -163,7 +163,7 @@ short file_count;
 char blank_line[70];
 
 if ( ( newfile = fopen(scorefile,"w")) != NULL) {
-  for (i=0; i<70; i++)
+  for (i=0; i<69; i++)
      blank_line[i] = ' '; /* Make the blank line to put into the score file */
   blank_line[69] = '\0';
   for (file_count=0; file_count < MAXSCOREENTRIES; file_count++)
