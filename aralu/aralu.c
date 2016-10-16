@@ -220,8 +220,6 @@ errmess( number)
 int number;
 {
 delete_windows();
-curs_set(1);
-nocbreak();
 endwin();
 if ( number != E_ENDGAME)
   printf("Aralu: %s\n",errors[number]);
@@ -288,7 +286,7 @@ if ( (ret = readscreen()) != 0) errmess( ret);
 if (restored) sub_holdmap();
 
 /* game has been restored or re-started */
-cbreak();
+raw();
 curs_set(0);
 typeahead(-1);
 nonl();
@@ -335,8 +333,6 @@ if ( dead && !operator) ret = score();
 if ( ret) errmess( ret);
 else {
   delete_windows();
-  curs_set(1);
-  nocbreak();
   endwin();
   printf("Thank you for trying aralu.\n");
   exit( 0);
