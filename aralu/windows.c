@@ -17,7 +17,7 @@ create_windows()
     dsp_status = newwin(10, 37, 2, 43);
     dsp_inven = newwin(10, 37, 2, 43);
     dsp_command = newwin(10, 78, 13, 2);
-    dsp_help = newwin(21, 78, 0, 0);
+    dsp_help = newwin(22, 78, 0, 0);
     dsp_main = newwin(MAXROWS, MAXCOLS, 0, 0);
     dsp_viewport = derwin(dsp_main, 10, 40, 1, 1);
 

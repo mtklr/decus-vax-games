@@ -51,6 +51,8 @@ char dummy;
 char *return_d = "Press any key to return to game";
 char *opreturn_d = "Press any key to continue list";
 
+wclear(dsp_help);
+
 i = 0;
    while( helptext[i] != NULL) {
         wprintw(dsp_help, "%s\n", helptext[i]);
@@ -58,7 +60,7 @@ i = 0;
    }
 if (operator) {
     wstandout(dsp_help);
-    mvwprintw(dsp_help, 21, 23, "%s", opreturn_d);
+    mvwprintw(dsp_help, 20, 23, "%s", opreturn_d);
     wstandend(dsp_help);
     wrefresh(dsp_help);
     getch();
@@ -70,13 +72,12 @@ if (operator) {
        }
 }
 wstandout(dsp_help);
-mvwprintw(dsp_help, 21, 23, "%s", return_d);
+mvwprintw(dsp_help, 20, 23, "%s", return_d);
 wstandend(dsp_help);
 wrefresh(dsp_help);
 getch();
 wclear(dsp_help);
 wrefresh(dsp_help);
-
 redraw_windows();
 put_windows();
 }
