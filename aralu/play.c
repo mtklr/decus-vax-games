@@ -587,7 +587,6 @@ char items[80];
 /* smg$erase_display(&dsp_inven); */
 /* smg$paste_virtual_display(&dsp_inven,&pb,&2,&43); */
 wclear(dsp_inven);
-wrefresh(dsp_inven);
 do {
   if ( BACKPACK[i].invenchar != SPACE) {
    item_to_ident = BACKPACK[i].invenchar;
@@ -607,7 +606,6 @@ do {
    prt_in_disp(dsp_inven,items,i,1);
    }
 } while( MAXINVEN >i++);
-
 }
 
 void exchange_weap() /* quick-change alternate weapon */
@@ -670,11 +668,13 @@ else if ( BACKPACK[wchar].invenchar != SPACE) { /* you have it */
            WORN = wchar;
            sprintf(wielding,"Now wearing %s.",BACKPACK[wchar].name);
            prt_msg(wielding);
+           prt_inven();
          }
          else {
            WIELD = wchar;
            sprintf(wielding,"Now wielding %s.",BACKPACK[wchar].name);
            prt_msg(wielding);
+           prt_inven();
          }
        }
        else prt_msg( "I don't see how you can use that.");
