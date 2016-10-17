@@ -149,6 +149,7 @@ do_acts();
 
 if ( send && !dead) return( key);
 } /* End while */
+return (-1);
 }
 
 void do_acts()

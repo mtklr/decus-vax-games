@@ -1146,6 +1146,7 @@ else {
 }
 
 if ( get_purchase()) return (FALSE); /* endless loop until ^Z is hit (TRUE) */
+return (-1);
 }
 
 void enter_store()
