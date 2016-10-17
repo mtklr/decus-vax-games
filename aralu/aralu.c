@@ -293,6 +293,7 @@ typeahead(-1);
 nonl();
 create_windows();
 change_viewport( ppos.y, ppos.x);
+keypad(dsp_viewport, TRUE);
 map[ppos.y][ppos.x].mapchar = '@';
 maparray[ppos.y][ppos.x] = '@';
 write_map();

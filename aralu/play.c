@@ -1,7 +1,7 @@
 #include "aralu.h"
 
 short parse_keystroke( keyhit)
-char keyhit;
+int keyhit;
 {
 int dummy, diff_num, d;
 short ret = 0;
@@ -31,6 +31,14 @@ switch( keyhit) {
         case LEFT :
         case DOWN :
         case RIGHT: move_plr( keyhit); break;
+        case KEY_UP:
+                    move_plr(UP); break;
+        case KEY_DOWN:
+                    move_plr(DOWN); break;
+        case KEY_LEFT:
+                    move_plr(LEFT); break;
+        case KEY_RIGHT:
+                    move_plr(RIGHT); break;
         case ' ': fire_item( ARROW); break;
         case 'u': choose_spell(); break;
         case 's': wclear(dsp_status);
