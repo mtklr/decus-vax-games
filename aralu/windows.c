@@ -14,8 +14,8 @@ void create_windows()
 /* smg$create_virtual_display(&MAXROWS,&MAXCOLS,&dsp_main,&SMG$M_BORDER); */
 /* smg$create_viewport(&dsp_main,&1,&1,&10,&40); */
 /* smg$set_keypad_mode(&kboard,&SMG$M_KEYPAD_APPLICATION); */
-    dsp_status = newwin(10, 37, 2, 43);
-    dsp_inven = newwin(10, 37, 2, 43);
+    dsp_status = newwin(11, 37, 1, 43);
+    dsp_inven = newwin(11, 37, 1, 43);
     dsp_command = newwin(10, 78, 13, 2);
     dsp_help = newwin(22, 78, 0, 0);
     dsp_main = newwin(MAXROWS, MAXCOLS, 0, 0);
@@ -65,7 +65,7 @@ char *message;
 {
     if (y < 1) y = 1; /* FIXME coordinates start at 1 not 0 on the old system */
     if (x < 1) x = 1;
-    mvwprintw(display, y - 1, x - 1, "%s", message);
+    mvwprintw(display, y, x - 1, "%s", message);
     touchwin(display);
     wrefresh(display);
 }
