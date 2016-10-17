@@ -89,27 +89,37 @@ else
     mvwaddch(dsp_main, row, col, ch);
 }
 
-void change_viewport( rowoff, coloff)
-int rowoff, coloff;
+void change_viewport(int rowoff, int coloff)
 {
-if ( rowoff)
-  if ( rowoff - SCRATIOV > 0) {
-    if ( rowoff + SCRATIOV >= MAXROWS) rowoff = MAXROWS-9;
-    else rowoff -= SCRATIOV;
-  }
-  else rowoff = 0;
+    if (rowoff) {
+        if (rowoff - SCRATIOV > 0) {
+            if (rowoff + SCRATIOV >= MAXROWS) {
+                rowoff = MAXROWS - 9;
+            } else {
+                rowoff -= SCRATIOV;
+            }
+        } else {
+            rowoff = 0;
+        }
+    }
 
-if ( coloff)
-  if ( coloff - SCRATIOH > 0) {
-    if ( coloff + SCRATIOH+3 >= MAXCOLS) coloff = MAXCOLS-39;
-    else coloff -= SCRATIOH;
-  }
-  else coloff = 0;
+    if (coloff) {
+        if (coloff - SCRATIOH > 0) {
+            if (coloff + SCRATIOH + 3 >= MAXCOLS) {
+                coloff = MAXCOLS - 39;
+            } else {
+                coloff -= SCRATIOH;
+            }
+        } else {
+            coloff = 0;
+        }
+    }
 
-if ( rowoff && !coloff)
-    mvderwin(dsp_viewport, rowoff, 0);
-else if ( !rowoff && coloff)
-    mvderwin(dsp_viewport, 0, coloff);
-else
-    mvderwin(dsp_viewport, rowoff, coloff);
+    if (rowoff && !coloff) {
+        mvderwin(dsp_viewport, rowoff, 0);
+    } else if (!rowoff && coloff) {
+        mvderwin(dsp_viewport, 0, coloff);
+    } else {
+        mvderwin(dsp_viewport, rowoff, coloff);
+    }
 }
