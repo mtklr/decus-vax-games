@@ -1,7 +1,5 @@
 #include "aralu.h"
 
-void do_attack(int mon_num, int bp_num, char spell, int dir);
-
 int eat( object)
 char object;
 {
@@ -223,7 +221,7 @@ else { /* monster was not killed */
 } /* End firing ELSE */
 }
 
-resurrect( num)
+void resurrect( num)
 int num;
 {
 
@@ -314,7 +312,7 @@ else ret = E_OPENMON;
 return( ret);
 }
 
-prt_monsters() /* for restored games */
+void prt_monsters() /* for restored games */
 {
 int i, j, k;
 int limit;
@@ -332,7 +330,7 @@ while( i++ < MAXMONSTERS*level) {
  } /* End while */
 }
 
-monster_attack( mon_num, obj) /* this is for monster attacks */
+void monster_attack( mon_num, obj) /* this is for monster attacks */
 int mon_num;
 char obj;
 {

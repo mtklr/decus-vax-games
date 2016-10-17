@@ -4,7 +4,7 @@ static short scoreentries;
 static short rank;
 static struct {
    char user[10];
-   short level, kills, exp;
+   int level, kills, exp;
 } scoretable[MAXSCOREENTRIES+1];
 static FILE *scf;
 
@@ -28,7 +28,7 @@ short ret;
    return( (ret == 0) ? E_ENDGAME : ret);
 }
 
-readscore() {
+short readscore() {
 
    short rank;
    short ret = 0;
@@ -47,7 +47,7 @@ readscore() {
   return( ret);
 }
 
-makescore() {
+short makescore() {
 
    short ret = 0, pos, i, build = 1, insert;
 
@@ -86,7 +86,7 @@ makescore() {
    return( ret);
 }
 
-finduser() {
+short finduser() {
 
    short i, found = 0;
 
@@ -95,7 +95,7 @@ finduser() {
    return( (found) ? i-1 : -1);
 }
 
-findpos() {
+short findpos() {
 
    short i, found = 0;
 
@@ -111,10 +111,10 @@ findpos() {
    return( (found) ? i-1 : -1);
 }
 
-writescore() {
+short writescore() {
 
    short ret = 0;
-   long tmp;
+   int tmp;
    char score_string[70];
 
    if( (scf = fopen( scorefile, "r+")) == NULL)
@@ -126,7 +126,7 @@ writescore() {
              scoretable[tmp].kills,scoretable[tmp].exp);
         while(strlen(score_string) < 69) strcat(score_string," ");
         score_string[69] = '\0';
-        if (fprintf(scf,"%s\n",score_string) == NULL)
+        if (fprintf(scf,"%s\n",score_string) < 0)
           {fclose( scf); return(E_WRITESCORE);}
       }
     }
@@ -134,7 +134,7 @@ writescore() {
    return( ret);
 }
 
-showscore() {
+void showscore() {
 
   short i;
 
@@ -145,7 +145,7 @@ showscore() {
              scoretable[i].level,scoretable[i].kills,scoretable[i].exp);
 }
 
-cp_entry( i1, i2)
+void cp_entry( i1, i2)
 register short i1, i2;
 {
    strcpy( scoretable[i1].user, scoretable[i2].user);
@@ -167,7 +167,7 @@ if ( ( newfile = fopen(scorefile,"w")) != NULL) {
      blank_line[i] = ' '; /* Make the blank line to put into the score file */
   blank_line[69] = '\0';
   for (file_count=0; file_count < MAXSCOREENTRIES; file_count++)
-    if( fprintf( newfile,"%s\n", blank_line) == NULL) ret = E_WRITESCORE;
+    if( fprintf( newfile,"%s\n", blank_line) < 0) ret = E_WRITESCORE;
   fclose( newfile);
 }
 else ret = E_OPENSCORE;

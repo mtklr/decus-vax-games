@@ -44,7 +44,7 @@ char *ophelp[] = {
 NULL /* End of OP help listing */
 };
 
-help()
+void help()
 {
 int i;
 char dummy;

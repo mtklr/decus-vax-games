@@ -1,7 +1,7 @@
 #include "aralu.h"
 #include "stuff.h"
 
-create( obj, quan)
+void create( obj, quan)
 short quan;
 char obj;
 {
@@ -22,7 +22,7 @@ while( i< quan) {
 }
 }
 
-create_objects()
+void create_objects()
 {
 int obj_num;
 /* for the creation, make a few extras, since monsters eat them */
@@ -44,7 +44,7 @@ else if ( obj_num==5) { create( ARMOR, 1); create( LSWORD, 1); }
 else create( SPACE, 1); /* should never happen */
 }
 
-sub_holdmap()
+void sub_holdmap()
 {
 int i = 0;
 
@@ -88,7 +88,7 @@ if ( (readfile = fopen( screenfile,"r")) != NULL) {
 /* can't print out the monsters with the rest of the map, since the character
    you see on the screen is not the same as the encoded character of the
    monster, so we have to do it in write_map() */
-if ( access( savefile, "r") != 0  &&  level == 1)
+if ( access( savefile, R_OK) != 0  &&  level == 1)
   if ( (ret = read_monsters())) errmess( ret);
 
 } /* End file-open IF */
@@ -97,7 +97,7 @@ fclose( readfile);
 return( ret);
 }
 
-prt_sub_holdmap()
+void prt_sub_holdmap()
 {
 int i = 0;
 
@@ -107,7 +107,7 @@ while( holdmap[i].num != -5) {
  } /* End while */
 }
 
-write_map()
+void write_map()
 {
 int count;
   for (count=1;count<=MAXROWS;count++) {
@@ -151,7 +151,7 @@ if ( send && !dead) return( key);
 } /* End while */
 }
 
-do_acts()
+void do_acts()
 {
 int monspeed, i, j, k;
 int limit;
@@ -216,7 +216,7 @@ if (ret == E_SAVED) ret = savegame();
 return( ret);
 }
 
-errmess( number)
+void errmess( number)
 int number;
 {
 delete_windows();
@@ -227,7 +227,7 @@ printf("Thank you for trying aralu.\n");
 exit( 0);
 }
 
-main( argc, argv)
+int main( argc, argv)
 int argc;
 char *argv[];
 {

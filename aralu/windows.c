@@ -2,7 +2,7 @@
 
 /* Handle the windows stuff */
 
-create_windows()
+void create_windows()
 {
 /* smg$create_pasteboard(&pb); */
 /* smg$create_virtual_keyboard(&kboard); */
@@ -24,7 +24,7 @@ create_windows()
     scrollok(dsp_command, TRUE);
 }
 
-put_windows()
+void put_windows()
 {
 /* $DESCRIPTOR( statlabel, "Character Stats"); */
 /* $DESCRIPTOR( invenlabel, "Inventory"); */
@@ -41,7 +41,7 @@ put_windows()
     wrefresh(dsp_command);
 }
 
-delete_windows()
+void delete_windows()
 {
     delwin(dsp_status);
     delwin(dsp_inven);
@@ -51,14 +51,14 @@ delete_windows()
     delwin(dsp_viewport);
 }
 
-redraw_windows()
+void redraw_windows()
 {
     redrawwin(dsp_status);
     redrawwin(dsp_viewport);
     redrawwin(dsp_command);
 }
 
-prt_in_disp( display, message, y, x)
+void prt_in_disp( display, message, y, x)
 WINDOW *display;
 int y, x;
 char *message;
@@ -70,14 +70,14 @@ char *message;
     wrefresh(display);
 }
 
-prt_msg( message)
+void prt_msg( message)
 char *message;
 {
     wprintw(dsp_command, "%s\n", message);
     wrefresh(dsp_command);
 }
 
-prt_char( ch, row, col)
+void prt_char( ch, row, col)
 char ch;
 int row, col;
 {
@@ -89,7 +89,7 @@ else
     mvwaddch(dsp_main, row, col, ch);
 }
 
-change_viewport( rowoff, coloff)
+void change_viewport( rowoff, coloff)
 int rowoff, coloff;
 {
 if ( rowoff)

@@ -1,6 +1,6 @@
 #include "aralu.h"
 
-make_choice( attribute, value, row, display)
+void make_choice( attribute, value, row, display)
 int value, row;
 WINDOW *display;
 char *attribute;
@@ -31,7 +31,7 @@ int add;
 return( --changes);
 }
 
-prt_difficulty(board)
+void prt_difficulty(board)
 WINDOW *board;
 {
 prt_in_disp(board,"Select difficulty level",1,5);

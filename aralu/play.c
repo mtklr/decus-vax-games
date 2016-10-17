@@ -1,16 +1,5 @@
 #include "aralu.h"
 
-void read_scroll();
-void do_pickup(char object, int number, char direction);
-void drop();
-void enchant();
-void wear_wield();
-void take_damage(int damage, char *killer);
-void exchange_weap();
-void choose_spell();
-void view();
-void fire_item(char item);
-
 short parse_keystroke( keyhit)
 char keyhit;
 {
@@ -130,8 +119,7 @@ else if (GAINLEVEL) ret = E_GAINLEVEL;
 return( ret);
 }
 
-#if 0
-recall_messages()
+void recall_messages()
 {
 int r_c;
 $DESCRIPTOR( return_d,"Press any key to return to game.");
@@ -152,7 +140,7 @@ smg$end_pasteboard_update(&pb);
 }
 #endif
 
-move_plr( direction)
+void move_plr( direction)
 int direction;
 {
 int number, dx, dy, rnd;
@@ -334,7 +322,7 @@ switch( dir) {
     } /* End while */
 }
 
-do_heal() /* heal up */
+void do_heal() /* heal up */
 {
 int bp_num, item_num;
 int PREWEIGHT;
@@ -561,7 +549,7 @@ if ( (--BACKPACK[bp_num].quantity) == 0) {
 
 }
 
-compress_inven() /* takes out "used" or dropped objects */
+void compress_inven() /* takes out "used" or dropped objects */
 {
 int i;
 for ( i=1; i< MAXINVEN-1; i++)
@@ -577,7 +565,7 @@ for ( i=1; i< MAXINVEN-1; i++)
    }
 }
 
-prt_inven()
+void prt_inven()
 {
 int i = 1;
 int item_num;
@@ -756,7 +744,7 @@ else if ( BACKPACK[dchar].invenchar != SPACE) { /* you have it */
 else prt_msg("You have no such object.");
 }
 
-drink_potion() /* pretty self-explanitory */
+void drink_potion() /* pretty self-explanitory */
 {
 int bp_num, item_num, change = TRUE;
 int PREWEIGHT, OLDMAXWEIGHT;
@@ -869,7 +857,7 @@ if ( (bp_num = check_inven( POTION)) != FALSE) {
 else prt_msg("You have nothing to drink.");
 }
 
-check_object( testobj, number, direction) /* checks and parses object */
+void check_object( testobj, number, direction) /* checks and parses object */
 int number;
 char testobj, direction;
 {
@@ -1042,7 +1030,7 @@ else { /* must be CASH */
 do_move( direction);
 }
 
-enter_arena()
+void enter_arena()
 {
 char rival[80];
 
@@ -1062,7 +1050,7 @@ in_arena = TRUE;
 can_exit = FALSE;
 }
 
-display_store_inven()
+void display_store_inven()
 {
 int i;
 char item_to_buy[40];
@@ -1157,13 +1145,13 @@ else {
 if ( get_purchase()) return (FALSE); /* endless loop until ^Z is hit (TRUE) */
 }
 
-enter_store()
+void enter_store()
 {
 display_store_inven();
 get_purchase();
 }
 
-sell_item()
+void sell_item()
 {
 int PREWEIGHT, delwealth, quan;
 int flag = 0;
@@ -1269,7 +1257,7 @@ if ( health < 0) {
  }
 }
 
-do_move( direction)
+void do_move( direction)
 char direction;
 {
 int dx, dy;

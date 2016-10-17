@@ -5,6 +5,7 @@
 #include <curses.h>
 #include <string.h>
 #include <stdlib.h>
+#include <unistd.h>
 
 #define ISCLEAR( position) (position == SPACE)
 #define location(chr,target) ((unsigned int)strchr(target,chr)-(unsigned int)target)
@@ -251,5 +252,140 @@ extern char *mon_names[];
 extern char *attacks[];
 extern char *monfire[];
 extern char *errors[];
+
+/* aralu.c */
+extern void create();
+extern void create_objects();
+extern void sub_holdmap();
+extern short readscreen();
+extern void prt_sub_holdmap();
+extern void write_map();
+extern short getkey();
+extern void do_acts();
+extern short gameloop();
+extern void errmess();
+
+/* create.c */
+extern void make_choice();
+extern short add_points();
+extern void prt_difficulty();
+extern short create_character();
+
+/* explode.c */
+extern void explode();
+
+/* help.c */
+extern void help();
+
+/* monsters.c */
+extern int eat();
+extern char get_move();
+extern void move_monsters();
+extern void resurrect();
+extern short read_monsters();
+extern void prt_monsters();
+extern void monster_attack();
+extern void do_attack();
+
+/* play.c */
+extern short parse_keystroke();
+extern void recall_messages();
+extern void move_plr();
+extern void read_scroll();
+extern void enchant();
+extern void view();
+extern void do_heal();
+extern void choose_spell();
+extern void fire_item();
+extern void compress_inven();
+extern void prt_inven();
+extern void exchange_weap();
+extern void wear_wield();
+extern void drop();
+extern void drink_potion();
+extern void check_object();
+extern int add_inven();
+extern void do_pickup();
+extern void enter_arena();
+extern void display_store_inven();
+extern short get_purchase();
+extern void enter_store();
+extern void sell_item();
+extern void take_damage();
+extern void do_move();
+
+/* play2.c */
+extern int obstacle();
+extern short isamonster();
+extern short combinable();
+extern void get_time();
+extern short grab_num();
+extern void change_speed();
+extern void check_speed();
+extern void check_confusion();
+extern void check_immunity();
+extern void check_mon_confuse();
+extern void check_blind();
+extern int get_name();
+extern void prt_status();
+extern void prt_speed();
+extern void prt_exp();
+extern void prt_wealth();
+extern void prt_username();
+extern void prt_level();
+extern void prt_health();
+extern void prt_kills();
+extern void prt_key_status();
+extern void prt_moves();
+extern void prt_str();
+extern void prt_int();
+extern void prt_dex();
+extern void prt_con();
+extern void prt_buse();
+extern void prt_wgt();
+extern int check_inven();
+extern int identify();
+extern void break_weapon();
+extern short ping_monster();
+
+/* random.c */
+extern void randomize();
+extern int randnum();
+
+/* save.c */
+extern short savegame();
+extern short restore();
+
+/* score.c */
+extern short score();
+extern short outputscore();
+extern short readscore();
+extern short makescore();
+extern short finduser();
+extern short findpos();
+extern short writescore();
+extern void showscore();
+extern void cp_entry();
+extern short create_scorefile();
+
+/* window.c */
+extern void create_windows();
+extern void put_windows();
+extern void delete_windows();
+extern void redraw_windows();
+extern void prt_msg();
+extern void prt_char();
+extern void prt_in_disp();
+extern void change_viewport();
+
+/* wizard.c */
+extern void kill_mon();
+extern void where();
+extern void create_object();
+extern void delete_object();
+extern void set_stats();
+extern void fly();
+extern void goto_level();
+extern void cure_all();
 
 /* end initialization */

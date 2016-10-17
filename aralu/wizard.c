@@ -1,7 +1,5 @@
 #include "aralu.h"
 
-void where();
-
 void kill_mon() /* kill a monster */
 {
 int i, j, y, x, n, k;
@@ -68,7 +66,7 @@ sprintf(you,"You are at (%d,%d).  Stopmonst: %d",ppos.x,ppos.y,stop_monst);
 prt_msg(you);
 }
 
-create_object() /* create any object where you are */
+void create_object() /* create any object where you are */
 {
 char obj;
 
@@ -99,7 +97,7 @@ prt_char( SPACE, ppos.y+dy, ppos.x+dx);
 prt_msg("Deleted.");
 }
 
-set_stats() /* make a nice character */
+void set_stats() /* make a nice character */
 {
 
 STR = grab_num("STR? ");
@@ -114,7 +112,7 @@ experience = grab_num("experience? ");
 prt_status();
 }
 
-fly() /* teleport */
+void fly() /* teleport */
 {
 
 map[ppos.y][ppos.x].mapchar = SPACE;
@@ -135,14 +133,14 @@ change_viewport( ppos.y, ppos.x);
 dely = delx = 0;
 }
 
-goto_level() /* go to 'n' level in dungeon */
+void goto_level() /* go to 'n' level in dungeon */
 {
 
 level = grab_num( "Go to which level? " ) - 1;
 GAINLEVEL = TRUE;
 }
 
-cure_all() /* cure all ailments from potions */
+void cure_all() /* cure all ailments from potions */
 {
 int j;
 

@@ -27,7 +27,7 @@ int number;
 return( ITEM_PROPS[number][COMBINE]);
 }
 
-get_time()
+void get_time()
 {
 int i;
 time_t time_val;
@@ -69,7 +69,7 @@ mvwgetstr(dsp_command, 10, 1, num);
 return( atoi( num));
 }
 
-change_speed( number)
+void change_speed( number)
 double number;
 {
 int i, j, k;
@@ -89,7 +89,7 @@ while( j++ < MAXMONSTERS*level) {
 } /* End while */
 }
 
-check_speed()
+void check_speed()
 {
 
 if ( speed > 1) {
@@ -114,27 +114,27 @@ flags[SPEED].valid = FALSE;
 flags[SPEED].moves = 0;
 }
 
-check_confusion()
+void check_confusion()
 {
 prt_msg("The confusion wears off.");
 flags[CONFUSE].valid = FALSE;
 flags[CONFUSE].moves = 0;
 }
 
-check_immunity()
+void check_immunity()
 {
 prt_msg("You no longer feel invulnerable.");
 flags[IMMUNITY].valid = FALSE;
 flags[IMMUNITY].moves = 0;
 }
 
-check_mon_confuse()
+void check_mon_confuse()
 {
 flags[MON_CONFUSE].valid = FALSE;
 flags[MON_CONFUSE].moves = 0;
 }
 
-check_blind()
+void check_blind()
 {
 prt_msg("Your vision clears...");
 /* smg$paste_virtual_display(&dsp_main,&pb,&2,&2); */
@@ -153,7 +153,7 @@ do {
 return( MAGIC_NUMBER);      /* no such object - error in screen file */
 }
 
-prt_status() /* Print out the stats */
+void prt_status() /* Print out the stats */
 {
 prt_username( username);
 prt_level();
@@ -179,7 +179,7 @@ prt_wgt();
           just have the slow/fast flag set for on/off with a number of moves
           dependent on the number of potions drank.
 */
-prt_speed()
+void prt_speed()
 {
 char speed_msg[80];
 char cur_speed[10];
@@ -195,7 +195,7 @@ sprintf(speed_msg,"Speed: %s", cur_speed);
 prt_in_disp(dsp_status,speed_msg,3,20);
 }
 
-prt_exp()
+void prt_exp()
 {
 char exp_msg[80];
 
@@ -203,7 +203,7 @@ sprintf(exp_msg,"Exp: %11d",experience);
 prt_in_disp( dsp_status, exp_msg, 2, 20);
 }
 
-prt_wealth()
+void prt_wealth()
 {
 char wealth_msg[80];
 
@@ -211,7 +211,7 @@ sprintf(wealth_msg,"Cash flow: %6d",wealth);
 prt_in_disp(dsp_status,wealth_msg,3,1);
 }
 
-prt_username( username)
+void prt_username( username)
 char *username;
 {
 char user_name[20];
@@ -220,7 +220,7 @@ sprintf(user_name,"Player: %9s",username);
 prt_in_disp( dsp_status, user_name, 1, 1);
 }
 
-prt_level()
+void prt_level()
 {
 char level_msg[80];
 
@@ -228,7 +228,7 @@ sprintf(level_msg,"Level: %9d",level);
 prt_in_disp( dsp_status, level_msg, 1, 20);
 }
 
-prt_health()
+void prt_health()
 {
 char health_msg[80];
 
@@ -236,7 +236,7 @@ sprintf(health_msg,"Health: %9d",health);
 prt_in_disp(dsp_status,health_msg,2,1);
 }
 
-prt_kills()
+void prt_kills()
 {
 char kill_msg[80];
 
@@ -244,7 +244,7 @@ sprintf(kill_msg,"Kills: %10d",kills);
 prt_in_disp(dsp_status,kill_msg,4,1);
 }
 
-prt_key_status()
+void prt_key_status()
 {
 
 if ( KEYPOSESS)
@@ -253,7 +253,7 @@ else
   prt_in_disp(dsp_status,"Key status:   No",4,20);
 }
 
-prt_moves( num)
+void prt_moves( num)
 int num;
 {
 char n_moves[10];
@@ -262,7 +262,7 @@ sprintf(n_moves,"Moves: %9d",flags[num].moves);
 prt_in_disp(dsp_status,n_moves,5,20);
 }
 
-prt_str()
+void prt_str()
 {
 char str_msg[80];
 
@@ -270,7 +270,7 @@ sprintf(str_msg,"Str: %5d",STR);
 prt_in_disp(dsp_status,str_msg,5,1);
 }
 
-prt_int()
+void prt_int()
 {
 char int_msg[80];
 
@@ -278,7 +278,7 @@ sprintf(int_msg,"Int: %5d",INT);
 prt_in_disp(dsp_status,int_msg,6,1);
 }
 
-prt_dex()
+void prt_dex()
 {
 char dex_msg[80];
 
@@ -286,7 +286,7 @@ sprintf(dex_msg,"Dex: %5d",DEX);
 prt_in_disp(dsp_status,dex_msg,7,1);
 }
 
-prt_con()
+void prt_con()
 {
 char con_msg[80];
 
@@ -294,7 +294,7 @@ sprintf(con_msg,"Con: %5d",CON);
 prt_in_disp(dsp_status,con_msg,8,1);
 }
 
-prt_buse()
+void prt_buse()
 {
 char buse_msg[80];
 
@@ -302,7 +302,7 @@ sprintf(buse_msg,"Bow: %5d",BUSE);
 prt_in_disp(dsp_status,buse_msg,9,1);
 }
 
-prt_wgt()
+void prt_wgt()
 {
 char wgt_msg[80];
 
@@ -334,7 +334,7 @@ do {
 return( MAGIC_NUMBER);
 }
 
-break_weapon( bp_num)
+void break_weapon( bp_num)
 int bp_num;
 {
 int PREWEIGHT;
@@ -352,7 +352,7 @@ prt_wgt();
 compress_inven();
 }
 
-ping_monster( x, y, mon_num)              /* ping the ghosted monster */
+short ping_monster( x, y, mon_num)              /* ping the ghosted monster */
 int x, y, mon_num;
 {
 monsters_struct *mon_ptr;

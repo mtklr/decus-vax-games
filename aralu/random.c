@@ -1,6 +1,7 @@
 #include <stdlib.h>
+#include <time.h>
 
-int randomize()
+void randomize()
 {
   srandom(time(NULL));
 }
