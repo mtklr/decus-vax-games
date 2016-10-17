@@ -125,7 +125,7 @@ double denom;
 while( !dead) {
 send = FALSE;
 wrefresh(dsp_viewport); /* keeps things moving around */
-if ( (key=getch()) != EOF) {
+if ( (key=wgetch(dsp_viewport)) != ERR) {
    send = TRUE;
    timeout_count--;
    flushinp(); /* clear input buffer, reduce delay (?) */
