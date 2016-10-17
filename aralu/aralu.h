@@ -134,6 +134,16 @@
 #define E_READSCORE     20
 #define E_OPENMON       21
 
+/* difficulty levels */
+#define DIFFSLOW        0.20
+#define DIFFFAST        0.05
+#define DIFFVERYFAST    0.01
+#define DIFF1200BAUD    0.40
+#define DIFFNORMAL      0.10
+
+#define DELAY           100
+#define TIMEOUT         400
+
 /* begin initialization */
 /* Integers and strings for global variables */
 short operator;         /* superuser flag */

@@ -57,11 +57,11 @@ changes = 16; /* how many changes player gets to make */
 WINDOW *dsp_create = newwin(10, 32, 6, 25);
 prt_difficulty(dsp_create);
 switch( diff_num=getch()) { /* Note: these values are VERY touchy */
-   case '1': DIFFICULTY = 0.2; break;
-   case '2': DIFFICULTY = 0.05; break;
-   case '3': DIFFICULTY = 0.01; break;
-   case '4': DIFFICULTY = 0.40; break;
-   default: DIFFICULTY = 0.1;
+   case '1': DIFFICULTY = DIFFSLOW; break;
+   case '2': DIFFICULTY = DIFFFAST; break;
+   case '3': DIFFICULTY = DIFFVERYFAST; break;
+   case '4': DIFFICULTY = DIFF1200BAUD; break;
+   default: DIFFICULTY = DIFFNORMAL;
 }
 wclear(dsp_create);
 prt_in_disp(dsp_create,"Attributes",1,12);

@@ -18,11 +18,11 @@ switch( keyhit) {
                   prt_difficulty(dsp_status);
                   diff_num = getkey();
                   switch( diff_num) {
-                   case '1': DIFFICULTY = 0.2; break;
-                   case '2': DIFFICULTY = 0.05; break;
-                   case '3': DIFFICULTY = 0.01; break;
-                   case '4': DIFFICULTY = 0.40; break;
-                   default: DIFFICULTY = 0.1;
+                   case '1': DIFFICULTY = DIFFSLOW; break;
+                   case '2': DIFFICULTY = DIFFFAST; break;
+                   case '3': DIFFICULTY = DIFFVERYFAST; break;
+                   case '4': DIFFICULTY = DIFF1200BAUD; break;
+                   default: DIFFICULTY = DIFFNORMAL;
                   }
                   wclear(dsp_status);
                   prt_status();
