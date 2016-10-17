@@ -121,24 +121,24 @@ return( ret);
 
 void recall_messages()
 {
-int r_c;
-$DESCRIPTOR( return_d,"Press any key to return to game.");
+/* int r_c; */
+/* $DESCRIPTOR( return_d,"Press any key to return to game."); */
 
-prt_msg(""); /* line advance */
-smg$begin_pasteboard_update(&pb);
-smg$unpaste_virtual_display(&dsp_main,&pb);
-smg$unpaste_virtual_display(&dsp_status,&pb);
-smg$unpaste_virtual_display(&dsp_inven,&pb);
-smg$end_pasteboard_update(&pb);
-smg$put_chars(&dsp_command,&return_d,&22,&23,&1,&2);
-smg$read_keystroke(&kboard,&r_c);
-prt_msg(""); /* line advance */
-smg$begin_pasteboard_update(&pb);
-smg$paste_virtual_display(&dsp_main,&pb,&2,&2);
-smg$paste_virtual_display(&dsp_status,&pb,&2,&43);
-smg$end_pasteboard_update(&pb);
+/* prt_msg(""); /1* line advance *1/ */
+/* smg$begin_pasteboard_update(&pb); */
+/* smg$unpaste_virtual_display(&dsp_main,&pb); */
+/* smg$unpaste_virtual_display(&dsp_status,&pb); */
+/* smg$unpaste_virtual_display(&dsp_inven,&pb); */
+/* smg$end_pasteboard_update(&pb); */
+/* smg$put_chars(&dsp_command,&return_d,&22,&23,&1,&2); */
+/* smg$read_keystroke(&kboard,&r_c); */
+/* prt_msg(""); /1* line advance *1/ */
+/* smg$begin_pasteboard_update(&pb); */
+/* smg$paste_virtual_display(&dsp_main,&pb,&2,&2); */
+/* smg$paste_virtual_display(&dsp_status,&pb,&2,&43); */
+/* smg$end_pasteboard_update(&pb); */
+    return;
 }
-#endif
 
 void move_plr( direction)
 int direction;
