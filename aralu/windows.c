@@ -94,7 +94,7 @@ void change_viewport(int rowoff, int coloff)
     if (rowoff) {
         if (rowoff - SCRATIOV > 0) {
             if (rowoff + SCRATIOV >= MAXROWS) {
-                rowoff = MAXROWS - 9;
+                rowoff = MAXROWS - 10;
             } else {
                 rowoff -= SCRATIOV;
             }
@@ -105,8 +105,8 @@ void change_viewport(int rowoff, int coloff)
 
     if (coloff) {
         if (coloff - SCRATIOH > 0) {
-            if (coloff + SCRATIOH + 3 >= MAXCOLS) {
-                coloff = MAXCOLS - 39;
+            if (coloff + SCRATIOH + 5 >= MAXCOLS) {
+                coloff = MAXCOLS - 40;
             } else {
                 coloff -= SCRATIOH;
             }
