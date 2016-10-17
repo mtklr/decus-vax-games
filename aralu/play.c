@@ -363,6 +363,7 @@ char spell[40];
 /* smg$erase_display(&dsp_inven); */
 wclear(dsp_inven);
 /* smg$label_border(&dsp_inven,&spell_label); */
+wprintw(dsp_inven, "Magic Spells");
 for (i=1; i<= SPELLNAMES; i++) {
    failure[i] =  (75 + pow(i-level-1,3)) - (5*(INT-14) + 3*level) + i*2;
    sprintf(spell,"%c) %20s Failure: %d%%",i+MAGIC_NUMBER,spells[i-1],failure[i]);
@@ -575,6 +576,7 @@ char items[80];
 /* smg$erase_display(&dsp_inven); */
 /* smg$paste_virtual_display(&dsp_inven,&pb,&2,&43); */
 wclear(dsp_inven);
+wprintw(dsp_inven, "Inventory");
 do {
   if ( BACKPACK[i].invenchar != SPACE) {
    item_to_ident = BACKPACK[i].invenchar;
@@ -1061,6 +1063,7 @@ char item_to_buy[40];
 /* smg$label_border(&dsp_status,&store_label); /1* use the stat disp. for store *1/ */
 /* smg$paste_virtual_display(&dsp_status,&pb,&2,&43); */
 wclear(dsp_status);
+wprintw(dsp_status, "Store Inventory");
 wrefresh(dsp_status);
 for (i=1; i< MAXOBJECTS-NUMITEMS; i++) {
    sprintf(item_to_buy,"%c) %17s %4d gp %4d lb.",i+MAGIC_NUMBER,object_names[i],

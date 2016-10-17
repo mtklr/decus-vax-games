@@ -155,6 +155,9 @@ return( MAGIC_NUMBER);      /* no such object - error in screen file */
 
 void prt_status() /* Print out the stats */
 {
+wclear(dsp_status);
+wprintw(dsp_status, "Character Stats");
+wrefresh(dsp_status);
 prt_username( username);
 prt_level();
 prt_exp();
