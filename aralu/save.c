@@ -57,15 +57,15 @@ k = 0;
         }
  holdmap[k].num = -5;
 
-  if ( fwrite( &player, sizeof(player), 1, outfile) != NULL) {
-    if ( fwrite( &ppos, sizeof(ppos), 1, outfile) != NULL)
-      if ( fwrite( &monsters, sizeof(monsters), 1, outfile) != NULL)
-        if ( fwrite( &BACKPACK, sizeof(BACKPACK), 1, outfile) != NULL)
+  if ( fwrite( &player, sizeof(player), 1, outfile) == 1) {
+    if ( fwrite( &ppos, sizeof(ppos), 1, outfile) == 1)
+      if ( fwrite( &monsters, sizeof(monsters), 1, outfile) == 1)
+        if ( fwrite( &BACKPACK, sizeof(BACKPACK), 1, outfile) == 1)
 /*        if ( fwrite( &(maparray[0][0]), sizeof(maparray), 1, outfile) != NULL)
             if ( fwrite( &map, sizeof(map), 1, outfile) != NULL)
 */
-            if ( fwrite( &holdmap, sizeof(holdmap), 1, outfile) != NULL)
-              if ( fwrite( &flags, sizeof(flags), 1, outfile) != NULL)
+            if ( fwrite( &holdmap, sizeof(holdmap), 1, outfile) == 1)
+              if ( fwrite( &flags, sizeof(flags), 1, outfile) < 1)
               ret = E_SAVED;
   }
   else ret = E_WRITESAVE;
@@ -75,7 +75,7 @@ fclose ( outfile);
 if ( stat( savefile, &sfstat) != 0) ret = E_WRITESAVE;
 else if ( (outfile = fopen( savefile, "a")) == NULL) ret = E_OPENSAVE;
 else {
-   if ( fwrite( &sfstat, sizeof( sfstat), 1, outfile) == NULL) ret = E_WRITESAVE;
+   if ( fwrite( &sfstat, sizeof( sfstat), 1, outfile) < 1) ret = E_WRITESAVE;
    fclose( outfile);
 }
 return ( ret);
