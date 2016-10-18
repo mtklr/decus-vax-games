@@ -78,7 +78,7 @@ switch( keyhit) {
                   break;
         case 12:  refresh(); break;
         /* case 2:   prt_msg("Zoom!"); sys$setpri(0,0,4,0); break; */
-/*      case 18:  recall_messages(); break; */
+        /* case 18:  recall_messages(); break; */
         case 'x': exchange_weap(); break;
         case 'w': wear_wield(); break;
         case 'd': drop(); break;
@@ -117,9 +117,9 @@ switch( keyhit) {
         case 7:  if (!operator) prt_msg("Press '?' for help.");
                  else goto_level();
                  break;
-        case 8:  if (!operator) prt_msg("Press '?' for help.");
-                 else { health = MAXHEALTH; prt_health(); }
-                 break;
+        case KEY_BACKSPACE: if (!operator) prt_msg("Press '?' for help.");
+                            else { health = MAXHEALTH; prt_health(); }
+                            break;
         default: prt_msg("Press '?' for help.");
 } /* End switch */
 if ( dead) ret = E_ENDGAME;
