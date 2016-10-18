@@ -56,16 +56,12 @@ short grab_num( prompt)
 char *prompt;
 {
 char num[11];
-/* $DESCRIPTOR( prompt_d, prompt); */
-/* $DESCRIPTOR( num_d, num); */
-
-/* prompt_d.dsc$w_length = strlen( prompt); */
-/* smg$erase_line(&dsp_command,&10,&1); */
-/* smg$set_cursor_abs(&dsp_command,&10,&1); */
-/* smg$read_string(&kboard,&num_d,&prompt_d,0,0,0,0,0,0,&dsp_command); */
-wmove(dsp_command, 10, 1);
-wclrtoeol(dsp_command);
-mvwgetstr(dsp_command, 10, 1, num);
+echo();
+curs_set(1);
+wprintw(dsp_command, "%s", prompt);
+wgetstr(dsp_command, num);
+curs_set(0);
+noecho();
 return( atoi( num));
 }
 
