@@ -100,15 +100,15 @@ prt_msg("Deleted.");
 void set_stats() /* make a nice character */
 {
 
-STR = grab_num("STR? ");
-INT = grab_num("INT? ");
-DEX = grab_num("DEX? ");
-CON = grab_num("CON? ");
-BUSE = grab_num("BUSE? ");
-kills = grab_num("Kills? ");
-wealth = grab_num("wealth? ");
-health = grab_num("health? ");
-experience = grab_num("experience? ");
+STR ? grab_num("STR? ") : STR;
+INT ? grab_num("INT? ") : INT;
+DEX ? grab_num("DEX? ") : DEX;
+CON ? grab_num("CON? ") : CON;
+BUSE ? grab_num("BUSE? ") : BUSE;
+kills ? grab_num("Kills? ") : kills;
+wealth ? grab_num("wealth? ") : wealth;
+health ? grab_num("health? ") : health;
+experience ? grab_num("experience? ") : experience;
 prt_status();
 }
 
