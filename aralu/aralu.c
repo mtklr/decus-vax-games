@@ -249,7 +249,7 @@ in_store = in_arena = can_exit = ret = restored = FALSE;
 level = 1;
 randomize(); /* to get the ball rolling for random numbers */
 
-strcpy( username, getenv("USER"));
+strcpy( username, SUPERUSER);
 if ( argc > 1) {
   if ( argv[1][0] != '-') ret = E_USAGE;
   else switch( toupper( argv[1][1])) {
@@ -265,10 +265,7 @@ if ( argc > 1) {
          case 'S': if ( (ret = outputscore()) == 0) ret = E_ENDGAME; break;
          case 'M':
                 if ( strcmp( username, SUPERUSER) != 0) errmess(  E_NOTSUPER);
-                printf("Enter username:\n");
-                scanf( "%s", op_username);
-                op_username[9] = 0;
-                strcpy( username, op_username);
+                strcpy( username, SUPERUSER);
                 break;
          default: ret = E_USAGE;
   } /* End switch */
