@@ -137,6 +137,7 @@ void goto_level() /* go to 'n' level in dungeon */
 {
 
 level = grab_num( "Go to which level? " ) - 1;
+if (level < 1 || level > NUMLEVELS) return;
 GAINLEVEL = TRUE;
 }
 

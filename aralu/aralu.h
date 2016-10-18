@@ -144,6 +144,8 @@
 #define DELAY           100
 #define TIMEOUT         400
 
+#define NUMLEVELS       9
+
 /* begin initialization */
 /* Integers and strings for global variables */
 short operator;         /* superuser flag */
