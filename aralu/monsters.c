@@ -53,7 +53,9 @@ int i;
 {
 /* For tdir[5], 0 = primary direction; 1 = alternate direction,
                 2 = monster's current direcion, 3 = -primary, 4 = -alternate */
-int movedir, testdir[5], newy, newx, firex, firey, ax, ay, moveoff, hlspeed;
+int movedir, testdir[5], newy, newx, ax, ay, moveoff, hlspeed;
+int firex = 0;
+int firey = 0;
 int m_spell, fdr;
 int distance = 0;
 int k = 1;

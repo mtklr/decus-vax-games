@@ -45,7 +45,8 @@ prt_in_disp(board,"5) Normal (default)",7,1);
 
 short create_character()
 {
-int cpb, cboard;
+int cpb;
+int cboard = 0;
 int changes, diff_num;
 short ret = 0;
 char left[20];
