@@ -1092,7 +1092,7 @@ short get_purchase()
 {
 int bp_num, quality;
 int PREWEIGHT;
-char c;
+int c;
 char gold_amount[80];
 char purchased[80];
 /* $DESCRIPTOR(statlabel,"Character Stats"); */
