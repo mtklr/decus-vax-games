@@ -263,14 +263,18 @@ int item_num, i, j, mon_health, sight_dist;
 int distance = 0; /* cur viewing distance */
 char viewchar[80];
 char mon_health_msg[80];
-char dir;
+int dir;
 
 prt_msg("View which direction?");
 dir = getkey();
 switch( dir) {
+        case KEY_UP:
         case UP: dx = 0; dy = -1; sight_dist = MAXVIEWDIST/2; break;
+        case KEY_RIGHT:
         case RIGHT: dx = 1; dy = 0; sight_dist = MAXVIEWDIST; break;
+        case KEY_LEFT:
         case LEFT: dx = -1; dy = 0; sight_dist = MAXVIEWDIST; break;
+        case KEY_DOWN:
         case DOWN: dx = 0; dy = 1; sight_dist = MAXVIEWDIST/2; break;
         default: prt_msg("Invalid direction."); return;
 } /* End switch */
@@ -499,9 +503,13 @@ do {
  dr = 0;
  dr = getkey();
  switch( dr) {
+        case KEY_UP:
         case UP: dx = 0; dy = -1; break;
+        case KEY_RIGHT:
         case RIGHT: dx = 1; dy = 0; break;
+        case KEY_LEFT:
         case LEFT: dx = -1; dy = 0; break;
+        case KEY_DOWN:
         case DOWN: dx = 0; dy = 1; break;
         case 26: return; break;
         default: dr = 999;
@@ -609,7 +617,7 @@ do {
 void exchange_weap() /* quick-change alternate weapon */
 {
 int DUMMY, bp_num, item_num;
-char wchar;
+int wchar;
 char wielding[80];
 
 if ( WIELD == 0 && ALTWEAP == 0) /* get an initial weapon */
@@ -648,7 +656,7 @@ else {              /* already have an alternate */
 void wear_wield() /* wears armor or wields weapon */
 {
 int bp_num, item_num;
-char wchar;
+int wchar;
 char wielding[80];
 
 prt_msg("Wear/wield which item? [* for list]");
@@ -684,7 +692,7 @@ void drop() /* drop, what else? */
 {
 int PREWEIGHT, amount;
 int dropall = 0;
-char dchar;
+int dchar;
 char drop_msg[80];
 
 if ( underchar != SPACE) {

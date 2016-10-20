@@ -117,7 +117,7 @@ int count;
 prt_monsters();
 }
 
-short getkey()
+int getkey()
 {
 int key, send;
 double denom;
@@ -289,7 +289,7 @@ curs_set(0);
 typeahead(-1);
 nonl();
 create_windows();
-change_viewport( ppos.y, ppos.x);
+keypad(stdscr, TRUE);
 keypad(dsp_viewport, TRUE);
 map[ppos.y][ppos.x].mapchar = '@';
 maparray[ppos.y][ppos.x] = '@';

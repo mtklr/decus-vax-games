@@ -272,7 +272,7 @@ extern void sub_holdmap();
 extern short readscreen();
 extern void prt_sub_holdmap();
 extern void write_map();
-extern short getkey();
+extern int getkey();
 extern void do_acts();
 extern short gameloop();
 extern void errmess();

@@ -80,14 +80,18 @@ prt_msg("Created.");
 void delete_object() /* delete object on map */
 {
 int dx, dy;
-char dir;
+int dir;
 
 prt_msg("Remove object which direction?");
 dir = getch();
 switch( dir) {
+        case KEY_UP:
         case UP: dy = -1; dx = 0; break;
+        case KEY_DOWN:
         case DOWN: dy = 1; dx = 0; break;
+        case KEY_LEFT:
         case LEFT: dx = -1; dy = 0; break;
+        case KEY_RIGHT:
         case RIGHT: dx = 1; dy = 0; break;
         default: prt_msg("Invalid direction."); return; break;
 }
