@@ -20,22 +20,10 @@ void create_windows()
     dsp_help = newwin(22, 78, 0, 0);
     dsp_main = newwin(MAXROWS, MAXCOLS, 0, 0);
     dsp_viewport = derwin(dsp_main, 10, 40, 1, 1);
-
-    scrollok(dsp_command, TRUE);
 }
 
 void put_windows()
 {
-/* $DESCRIPTOR( statlabel, "Character Stats"); */
-/* $DESCRIPTOR( invenlabel, "Inventory"); */
-
-/* smg$begin_pasteboard_update(&pb); */
-/* smg$paste_virtual_display(&dsp_status,&pb,&2,&43); */
-/* smg$paste_virtual_display(&dsp_main,&pb,&2,&2); */
-/* smg$paste_virtual_display(&dsp_command,&pb,&13,&2); */
-/* smg$label_border(&dsp_status,&statlabel); */
-/* smg$label_border(&dsp_inven,&invenlabel); */
-/* smg$end_pasteboard_update(&pb); */
     wrefresh(dsp_status);
     wrefresh(dsp_viewport);
     wrefresh(dsp_command);

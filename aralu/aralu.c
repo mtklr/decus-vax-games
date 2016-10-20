@@ -291,6 +291,8 @@ nonl();
 create_windows();
 keypad(stdscr, TRUE);
 keypad(dsp_viewport, TRUE);
+scrollok(dsp_command, TRUE);
+change_viewport( ppos.y, ppos.x);
 map[ppos.y][ppos.x].mapchar = '@';
 maparray[ppos.y][ppos.x] = '@';
 write_map();
