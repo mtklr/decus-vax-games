@@ -91,16 +91,16 @@ if ( stat( savefile, &oldsfstat) != 0) ret = E_NOSAVEFILE;
 else {
 printf("\33[24;1HRestoring game...\n");
 if ( (infile = fopen( savefile,"r")) != NULL) {
-  if ( fread( &player, sizeof(player), 1, infile) != NULL) {
-    if ( fread( &ppos, sizeof(ppos), 1, infile) != NULL)
-      if ( fread( &monsters, sizeof(monsters), 1, infile) != NULL)
-        if ( fread( &BACKPACK, sizeof(BACKPACK), 1, infile) != NULL)
-/*        if ( fread( &(maparray[0][0]), sizeof(maparray), 1, infile) != NULL)
-            if ( fread( &map, sizeof(map), 1, infile) != NULL)
+  if ( fread( &player, sizeof(player), 1, infile) == 1) {
+    if ( fread( &ppos, sizeof(ppos), 1, infile) == 1)
+      if ( fread( &monsters, sizeof(monsters), 1, infile) == 1)
+        if ( fread( &BACKPACK, sizeof(BACKPACK), 1, infile) == 1)
+/*        if ( fread( &(maparray[0][0]), sizeof(maparray), 1, infile) == 1)
+            if ( fread( &map, sizeof(map), 1, infile) == 1)
 */
-            if ( fread( &holdmap, sizeof(holdmap), 1, infile) != NULL)
-              if ( fread( &flags, sizeof(flags), 1, infile) != NULL)
-         if ( fread( &sfstat, sizeof(sfstat), 1, infile) != NULL) {
+            if ( fread( &holdmap, sizeof(holdmap), 1, infile) == 1)
+              if ( fread( &flags, sizeof(flags), 1, infile) == 1)
+         if ( fread( &sfstat, sizeof(sfstat), 1, infile) == 1) {
              if ( (strcmp( username, SUPERUSER) != 0) &&
                 ( (strcmp( username, player.username) != 0) ||
                   (sfstat.st_dev != oldsfstat.st_dev) ||
