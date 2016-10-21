@@ -6,7 +6,7 @@ OBJ = $(SRC:.c=.o)
 
 LDLIBS = -lncurses
 
-CFLAGS +=
+CFLAGS += -O0 -g -Wall -Wextra
 LDFLAGS +=
 
 all: $(PROG)
