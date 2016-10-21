@@ -14,6 +14,7 @@ switch( keyhit) {
                   ret = E_SAVED;
                   break;
         case 'S': prt_msg("Choose another speed.");
+                  wtimeout(dsp_viewport, -1);
                   wclear(dsp_status);
                   prt_difficulty(dsp_status);
                   diff_num = getkey();
@@ -25,6 +26,7 @@ switch( keyhit) {
                    default: DIFFICULTY = DIFFNORMAL;
                   }
                   wclear(dsp_status);
+                  wtimeout(dsp_viewport, TIMEOUT);
                   prt_status();
                   break;
         case UP   :
