@@ -6,8 +6,7 @@
 #define TRUE 		1
 #define FALSE 		0
 
-int dsp_main, dsp_pegs, dsp_help, dsp_score, dsp_text;
-int kboard, pb;
+WINDOW *dsp_main, *dsp_pegs, *dsp_help, *dsp_score, *dsp_text;
 
 int random_incl, random_seed;		/* for random functions */
 
