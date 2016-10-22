@@ -13,11 +13,11 @@ extern int LastLegalY, LastLegalX;
 extern int Score, BestScore;
 extern double FuelDec;
  
-void EndCurses();
-void StartLander();
-int FlyLander();
-int CleanUp();
-void Explode();
+static void EndCurses();
+static void StartLander();
+static int FlyLander();
+static int CleanUp();
+static void Explode();
  
 int Landings;
 int BSLandings = 0;
@@ -73,7 +73,9 @@ double *init_dy, *init_dx;
 */
  
 static void EndCurses(screen)
- 
+
+WINDOW *screen; 
+
        {
        nodelay(screen, FALSE);                        /* switch off nodelay */
        wmove(screen, 1, 0);

@@ -58,9 +58,9 @@ typedef chtype chtype_port_t;
 static chtype_port_t LineMap[128] = {0};
 static int Old_Y, Old_X;
  
-void Introduction();
-void dumpcore();
-void zap();
+static void Introduction();
+static void dumpcore();
+static void zap();
  
 void InitialiseScreen(init_scr)
  

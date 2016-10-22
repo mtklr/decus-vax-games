@@ -57,7 +57,7 @@ double *y_delta, *x_delta;
        if (Fuel > 0.0)
                {
                wrefresh(screen);
-               while ((ch = mygetch()) != NO_INP)
+               while ((ch = wgetch(screen)) != NO_INP)
                        {
 #ifdef BSD
                        ch &= 0x7F;
@@ -99,46 +99,3 @@ double *y_delta, *x_delta;
            att1p, att2p, att3p, Power, Fuel);
        wrefresh(screen);
        }
-
-
-
-#include <descrip.h>
-#include <ctype.h>
-#include <iodef.h>
-#include <ttdef.h>
-#include <tt2def.h>
-
-struct {       /* terminal mode buffers */
-        int     page_width;
-        int     basic_term;
-        int     ext_term;
-       } modebuf, savemode;
-
-int     getch_chan = 0;
-
-int mygetch()
-{
-static $DESCRIPTOR(tname,"SYS$INPUT");
-char    c;
-int     typeahdcnt;
-int     sys$qiow();
-
-    if (!getch_chan)
-    {   sys$assign(&tname,&getch_chan,0,0);
-        sys$qiow(0,getch_chan,IO$_SENSEMODE,0,0,0,&modebuf,12,0,0,0,0);
-        savemode = modebuf;
-        modebuf.basic_term = modebuf.basic_term & ~TT$M_WRAP;
-        modebuf.ext_term = modebuf.ext_term & ~TT2$M_APP_KEYPAD;
-        sys$qiow(0,getch_chan,IO$_SETMODE,0,0,0,&modebuf,12,0,0,0,0);
-    }
-
-    sys$qiow(0,getch_chan,IO$_SENSEMODE|IO$M_TYPEAHDCNT,
-             0,0,0,&typeahdcnt,4,0,0,0,0);
-    typeahdcnt &= 0xffff;
-    if (!typeahdcnt) return NO_INP;
-
-    sys$qiow(0,getch_chan,IO$_READVBLK | IO$M_NOECHO | IO$M_NOFILTR,
-             0,0,0,&c,1,0,0,0,0);
-    if (c == EOF)  exit(1);
-    return c;
-}

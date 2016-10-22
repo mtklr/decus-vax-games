@@ -14,15 +14,6 @@
 #define MAX_PADS 20        /* maximum number of landing pads in a lunarscape */
 
 
-
-#define HS_FILE "disk$userdisk1:[mas0.maslib.games.lander]land.score"
-
-#define BSD
-#define RAND_BSD
-
-#define M_PI   3.141592654
-#define M_PI_2 1.570796327
-#define cbreak crmode
-#define random() rand()
-#define srandom(x) srand(x)
-
+#ifndef HS_FILE
+#define HS_FILE "lander.hs"
+#endif
