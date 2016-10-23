@@ -267,11 +267,10 @@ while( 1) {
         /* print out pegs for clues */
 	count = 0;
 	for ( i=0; i< 4; i++)
-	  if ( pegs[i] == 'X')
+	  if ( pegs[i] == 'X' || pegs[i] == 'o')
 	    prt_char( dsp_pegs, pegs[i], cur_row-1, (count++)*2+1, A_REVERSE);
-	for ( j=0; j< 4; j++)
-	  if ( pegs[j] == 'o')
-	    prt_char( dsp_pegs, pegs[j], cur_row-1, (count++)*2+1, A_REVERSE);
+          else
+	    prt_char( dsp_pegs, ' ', cur_row-1, (count++)*2+1, A_REVERSE);
 
 	for( i=0; i< 4; i++) guess[i] = ' ';
  	cur_row += 2;
