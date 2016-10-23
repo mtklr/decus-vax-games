@@ -219,11 +219,13 @@ while( 1) {
     case 18: case 12: refresh(); break;
     case 26: 
      	exit_game(); break;
+    case KEY_LEFT:
     case 20: /* move left */
 	if ( (cur_col - 3) < 1) cur_col = 1; 
 	else cur_col -= 3;
 	cursor();
 	break;
+    case KEY_RIGHT:
     case 21: /* move right */
 	if ( (cur_col + 3) > 10) cur_col = 10;
 	else cur_col += 3;
