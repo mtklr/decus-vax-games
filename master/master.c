@@ -16,16 +16,16 @@ put_windows()					/* put windows on the screen */
 int i;
 /* Note: since the help display is not bordered, you have to paste it before 
          pasting the score display in order to get the border for the score */
-mvwin(dsp_pegs, 2, 2);
+mvwin(dsp_pegs, 0, 14);
 for( i=2; i< 22; i+=2)
     mvwhline(dsp_pegs, i, 1, '-', 9);
 for( i=2; i< 22; i+=2) 
     mvwhline(dsp_main, i, 1, '-', 13);
 
-    mvwin(dsp_help, 2, 37);
-    mvwin(dsp_score, 2, 26);
+    mvwin(dsp_score, 0, 24);
+    mvwhline(dsp_score, 2, 1, '-', 11);
     mvwin(dsp_text, 24, 1);
-    mvwhline(dsp_score, 2, 1, 2, 11);
+    mvwin(dsp_help, 0, 36);
     refresh();
 }
 
@@ -109,7 +109,7 @@ put_windows();
 prt_help();
 randomize();
 prt( dsp_pegs, "  Clues  ", 1, 1, A_BOLD);
-prt( dsp_score, " W   L   %", 1, 1, A_BOLD);
+prt( dsp_score, " W   L   %%", 1, 1, A_BOLD);
 score_row = 3;
 cur_row = 2;
 cur_col = 1;
@@ -194,7 +194,7 @@ char str[80];
 
 /* Begin setup */
 printf("As a parameter, use \"m\" for master or \"d\" for difficult games.\n");
-sleep(1);
+/* sleep(1); */
 wins = losses = 0;
 game = REGULAR;
 
@@ -268,9 +268,9 @@ while( 1) {
 	count = 0;
 	for ( i=0; i< 4; i++)
 	  if ( pegs[i] == 'X' || pegs[i] == 'o')
-	    prt_char( dsp_pegs, pegs[i], cur_row-1, (count++)*2+1, A_REVERSE);
+	    prt_char( dsp_pegs, pegs[i], cur_row, (count++)*2+1, A_REVERSE);
           else
-	    prt_char( dsp_pegs, ' ', cur_row-1, (count++)*2+1, A_REVERSE);
+	    prt_char( dsp_pegs, ' ', cur_row, (count++)*2+1, A_REVERSE);
 
 	for( i=0; i< 4; i++) guess[i] = ' ';
  	cur_row += 2;
